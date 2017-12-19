@@ -1,0 +1,9 @@
+language: java
+script: ./gradlew build jacocoTestReport
+jdk: oraclejdk8
+env:
+  matrix:
+  - TERM=dumb
+after_success:
+- ./gradlew jacocoRootReport coveralls
+
