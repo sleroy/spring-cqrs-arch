@@ -2,6 +2,11 @@
 
 [ ![Download](https://api.bintray.com/packages/sleroy/maven/spring-cqrs-module/images/download.svg) ](https://bintray.com/sleroy/maven/spring-cqrs-module/_latestVersion)
 
+[![Coverage Status](https://coveralls.io/repos/github/sleroy/spring-cqrs-arch/badge.svg?branch=master)](https://coveralls.io/github/sleroy/spring-cqrs-arch?branch=master)
+
+[![Build Status](https://travis-ci.org/sleroy/spring-cqrs-arch.svg?branch=master)](https://travis-ci.org/sleroy/spring-cqrs-arch)
+
+
 # Purpose
 
 This module is an implementation of a software architecture model inspired from the CQRS ( [link from Fowler](https://martinfowler.com/bliki/CQRS.html) ) model.
