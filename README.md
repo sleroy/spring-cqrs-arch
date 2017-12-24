@@ -5,7 +5,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/sleroy/spring-cqrs-arch/badge.svg?branch=master)](https://coveralls.io/github/sleroy/spring-cqrs-arch?branch=master)
 
 [![Build Status](https://travis-ci.org/sleroy/spring-cqrs-arch.svg?branch=master)](https://travis-ci.org/sleroy/spring-cqrs-arch)
-
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/199a12aa6e404478b78b648688fa894c)](https://www.codacy.com/app/sleroy/spring-cqrs-arch?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=sleroy/spring-cqrs-arch&amp;utm_campaign=Badge_Grade)
 
 # Purpose
 
