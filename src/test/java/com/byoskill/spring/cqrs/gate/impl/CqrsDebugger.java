@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Profile;
 
 import com.byoskill.spring.cqrs.annotations.EventHandler;
 import com.byoskill.spring.cqrs.api.ICommandExecutionListener;
+import com.byoskill.spring.cqrs.gate.api.ICommandExceptionContext;
 import com.google.common.eventbus.Subscribe;
 
 /**
@@ -220,7 +221,7 @@ public class CqrsDebugger implements ICommandExecutionListener {
      *            the cause
      */
     @Override
-    public void onFailure(final Object _command, final Throwable cause) {
+    public void onFailure(final Object _command, final ICommandExceptionContext cause) {
 	commands.add(new CommandResult(_command, cause));
 
     }

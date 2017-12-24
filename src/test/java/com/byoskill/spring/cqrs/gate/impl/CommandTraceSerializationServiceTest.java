@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import com.byoskill.spring.cqrs.gate.api.ICommandExceptionContext;
 import com.byoskill.spring.cqrs.gate.conf.CqrsConfiguration;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -52,7 +53,26 @@ public class CommandTraceSerializationServiceTest {
 
     @Test
     public void testOnFailure() throws Exception {
-	commandTraceSerializationService.onFailure(new FakeCommand("FIELDA"), new UnsupportedOperationException());
+	commandTraceSerializationService.onFailure(new FakeCommand("FIELDA"), new ICommandExceptionContext() {
+
+	    @Override
+	    public Object getCommand() {
+		// TODO Auto-generated method stub
+		return null;
+	    }
+
+	    @Override
+	    public Exception getException() {
+
+		return new UnsupportedOperationException();
+	    }
+
+	    @Override
+	    public Object getHandler() {
+		// TODO Auto-generated method stub
+		return null;
+	    }
+	});
 	Assert.assertFalse(commandTraceSerializationService.hasTraces());
     }
 

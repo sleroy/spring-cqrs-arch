@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.byoskill.spring.cqrs.api.ICommandExecutionListener;
+import com.byoskill.spring.cqrs.gate.api.ICommandExceptionContext;
 import com.byoskill.spring.cqrs.gate.conf.CqrsConfiguration;
 
 @Service
@@ -29,7 +30,7 @@ public class CommandLoggingService implements ICommandExecutionListener {
      * @see com.byoskill.spring.cqrs.api.ICommandExecutionListener#onFailure(java.lang.Object, java.lang.Throwable)
      */
     @Override
-    public void onFailure(final Object _command, final Throwable _cause) {
+    public void onFailure(final Object _command, final ICommandExceptionContext _cause) {
 	if (configuration.isLoggingEnabled()) {
 	    LOGGER.error("Command has failed {} for the reason {}", _command, _cause);
 	}

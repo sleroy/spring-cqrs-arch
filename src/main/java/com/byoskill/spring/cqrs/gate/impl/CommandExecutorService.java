@@ -9,6 +9,12 @@
  */
 package com.byoskill.spring.cqrs.gate.impl;
 
+import java.util.Optional;
+
+import javax.validation.ConstraintViolationException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,8 +23,9 @@ import com.byoskill.spring.cqrs.api.ICommandCallback;
 import com.byoskill.spring.cqrs.api.ICommandExecutionListener;
 import com.byoskill.spring.cqrs.api.ICommandHandler;
 import com.byoskill.spring.cqrs.api.ICommandProfilingService;
-import com.byoskill.spring.cqrs.gate.api.CommandExecutionException;
 import com.byoskill.spring.cqrs.gate.api.CommandHandlerNotFoundException;
+import com.byoskill.spring.cqrs.gate.api.ICommandExceptionContext;
+import com.byoskill.spring.cqrs.gate.api.ICommandExceptionHandler;
 import com.byoskill.spring.cqrs.gate.api.InvalidCommandException;
 import com.byoskill.spring.cqrs.gate.conf.CqrsConfiguration;
 import com.byoskill.spring.utils.validation.ObjectValidation;
@@ -31,35 +38,48 @@ import com.byoskill.spring.utils.validation.ObjectValidation;
  * @author Slawek
  */
 @Service
-public class SequentialCommandExecutorService {
+public class CommandExecutorService {
 
-    @Autowired
-    private CqrsConfiguration		configuration;
+    private static final Logger LOGGER = LoggerFactory.getLogger(CommandExecutorService.class);
 
-    @Autowired
-    private HandlersProvider		handlersProvider;
+    private final Optional<ICommandExceptionHandler> commandExceptionHandler;
 
-    @Autowired
-    private ICommandExecutionListener[]	listeners;
+    private CqrsConfiguration configuration;
 
-    @Autowired
-    private ICommandProfilingService	profilingService;
+    private final DefaultExceptionHandler defaultExceptionHandler;
 
-    /**
-     * Instantiates a new sequential command executor service.
-     */
-    public SequentialCommandExecutorService() {
-	super();
-    }
+    private final HandlersProvider handlersProvider;
+
+    private ICommandExecutionListener[] listeners;
+
+    private final ICommandProfilingService profilingService;
 
     /**
      * Instantiates a new sequential command executor service.
      *
-     * @param _configuration
+     * @param configuration
      *            the configuration
+     * @param handlersProvider
+     *            the handlers provider
+     * @param listeners
+     *            the listeners
+     * @param profilingService
+     *            the profiling service
+     * @param commandExceptionHandler
+     *            the command exception handler
      */
-    public SequentialCommandExecutorService(final CqrsConfiguration _configuration) {
-	configuration = _configuration;
+    @Autowired
+    public CommandExecutorService(final CqrsConfiguration configuration,
+	    final HandlersProvider handlersProvider, final ICommandExecutionListener[] listeners,
+	    final ICommandProfilingService profilingService,
+	    final Optional<ICommandExceptionHandler> commandExceptionHandler) {
+	super();
+	this.configuration = configuration;
+	this.handlersProvider = handlersProvider;
+	this.listeners = listeners;
+	this.profilingService = profilingService;
+	this.commandExceptionHandler = commandExceptionHandler;
+	defaultExceptionHandler = new DefaultExceptionHandler();
     }
 
     /**
@@ -73,8 +93,11 @@ public class SequentialCommandExecutorService {
      */
     public <R> R run(final Object command) {
 	final ObjectValidation objectValidation = new ObjectValidation();
-	if (!objectValidation.isValid(command)) {
-	    throw new InvalidCommandException(command);
+	LOGGER.debug("Validation of the command {}", command);
+	try {
+	    objectValidation.validate(command);
+	} catch (final ConstraintViolationException e) {
+	    throw new InvalidCommandException(command, e);
 	}
 
 	final ICommandHandler<Object, Object> handler = handlersProvider.getHandler(command);
@@ -100,8 +123,31 @@ public class SequentialCommandExecutorService {
 	    notifyListenersSuccess(command, result);
 
 	} catch (final Exception e) {
-	    notifyListenersFailure(command, e);
-	    throw new CommandExecutionException(e);
+	    final ICommandExceptionContext exceptionContext = new ICommandExceptionContext() {
+
+		@Override
+		public Object getCommand() {
+		    return command;
+		}
+
+		@Override
+		public Exception getException() {
+
+		    return e;
+		}
+
+		@Override
+		public Object getHandler() {
+		    return handler;
+		}
+	    };
+	    notifyListenersFailure(command, exceptionContext);
+	    if (commandExceptionHandler.isPresent()) {
+
+		commandExceptionHandler.get().handleException(exceptionContext);
+	    } else {
+		defaultExceptionHandler.handleException(exceptionContext);
+	    }
 	}
 	return result;
     }
@@ -114,9 +160,9 @@ public class SequentialCommandExecutorService {
 	listeners = _listeners;
     }
 
-    private void notifyListenersFailure(final Object command, final Throwable e) {
+    private void notifyListenersFailure(final Object command, final ICommandExceptionContext exceptionContext) {
 	for (final ICommandExecutionListener commandExecutionListener : listeners) {
-	    commandExecutionListener.onFailure(command, e);
+	    commandExecutionListener.onFailure(command, exceptionContext);
 	}
     }
 

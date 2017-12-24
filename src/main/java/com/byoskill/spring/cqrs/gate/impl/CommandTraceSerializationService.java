@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.byoskill.spring.cqrs.api.ICommandExecutionListener;
+import com.byoskill.spring.cqrs.gate.api.ICommandExceptionContext;
 import com.byoskill.spring.cqrs.gate.conf.CqrsConfiguration;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -70,7 +71,7 @@ public class CommandTraceSerializationService implements ICommandExecutionListen
      * @throws IOException
      *             Signals that an I/O exception has occurred.
      */
-    public synchronized void flushFile() throws JsonGenerationException, JsonMappingException, IOException {
+    public synchronized void flushFile() throws Exception {
 	objectMapper.writeValue(configuration.getTraceFile(), commandTrace);
 	commandTrace = new CommandTrace();
     }
@@ -92,9 +93,9 @@ public class CommandTraceSerializationService implements ICommandExecutionListen
      * lang.Object, java.lang.Throwable)
      */
     @Override
-    public void onFailure(final Object command, final Throwable cause) {
+    public void onFailure(final Object command, final ICommandExceptionContext cause) {
 	if (configuration.isTracingEnabled()) {
-	    serializeTrace(CommandExecution.failure( command, cause));
+	    serializeTrace(CommandExecution.failure( command, cause.getException()));
 	}
 
     }
@@ -121,7 +122,7 @@ public class CommandTraceSerializationService implements ICommandExecutionListen
     public void shutdown() {
 	try {
 	    flushFile();
-	} catch (final IOException e) {
+	} catch (final Exception e) {
 	    LOGGER.error("Error during the serialization of the command trace {} -> {}", configuration.getTraceFile(),
 		    e);
 	}

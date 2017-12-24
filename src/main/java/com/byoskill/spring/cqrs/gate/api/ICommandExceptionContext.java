@@ -9,22 +9,26 @@
  */
 package com.byoskill.spring.cqrs.gate.api;
 
-/**
- * This exception is thrown when the callback is failing.
- *
- * @author sleroy
- *
- */
-public class CallBackException extends CqrsException {
+public interface ICommandExceptionContext {
 
     /**
-     * Instantiates a new call back exception.
+     * Gets the command.
      *
-     * @param _tCallBackException the t call back exception
-     * @param _e the e
+     * @return the command
      */
-    public CallBackException(final Throwable _tCallBackException, final Throwable _e) {
-	super(_tCallBackException.getMessage(), _e);
-    }
+    Object getCommand();
 
+    /**
+     * Gets the exception.
+     *
+     * @return the exception
+     */
+    Exception getException();
+
+    /**
+     * Gets the handler.
+     *
+     * @return the handler
+     */
+    Object getHandler();
 }

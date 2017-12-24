@@ -15,7 +15,8 @@ package com.byoskill.spring.cqrs.api;
 import com.byoskill.spring.cqrs.annotations.CommandOptions;
 
 /**
- * The Interface ICommandHandler is the interface to be implemented to add a new command handler.
+ * The Interface ICommandHandler is the interface to be implemented to add a new
+ * command handler.
  *
  * @author Slawek
  * @author sleroy
@@ -35,5 +36,5 @@ public interface ICommandHandler<C, R> {
      *            the command
      * @return the r
      */
-    public R handle(C command);
+    public R handle(C command) throws Exception;
 }

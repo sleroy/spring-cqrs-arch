@@ -9,6 +9,8 @@
  */
 package com.byoskill.spring.cqrs.gate.api;
 
+import javax.validation.ConstraintViolationException;
+
 /**
  * The Class InvalidCommandException is thrown when an invalid command has been
  * sent.
@@ -22,8 +24,9 @@ public class InvalidCommandException extends CqrsException {
      *
      * @param _command
      *            the command
+     * @param e
      */
-    public InvalidCommandException(final Object _command) {
-	super("Command invalid : " + _command);
+    public InvalidCommandException(final Object _command, final ConstraintViolationException e) {
+	super("Command invalid : " + _command, e);
     }
 }

@@ -33,14 +33,14 @@ public class SpringGate implements Gate {
     @Autowired
     private IEventBusService		     eventBusService;
     @Autowired
-    private SequentialCommandExecutorService sequentialCommandExecutorService;
+    private CommandExecutorService commandExecutorService;
 
     /**
      * Executes sequentially.
      */
     @Override
     public <R> R dispatch(final Object _command) {
-	return sequentialCommandExecutorService.run(_command);
+	return commandExecutorService.run(_command);
 
     }
 
@@ -49,7 +49,7 @@ public class SpringGate implements Gate {
      */
     @Override
     public <R> CompletableFuture<Object> dispatchAsync(final Object command) {
-	return CompletableFuture.supplyAsync(() -> sequentialCommandExecutorService.run(command));
+	return CompletableFuture.supplyAsync(() -> commandExecutorService.run(command));
 
     }
 
