@@ -3,8 +3,6 @@ package com.byoskill.spring.cqrs.gate.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-import java.util.Optional;
-
 import javax.validation.constraints.NotNull;
 
 import org.junit.Before;
@@ -18,7 +16,6 @@ import com.byoskill.spring.cqrs.api.ICommandHandler;
 import com.byoskill.spring.cqrs.api.ICommandProfilingService;
 import com.byoskill.spring.cqrs.gate.api.CommandExecutionException;
 import com.byoskill.spring.cqrs.gate.api.CommandHandlerNotFoundException;
-import com.byoskill.spring.cqrs.gate.api.ICommandExceptionHandler;
 import com.byoskill.spring.cqrs.gate.api.InvalidCommandException;
 import com.byoskill.spring.cqrs.gate.conf.CqrsConfiguration;
 
@@ -45,7 +42,7 @@ public class CommandExecutorServiceTest {
 	    handlersProvider,
 	    null,
 	    profilingService,
-	    Optional.<ICommandExceptionHandler> empty()
+	    null
 	    );
 
     @Before

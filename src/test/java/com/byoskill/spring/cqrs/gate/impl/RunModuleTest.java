@@ -21,6 +21,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.byoskill.spring.cqrs.api.ICommandHandler;
 import com.byoskill.spring.cqrs.gate.api.CommandHandlerNotFoundException;
 import com.byoskill.spring.cqrs.gate.api.Gate;
+import com.byoskill.spring.cqrs.gate.api.ICommandExceptionHandler;
 import com.byoskill.spring.cqrs.gate.api.InvalidCommandException;
 import com.byoskill.spring.cqrs.gate.conf.CqrsConfiguration;
 
@@ -89,6 +90,13 @@ public class RunModuleTest {
 	return new StringCommandHandler(gate);
     }
 
+    @Bean
+    public ICommandExceptionHandler exceptionHandler() {
+	return context -> {
+	    Assert.fail(context.getException().getMessage());
+
+	};
+    }
 
     @Test
     public void test() throws InterruptedException, ExecutionException, TimeoutException {
