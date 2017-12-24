@@ -143,6 +143,12 @@ public class CqrsDebugger implements ICommandExecutionListener {
 
     private final List<Object>	      events   = new ArrayList<>();
 
+    @Override
+    public void beginExecution(final Object command, final Object commandHandler) {
+	//
+
+    }
+
     /**
      * Clear all the informations.
      */

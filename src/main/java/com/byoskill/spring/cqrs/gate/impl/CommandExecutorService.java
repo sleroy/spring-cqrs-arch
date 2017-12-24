@@ -116,7 +116,7 @@ public class CommandExecutorService {
 	}
 	R result = null;
 	try {
-
+	    notifyListenersBegin(command, handler);
 	    result = callback.call();
 
 	    // Notify listeners
@@ -158,6 +158,12 @@ public class CommandExecutorService {
 
     public void setListeners(final ICommandExecutionListener[] _listeners) {
 	listeners = _listeners;
+    }
+
+    private void notifyListenersBegin(final Object command, final Object commandHandler) {
+	for (final ICommandExecutionListener commandExecutionListener : listeners) {
+	    commandExecutionListener.beginExecution(command, commandHandler);
+	}
     }
 
     private void notifyListenersFailure(final Object command, final ICommandExceptionContext exceptionContext) {

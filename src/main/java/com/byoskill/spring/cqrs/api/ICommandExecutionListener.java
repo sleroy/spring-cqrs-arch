@@ -19,6 +19,14 @@ import com.byoskill.spring.cqrs.gate.api.ICommandExceptionContext;
 public interface ICommandExecutionListener {
 
     /**
+     * Begin execution of a command.
+     *
+     * @param command the command
+     * @param commandHandler the command handler
+     */
+    void beginExecution(Object command, Object commandHandler);
+
+    /**
      *  Invoked when command handling execution resulted in an error.
      *
      * @param _command the command

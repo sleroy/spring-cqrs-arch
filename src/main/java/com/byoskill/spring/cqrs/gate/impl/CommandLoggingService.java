@@ -26,6 +26,14 @@ public class CommandLoggingService implements ICommandExecutionListener {
     @Autowired
     private CqrsConfiguration	configuration;
 
+    @Override
+    public void beginExecution(final Object command, final Object commandHandler) {
+	if (configuration.isLoggingEnabled()) {
+	    LOGGER.info("Command to be executed : {} with {}", command, commandHandler);
+	}
+
+    }
+
     /* (non-Javadoc)
      * @see com.byoskill.spring.cqrs.api.ICommandExecutionListener#onFailure(java.lang.Object, java.lang.Throwable)
      */

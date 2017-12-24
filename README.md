@@ -191,6 +191,16 @@ public class DemoBean implements ICommandExecutionListener {
 }
 ```
 
+## Transactions
+
+Transaction can be implemented in two ways :
+
+* Creating an ICommandExecutionListener and trigger the transaction as a wrapper over 
+  the execution of a transaction
+* Directly on the CommandHandler by adding the appropriate @Transaction
+
+
+
 ## References
 
 * [Clarified CQRS](http://udidahan.com/2009/12/09/clarified-cqrs/)

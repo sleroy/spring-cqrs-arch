@@ -61,6 +61,12 @@ public class CommandTraceSerializationService implements ICommandExecutionListen
 
     }
 
+    @Override
+    public void beginExecution(final Object command, final Object commandHandler) {
+	// Nothing to do.
+
+    }
+
     /**
      * Flush file.
      *
