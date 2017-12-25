@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.context.ApplicationContext;
 
 import com.byoskill.spring.cqrs.api.ICommandHandler;
 
@@ -34,7 +35,17 @@ public class SpringHandlersProviderTest {
     @Test
     public void testGetHandler() throws Exception {
 	initHandlers();
-	final ICommandHandler value = _command -> null;
+	final ICommandHandler value = new ICommandHandler<String, String>() {
+
+	    @Override
+	    public String handle(String command) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	    }
+
+	};
+	springHandlersProvider.postProcessAfterInitialization(value, BEAN);
+	
 	Mockito.when(beanFactory.getBean(BEAN, ICommandHandler.class)).thenReturn(value);
 	assertNotNull(springHandlersProvider.getHandler("COMMAND_AS_STRING"));
     }
@@ -45,8 +56,7 @@ public class SpringHandlersProviderTest {
     }
 
     private void initHandlers() {
-	Mockito.when(beanFactory.getBeanNamesForType(ICommandHandler.class)).thenReturn(new String[] { BEAN });
-	Mockito.when(beanFactory.getBean(BEAN, ICommandHandler.class)).thenReturn(new FakeCommandHandler());
-	springHandlersProvider.onApplicationEvent();
+
+	springHandlersProvider.postProcessAfterInitialization(BEAN, BEAN);
     }
 }

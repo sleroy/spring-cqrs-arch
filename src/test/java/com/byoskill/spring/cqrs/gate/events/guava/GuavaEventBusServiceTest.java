@@ -43,7 +43,6 @@ public class GuavaEventBusServiceTest {
 	final CqrsConfiguration cqrsConfiguration = new CqrsConfiguration();
 	applicationContext = Mockito.mock(ApplicationContext.class);
 	guavaEventBusService = new GuavaEventBusService(cqrsConfiguration);
-	guavaEventBusService.setApplicationContext(applicationContext);
 	guavaEventBusService.registerEventSuscriber(testEventSuscriber);
 
     }

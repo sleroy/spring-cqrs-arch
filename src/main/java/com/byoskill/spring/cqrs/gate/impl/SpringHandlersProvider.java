@@ -9,12 +9,12 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.stereotype.Component;
 
@@ -32,37 +32,53 @@ import com.byoskill.spring.cqrs.gate.api.CqrsException;
  *
  */
 @Component
-public class SpringHandlersProvider implements HandlersProvider {
+public class SpringHandlersProvider implements HandlersProvider, BeanPostProcessor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SpringHandlersProvider.class);
 
-    @Autowired
-    private ConfigurableListableBeanFactory beanFactory;
+
+    private final ConfigurableListableBeanFactory beanFactory;
 
     private final Map<Class<?>, String> handlers = new HashMap<>();
+
+    @Autowired
+    public SpringHandlersProvider(final ConfigurableListableBeanFactory beanFactory) {
+	super();
+	this.beanFactory = beanFactory;
+    }
 
     @SuppressWarnings("unchecked")
     @Override
     public ICommandHandler<Object, Object> getHandler(final Object command) {
 	final String beanName = handlers.get(command.getClass());
 	if (beanName == null) {
-	    throw new CommandHandlerNotFoundException("command handler not found. Command class is " + command.getClass());
+	    throw new CommandHandlerNotFoundException(
+		    "command handler not found. Command class is " + command.getClass());
 	}
 	return beanFactory.getBean(beanName, ICommandHandler.class);
     }
 
-    @PostConstruct
-    public void onApplicationEvent() {
-	handlers.clear();
-	final String[] commandHandlersNames = beanFactory.getBeanNamesForType(ICommandHandler.class);
-	for (final String beanName : commandHandlersNames) {
-	    LOGGER.info("Loading the CommandHandler definition {}", beanName);
-	    final ICommandHandler bean = beanFactory.getBean(beanName, ICommandHandler.class);
-	    final Class<?> commandType = getHandledCommandType(bean);
-	    LOGGER.info("CommandHandler is handling command of type {}", commandType);
-	    handlers.put(commandType, beanName);
 
+
+    @Override
+    public Object postProcessAfterInitialization(final Object bean, final String beanName) throws BeansException {
+	if (bean instanceof ICommandHandler) {
+	    LOGGER.info("Loading the bean definition {}->{}", beanName, bean);
+	    handlers.put(getHandledCommandType(bean), beanName);
 	}
+	return bean;
+    }
+
+    @Override
+    public Object postProcessBeforeInitialization(final Object bean, final String beanName) throws BeansException {
+
+	return bean;
+    }
+
+    private void addingCommandHandler(final String beanName, final ICommandHandler bean) {
+	final Class<?> commandType = getHandledCommandType(bean);
+	LOGGER.info("CommandHandler is handling command of type {}", commandType);
+	handlers.put(commandType, beanName);
     }
 
     private ParameterizedType findByRawType(final Type[] genericInterfaces, final Class<?> expectedRawType) {

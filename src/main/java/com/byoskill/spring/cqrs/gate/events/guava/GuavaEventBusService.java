@@ -50,6 +50,20 @@ public class GuavaEventBusService implements ApplicationContextAware, IEventBusS
      */
     public GuavaEventBusService(final CqrsConfiguration cqrsConfiguration) {
 	this.cqrsConfiguration = cqrsConfiguration;
+	if (cqrsConfiguration.isAsyncEventQueries()) {
+	    // The event bus should handle async event processing.
+	    threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
+	    threadPoolTaskExecutor.setCorePoolSize(cqrsConfiguration.getCorePoolSize());
+	    threadPoolTaskExecutor.setMaxPoolSize(cqrsConfiguration.getMaxPoolSize());
+	    threadPoolTaskExecutor.setQueueCapacity(cqrsConfiguration.getQueueCapacity());
+	    threadPoolTaskExecutor.setKeepAliveSeconds(cqrsConfiguration.getKeepAliveSeconds());
+	    threadPoolTaskExecutor.setThreadGroupName("cqrs-event-bus");
+	    threadPoolTaskExecutor.setThreadNamePrefix("eventbus");
+	    threadPoolTaskExecutor.initialize();
+	    eventBus = new AsyncEventBus(threadPoolTaskExecutor);
+	} else {
+	    eventBus = new EventBus();
+	}
 
     }
 
@@ -85,20 +99,7 @@ public class GuavaEventBusService implements ApplicationContextAware, IEventBusS
     @Override
     public void setApplicationContext(final ApplicationContext _applicationContext) throws BeansException {
 	applicationContext = _applicationContext;
-	if (cqrsConfiguration.isAsyncEventQueries()) {
-	    // The event bus should handle async event processing.
-	    threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
-	    threadPoolTaskExecutor.setCorePoolSize(cqrsConfiguration.getCorePoolSize());
-	    threadPoolTaskExecutor.setMaxPoolSize(cqrsConfiguration.getMaxPoolSize());
-	    threadPoolTaskExecutor.setQueueCapacity(cqrsConfiguration.getQueueCapacity());
-	    threadPoolTaskExecutor.setKeepAliveSeconds(cqrsConfiguration.getKeepAliveSeconds());
-	    threadPoolTaskExecutor.setThreadGroupName("cqrs-event-bus");
-	    threadPoolTaskExecutor.setThreadNamePrefix("eventbus");
-	    threadPoolTaskExecutor.initialize();
-	    eventBus = new AsyncEventBus(threadPoolTaskExecutor);
-	} else {
-	    eventBus = new EventBus();
-	}
+
 
 	lookingForEventSuscriberBeans();
 

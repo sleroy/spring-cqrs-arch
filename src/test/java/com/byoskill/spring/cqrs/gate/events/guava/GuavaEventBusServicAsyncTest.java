@@ -45,7 +45,7 @@ public class GuavaEventBusServicAsyncTest {
 	cqrsConfiguration.setAsyncEventQueries(true);
 	cqrsConfiguration.setLoggingEnabled(true);
 	guavaEventBusService = new GuavaEventBusService(cqrsConfiguration);
-	guavaEventBusService.setApplicationContext(applicationContext);
+
 	guavaEventBusService.registerEventSuscriber(testEventSuscriber);
 
     }
