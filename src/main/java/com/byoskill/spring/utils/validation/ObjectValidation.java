@@ -12,9 +12,10 @@ package com.byoskill.spring.utils.validation;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
 import javax.validation.Validation;
 import javax.validation.Validator;
+
+import com.byoskill.spring.cqrs.api.CommandNotValidException;
 
 /**
  * This class is used to performs manual validation of pojo.
@@ -44,7 +45,7 @@ public class ObjectValidation {
     public void validate(final Object _object) {
 	final Set<ConstraintViolation<Object>> constraints = validator.validate(_object);
 	if (!constraints.isEmpty()) {
-	    throw new ConstraintViolationException("Object " + _object + " + is not valid", constraints);
+	    throw new CommandNotValidException("Object " + _object + " + is not valid", constraints);
 	}
     }
 }
