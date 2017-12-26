@@ -14,6 +14,11 @@ package com.byoskill.spring.cqrs.gate.api;
  */
 public class CommandHandlerNotFoundException extends CqrsException {
 
+    /**
+     * Instantiates a new command handler not found exception.
+     *
+     * @param _command the command
+     */
     public CommandHandlerNotFoundException(final Object _command) {
 	super("Could not execute the command : " + _command);
     }

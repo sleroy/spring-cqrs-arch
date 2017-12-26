@@ -14,10 +14,21 @@ package com.byoskill.spring.cqrs.gate.api;
  */
 public class CommandExecutionException extends CqrsException {
 
+    /**
+     * Instantiates a new command execution exception.
+     *
+     * @param _command the command
+     * @param _e the exception
+     */
     public CommandExecutionException(final Object _command, final Throwable _e) {
 	super("Command " + _command + " has failed", _e);
     }
 
+    /**
+     * Instantiates a new command execution exception.
+     *
+     * @param cause the cause
+     */
     public CommandExecutionException(final Throwable cause) {
 	super(cause);
     }

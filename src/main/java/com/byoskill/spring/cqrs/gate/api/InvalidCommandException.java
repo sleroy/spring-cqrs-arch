@@ -22,9 +22,8 @@ public class InvalidCommandException extends CqrsException {
     /**
      * Instantiates a new invalid command exception.
      *
-     * @param _command
-     *            the command
-     * @param e
+     * @param _command            the command
+     * @param e the exception
      */
     public InvalidCommandException(final Object _command, final ConstraintViolationException e) {
 	super("Command invalid : " + _command, e);
