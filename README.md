@@ -7,6 +7,18 @@
 [![Build Status](https://travis-ci.org/sleroy/spring-cqrs-arch.svg?branch=master)](https://travis-ci.org/sleroy/spring-cqrs-arch)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/199a12aa6e404478b78b648688fa894c)](https://www.codacy.com/app/sleroy/spring-cqrs-arch?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=sleroy/spring-cqrs-arch&amp;utm_campaign=Badge_Grade)
 
+# Changelog
+
+* 0.2.3 :
+
+- Added unit tests for spring gate promises
+- Better logging with onFailure (added stacktraces)  
+
+* 0.2.2 :
+
+- Bug fix with dependency scanning
+- Better exception management for constraint violations
+
 # Purpose
 
 This module is an implementation of a software architecture model inspired from the CQRS ( [link from Fowler](https://martinfowler.com/bliki/CQRS.html) ) model.

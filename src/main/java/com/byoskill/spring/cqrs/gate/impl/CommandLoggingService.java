@@ -40,7 +40,7 @@ public class CommandLoggingService implements ICommandExecutionListener {
     @Override
     public void onFailure(final Object _command, final ICommandExceptionContext _cause) {
 	if (configuration.isLoggingEnabled()) {
-	    LOGGER.error("Command has failed {} for the reason {}", _command, _cause);
+	    LOGGER.error("Command has failed {} for the reason {}", _command, _cause, _cause.getException());
 	}
 
     }

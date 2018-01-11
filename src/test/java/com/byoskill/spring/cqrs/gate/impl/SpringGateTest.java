@@ -9,26 +9,25 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.byoskill.spring.cqrs.gate.impl.CommandExecutorService;
-import com.byoskill.spring.cqrs.gate.impl.SpringGate;
-
 @RunWith(MockitoJUnitRunner.class)
 public class SpringGateTest {
-	private static final String COMMAND = "GNI";
+    private static final String COMMAND = "GNI";
 
-	
-	@Mock
-	private CommandExecutorService commandExecutorService;
 
-	@InjectMocks
-	private SpringGate springGate;
+    @Mock
+    private CommandExecutorService commandExecutorService;
 
-	@Test
-	public void testDispatch() throws Exception {
-		springGate.dispatch(COMMAND);
-		verify(commandExecutorService, Mockito.times(1)).run(COMMAND);
-	}
-	
+    @InjectMocks
+    private SpringGate springGate;
+
+    @Test
+    public void testDispatch() throws Exception {
+	springGate.dispatch(COMMAND);
+	verify(commandExecutorService, Mockito.times(1)).run(COMMAND);
+    }
+
+
+
 
 
 }

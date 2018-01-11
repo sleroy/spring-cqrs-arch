@@ -41,7 +41,7 @@ public interface Gate {
      *            the command.
      * @return the result of the command.
      */
-    public <R> CompletableFuture<Object> dispatchAsync(Object command);
+    public <R> CompletableFuture<R> dispatchAsync(Object command);
 
     /**
      * Dispatches an event and executes it asynchronously.

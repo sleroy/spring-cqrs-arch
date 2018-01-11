@@ -31,9 +31,9 @@ public class SpringGate implements Gate {
     private static final Logger		     LOGGER = LoggerFactory.getLogger(SpringGate.class);
 
     @Autowired
-    private IEventBusService		     eventBusService;
-    @Autowired
     private CommandExecutorService commandExecutorService;
+    @Autowired
+    private IEventBusService		     eventBusService;
 
     /**
      * Executes sequentially.
@@ -48,7 +48,7 @@ public class SpringGate implements Gate {
      * @see com.byoskill.spring.cqrs.gate.api.Gate#dispatchAsync(java.lang.Object)
      */
     @Override
-    public <R> CompletableFuture<Object> dispatchAsync(final Object command) {
+    public <R> CompletableFuture<R> dispatchAsync(final Object command) {
 	return CompletableFuture.supplyAsync(() -> commandExecutorService.run(command));
 
     }
