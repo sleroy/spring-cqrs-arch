@@ -36,12 +36,17 @@ public class SpringGate implements Gate {
     private IEventBusService		     eventBusService;
 
     /**
-     * Executes sequentially.
+     * Executes sequentially a command
      */
     @Override
     public <R> R dispatch(final Object _command) {
 	return commandExecutorService.run(_command);
 
+    }
+
+    @Override
+    public <R> R dispatch(final Object command, final Class<R> returnType) {
+	return returnType.cast(commandExecutorService.run(command));
     }
 
     /* (non-Javadoc)
@@ -51,6 +56,14 @@ public class SpringGate implements Gate {
     public <R> CompletableFuture<R> dispatchAsync(final Object command) {
 	return CompletableFuture.supplyAsync(() -> commandExecutorService.run(command));
 
+    }
+
+    /* (non-Javadoc)
+     * @see com.byoskill.spring.cqrs.gate.api.Gate#dispatchAsync(java.lang.Object, java.lang.Class)
+     */
+    @Override
+    public <R> CompletableFuture<R> dispatchAsync(final Object command, final Class<R> expectedReturnType) {
+	return CompletableFuture.supplyAsync(() -> expectedReturnType.cast(commandExecutorService.run(command)));
     }
 
     /* (non-Javadoc)

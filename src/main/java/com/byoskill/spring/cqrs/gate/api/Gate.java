@@ -35,6 +35,16 @@ public interface Gate {
     public <R> R dispatch(Object command);
 
     /**
+     * Dispatch a command and executes it sequentially.
+     *
+     * @param <R> the generic type
+     * @param command            the command.
+     * @param returnType the expected return type
+     * @return the result of the command.
+     */
+    public <R> R dispatch(Object command, Class<R> returnType);
+
+    /**
      * Dispatch a command and executes it asynchronously.
      *
      * @param command
@@ -42,6 +52,16 @@ public interface Gate {
      * @return the result of the command.
      */
     public <R> CompletableFuture<R> dispatchAsync(Object command);
+
+    /**
+     * Dispatch a command and executes it asynchronously.
+     *
+     * @param <R> the generic type
+     * @param command            the command.
+     * @param expectedReturnType the expected return type
+     * @return the result of the command.
+     */
+    public <R> CompletableFuture<R> dispatchAsync(Object command, Class<R> expectedReturnType);
 
     /**
      * Dispatches an event and executes it asynchronously.
