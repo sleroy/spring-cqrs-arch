@@ -9,6 +9,10 @@
 
 # Changelog
 
+* 0.2.4 :
+
+- Upgrade of the Gate to specify the expected return type.
+
 * 0.2.3 :
 
 - Added unit tests for spring gate promises
