@@ -1,29 +1,31 @@
 package com.byoskill.spring.cqrs.gate.impl;
 
+import java.util.concurrent.CompletableFuture;
+
+import com.byoskill.spring.cqrs.api.IAsyncCommandHandler;
 import com.byoskill.spring.cqrs.api.ICommandCallback;
-import com.byoskill.spring.cqrs.api.ICommandHandler;
 
 /**
  * Default callback to invoke sequentially a command.
  *
  * @author sleroy
- *        
+ *
  * @param <R>
  */
 public class DefaultCommandCallback<R> implements ICommandCallback<R> {
 
-	private final ICommandHandler<Object, Object>	handler;
-	private final Object							command;
+    private final Object			  command;
+    private final IAsyncCommandHandler<Object, R> handler;
 
-	public DefaultCommandCallback(final Object _command, final ICommandHandler<Object, Object> _handler) {
-		command = _command;
-		handler = _handler;
-	}
+    public DefaultCommandCallback(final Object _command, final IAsyncCommandHandler<Object, R> _handler) {
+	command = _command;
+	handler = _handler;
+    }
 
-	@Override
-	public R call() throws Exception {
+    @Override
+    public CompletableFuture<R> call() throws Exception {
 
-		return (R) handler.handle(command);
-	}
-	
+	return handler.handle(command);
+    }
+
 }

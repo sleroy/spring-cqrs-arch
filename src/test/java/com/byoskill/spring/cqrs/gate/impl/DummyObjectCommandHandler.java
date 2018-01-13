@@ -5,9 +5,9 @@ import com.byoskill.spring.cqrs.api.ICommandHandler;
 public class DummyObjectCommandHandler implements ICommandHandler<DummyObject, Integer> {
 
     @Override
-    public Integer handle(final DummyObject command) throws Exception {
+    public Integer handle(final DummyObject command)  {
 
-        return 1;
+	return 1;
     }
 
 }

@@ -28,46 +28,67 @@ import com.byoskill.spring.cqrs.gate.api.IEventBusService;
 @Service
 public class SpringGate implements Gate {
 
-    private static final Logger		     LOGGER = LoggerFactory.getLogger(SpringGate.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SpringGate.class);
 
+    private final CommandExecutorService commandExecutorService;
+    private final IEventBusService	 eventBusService;
+
+    /**
+     * Instantiates a new spring gate.
+     *
+     * @param commandExecutorService the command executor service
+     * @param eventBusService the event bus service
+     */
     @Autowired
-    private CommandExecutorService commandExecutorService;
-    @Autowired
-    private IEventBusService		     eventBusService;
+    public SpringGate(final CommandExecutorService commandExecutorService, final IEventBusService eventBusService) {
+	super();
+	this.commandExecutorService = commandExecutorService;
+	this.eventBusService = eventBusService;
+    }
 
     /**
      * Executes sequentially a command
      */
     @Override
     public <R> R dispatch(final Object _command) {
-	return commandExecutorService.run(_command);
+	return (R) commandExecutorService.run(_command, Object.class).join();
 
     }
 
     @Override
     public <R> R dispatch(final Object command, final Class<R> returnType) {
-	return returnType.cast(commandExecutorService.run(command));
+	return returnType.cast(commandExecutorService.run(command, returnType).join());
     }
 
-    /* (non-Javadoc)
-     * @see com.byoskill.spring.cqrs.gate.api.Gate#dispatchAsync(java.lang.Object)
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * com.byoskill.spring.cqrs.gate.api.Gate#dispatchAsync(java.lang.Object)
      */
     @Override
     public <R> CompletableFuture<R> dispatchAsync(final Object command) {
-	return CompletableFuture.supplyAsync(() -> commandExecutorService.run(command));
+	return (CompletableFuture<R>) commandExecutorService.run(command, Object.class);
 
     }
 
-    /* (non-Javadoc)
-     * @see com.byoskill.spring.cqrs.gate.api.Gate#dispatchAsync(java.lang.Object, java.lang.Class)
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * com.byoskill.spring.cqrs.gate.api.Gate#dispatchAsync(java.lang.Object,
+     * java.lang.Class)
      */
     @Override
     public <R> CompletableFuture<R> dispatchAsync(final Object command, final Class<R> expectedReturnType) {
-	return CompletableFuture.supplyAsync(() -> expectedReturnType.cast(commandExecutorService.run(command)));
+	return commandExecutorService.run(command, expectedReturnType);
     }
 
-    /* (non-Javadoc)
-     * @see com.byoskill.spring.cqrs.gate.api.Gate#dispatchEvent(java.lang.Object)
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * com.byoskill.spring.cqrs.gate.api.Gate#dispatchEvent(java.lang.Object)
      */
     @Override
     public void dispatchEvent(final Object _event) {

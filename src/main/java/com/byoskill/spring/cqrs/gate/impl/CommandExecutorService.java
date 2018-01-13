@@ -10,6 +10,7 @@
 package com.byoskill.spring.cqrs.gate.impl;
 
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 import javax.validation.ConstraintViolationException;
 
@@ -19,9 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.byoskill.spring.cqrs.api.HandlersProvider;
-import com.byoskill.spring.cqrs.api.ICommandCallback;
+import com.byoskill.spring.cqrs.api.IAsyncCommandHandler;
 import com.byoskill.spring.cqrs.api.ICommandExecutionListener;
-import com.byoskill.spring.cqrs.api.ICommandHandler;
 import com.byoskill.spring.cqrs.api.ICommandProfilingService;
 import com.byoskill.spring.cqrs.gate.api.CommandHandlerNotFoundException;
 import com.byoskill.spring.cqrs.gate.api.ICommandExceptionContext;
@@ -39,6 +39,35 @@ import com.byoskill.spring.utils.validation.ObjectValidation;
  */
 @Service
 public class CommandExecutorService {
+
+    private final class ICommandExceptionContextImplementation implements ICommandExceptionContext {
+	private final Object			 command;
+	private final Throwable			 e;
+	private final IAsyncCommandHandler<?, ?> handler;
+
+	ICommandExceptionContextImplementation(final Object command, final Throwable e,
+		final IAsyncCommandHandler<?, ?> handler) {
+	    this.command = command;
+	    this.e = e;
+	    this.handler = handler;
+	}
+
+	@Override
+	public Object getCommand() {
+	    return command;
+	}
+
+	@Override
+	public Throwable getException() {
+
+	    return e;
+	}
+
+	@Override
+	public Object getHandler() {
+	    return handler;
+	}
+    }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CommandExecutorService.class);
 
@@ -69,9 +98,8 @@ public class CommandExecutorService {
      *            the command exception handler
      */
     @Autowired
-    public CommandExecutorService(final CqrsConfiguration configuration,
-	    final HandlersProvider handlersProvider, final ICommandExecutionListener[] listeners,
-	    final ICommandProfilingService profilingService,
+    public CommandExecutorService(final CqrsConfiguration configuration, final HandlersProvider handlersProvider,
+	    final ICommandExecutionListener[] listeners, final ICommandProfilingService profilingService,
 	    final Optional<ICommandExceptionHandler> commandExceptionHandler) {
 	super();
 	this.configuration = configuration;
@@ -89,67 +117,53 @@ public class CommandExecutorService {
      *            the generic type
      * @param command
      *            the command
+     * @param expectedType
+     *            the expected type
      * @return the result of the command
      */
-    public <R> R run(final Object command) {
-	final ObjectValidation objectValidation = new ObjectValidation();
-	LOGGER.debug("Validation of the command {}", command);
-	try {
-	    objectValidation.validate(command);
-	} catch (final ConstraintViolationException e) {
-	    throw new InvalidCommandException(command, e);
-	}
+    public <R> CompletableFuture<R> run(final Object command, final Class<R> expectedType) {
+	final IAsyncCommandHandler<Object, Object> handler = handlersProvider.getHandler(command);
 
-	final ICommandHandler<Object, Object> handler = handlersProvider.getHandler(command);
-	if (handler == null) {
-	    throw new CommandHandlerNotFoundException(command);
-	}
+	CompletableFuture<Object> promise = CompletableFuture.supplyAsync(() -> command);
+	promise = promise.thenApply((c) -> {
+	    commandValidation(c);
+
+	    if (handler == null) {
+		throw new CommandHandlerNotFoundException(command);
+	    }
+	    return c;
+	});
 	// You can add Your own capabilities here: dependency injection,
 	// security, transaction management, logging, profiling, spying,
 	// storing
-	// commands, etc
+	// commands, etc);
 
-	ICommandCallback<R> callback = new DefaultCommandCallback<>(command, handler);
 	// Decorate with profiling
+	IProfiler profiler = null;
 	if (configuration.isProfilingEnabled()) {
-	    callback = profilingService.decorate(command, callback);
+	    profiler = profilingService.newProfiler(handler);
+	    final IProfiler p = profiler; // Scopes
+	    promise = promise.thenCompose((c) -> p.begin(c));
+
 	}
-	R result = null;
-	try {
-	    notifyListenersBegin(command, handler);
-	    result = callback.call();
+	final R result = null;
+	// Promise chaining listeners begin
+	promise = promise.thenCompose(c -> notifyListenersBegin(c, handler));
+	// Promise command handler (now argument is the returned type)
+	promise = promise.thenCompose(c -> handler.handle(c)); // handle
+	// handle result
+	promise.handle((r, e) -> {
+	    if (e != null) {
 
-	    // Notify listeners
-	    notifyListenersSuccess(command, result);
-
-	} catch (final Exception e) {
-	    final ICommandExceptionContext exceptionContext = new ICommandExceptionContext() {
-
-		@Override
-		public Object getCommand() {
-		    return command;
-		}
-
-		@Override
-		public Exception getException() {
-
-		    return e;
-		}
-
-		@Override
-		public Object getHandler() {
-		    return handler;
-		}
-	    };
-	    notifyListenersFailure(command, exceptionContext);
-	    if (commandExceptionHandler.isPresent()) {
-
-		commandExceptionHandler.get().handleException(exceptionContext);
+		notifyListenersFailure(command, e, handler);
+		return expectedType.cast(r);
 	    } else {
-		defaultExceptionHandler.handleException(exceptionContext);
+		notifyListenersSuccess(command, r);
+		return expectedType.cast(r);
 	    }
-	}
-	return result;
+	});
+
+	return (CompletableFuture<R>) promise;
     }
 
     public void setConfiguration(final CqrsConfiguration _configuration) {
@@ -160,15 +174,38 @@ public class CommandExecutorService {
 	listeners = _listeners;
     }
 
-    private void notifyListenersBegin(final Object command, final Object commandHandler) {
-	for (final ICommandExecutionListener commandExecutionListener : listeners) {
-	    commandExecutionListener.beginExecution(command, commandHandler);
+    private void commandValidation(final Object command) {
+	final ObjectValidation objectValidation = new ObjectValidation();
+	LOGGER.debug("Validation of the command {}", command);
+	try {
+	    objectValidation.validate(command);
+	} catch (final ConstraintViolationException e) {
+	    throw new InvalidCommandException(command, e);
 	}
     }
 
-    private void notifyListenersFailure(final Object command, final ICommandExceptionContext exceptionContext) {
+    private CompletableFuture<Object> notifyListenersBegin(final Object command, final Object commandHandler) {
+	return CompletableFuture.supplyAsync(() -> {
+	    for (final ICommandExecutionListener commandExecutionListener : listeners) {
+		commandExecutionListener.beginExecution(command, commandHandler);
+	    }
+	    return command;
+	});
+    }
+
+    private void notifyListenersFailure(final Object command, final Throwable e,
+	    final IAsyncCommandHandler<?, ?> handler) {
+	final ICommandExceptionContext exceptionContext = new ICommandExceptionContextImplementation(command, e,
+		handler);
 	for (final ICommandExecutionListener commandExecutionListener : listeners) {
 	    commandExecutionListener.onFailure(command, exceptionContext);
+	}
+	// The command exception handler may wrap exceptions or rethrow it
+	if (commandExceptionHandler.isPresent()) {
+
+	    commandExceptionHandler.get().handleException(exceptionContext);
+	} else {
+	    defaultExceptionHandler.handleException(exceptionContext);
 	}
     }
 

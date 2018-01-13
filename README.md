@@ -9,6 +9,8 @@
 
 # Changelog
 
+* 0.3.0 : Rewrote the engine to be completely asynchronous using CompletableFuture.
+
 * 0.2.4 :
 
 - Upgrade of the Gate to specify the expected return type.

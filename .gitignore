@@ -7,3 +7,4 @@ bin
 .project
 .gradle
 .classpath
+/command.trace

@@ -9,6 +9,8 @@
  */
 package com.byoskill.spring.cqrs.api;
 
+import com.byoskill.spring.cqrs.gate.impl.IProfiler;
+
 /**
  * Default interface to implement a Profile service.
  * @author sleroy
@@ -16,14 +18,12 @@ package com.byoskill.spring.cqrs.api;
  */
 public interface ICommandProfilingService {
 
+
     /**
-     * Decorate.
+     * New profiler.
      *
-     * @param <R> the generic type
-     * @param _command the command
-     * @param _callback the callback
-     * @return the command callback
+     * @return the i profiler
      */
-    <R> ICommandCallback<R> decorate(Object _command, ICommandCallback<R> _callback);
+    IProfiler newProfiler(Object handler);
 
 }

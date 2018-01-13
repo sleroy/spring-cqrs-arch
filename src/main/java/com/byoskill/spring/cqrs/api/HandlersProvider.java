@@ -21,5 +21,5 @@ public interface HandlersProvider {
      * @param command the command
      * @return the handler
      */
-    ICommandHandler<Object, Object> getHandler(Object command);
+    IAsyncCommandHandler<Object, Object> getHandler(Object command);
 }

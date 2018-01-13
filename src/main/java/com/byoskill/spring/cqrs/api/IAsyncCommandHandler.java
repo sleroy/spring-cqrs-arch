@@ -12,6 +12,8 @@
  */
 package com.byoskill.spring.cqrs.api;
 
+import java.util.concurrent.CompletableFuture;
+
 import com.byoskill.spring.cqrs.annotations.CommandOptions;
 
 /**
@@ -27,14 +29,14 @@ import com.byoskill.spring.cqrs.annotations.CommandOptions;
  *            (asynchronous=true) should be {@link Void}
  */
 
-public interface ICommandHandler<C, R> {
+public interface IAsyncCommandHandler<C, R> {
 
     /**
      * Handle.
      *
      * @param command            the command
-     * @return the returned value
-     * @throws RuntimeException the runtime exception
+     * @return the returned type
+     * @throws Exception the exception
      */
-    public R handle(C command) throws RuntimeException;
+    public CompletableFuture<R> handle(C command) throws RuntimeException;
 }

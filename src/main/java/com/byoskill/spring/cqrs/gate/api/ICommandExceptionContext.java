@@ -23,7 +23,7 @@ public interface ICommandExceptionContext {
      *
      * @return the exception
      */
-    Exception getException();
+    Throwable getException();
 
     /**
      * Gets the handler.

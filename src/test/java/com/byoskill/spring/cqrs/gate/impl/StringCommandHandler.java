@@ -15,16 +15,16 @@ public class StringCommandHandler implements ICommandHandler<String, Integer> {
 
     @Autowired
     public StringCommandHandler(final Gate gate) {
-        super();
-        this.gate = gate;
+	super();
+	this.gate = gate;
 
     }
 
     @Override
-    public Integer handle(final String command) throws Exception {
-        commands.add(command);
-        gate.dispatchEvent("EVENT_" + command);
-        return commands.size();
+    public Integer handle(final String command) {
+	commands.add(command);
+	gate.dispatchEvent("EVENT_" + command);
+	return commands.size();
     }
 
 }
