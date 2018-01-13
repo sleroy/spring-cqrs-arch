@@ -22,7 +22,8 @@ public interface ICommandProfilingService {
     /**
      * New profiler.
      *
-     * @return the i profiler
+     * @param handler the handler
+     * @return the profiler
      */
     IProfiler newProfiler(Object handler);
 

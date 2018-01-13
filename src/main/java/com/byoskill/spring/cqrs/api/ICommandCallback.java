@@ -11,7 +11,7 @@ import java.util.concurrent.CompletableFuture;
  *
  * @author sleroy
  *
- * @param <R>
+ * @param <R> returned type
  */
 public interface ICommandCallback<R> {
     /**

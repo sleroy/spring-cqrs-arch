@@ -36,7 +36,7 @@ public interface IAsyncCommandHandler<C, R> {
      *
      * @param command            the command
      * @return the returned type
-     * @throws Exception the exception
+     * @throws RuntimeException the runtime exception
      */
     public CompletableFuture<R> handle(C command) throws RuntimeException;
 }
