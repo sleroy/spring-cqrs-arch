@@ -9,6 +9,8 @@
 
 # Changelog
 
+* 0.3.1 : Fixed exception message for constraint violations.
+
 * 0.3.0 : Rewrote the engine to be completely asynchronous using CompletableFuture.
 
 * 0.2.4 :
