@@ -9,6 +9,7 @@
  */
 package com.byoskill.spring.cqrs.gate.api;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -43,6 +44,17 @@ public interface Gate {
      * @return the result of the command.
      */
     public <R> R dispatch(Object command, Class<R> returnType);
+
+    /**
+     * Dispatch a list of command asynchronously.
+     *
+     * @param <R> the generic type
+     * @param commands the commands
+     * @param expectedReturnType the expected return type
+     * @return the result of the command.
+     */
+    public <R> List<R> dispatchAll(List<?> commands, Class<R> expectedReturnType);
+
 
     /**
      * Dispatch a command and executes it asynchronously.

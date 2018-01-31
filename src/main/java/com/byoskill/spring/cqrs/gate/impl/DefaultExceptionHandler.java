@@ -9,6 +9,9 @@
  */
 package com.byoskill.spring.cqrs.gate.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.byoskill.spring.cqrs.gate.api.CommandExecutionException;
 import com.byoskill.spring.cqrs.gate.api.ICommandExceptionContext;
 import com.byoskill.spring.cqrs.gate.api.ICommandExceptionHandler;
@@ -18,8 +21,12 @@ import com.byoskill.spring.cqrs.gate.api.ICommandExceptionHandler;
  */
 public class DefaultExceptionHandler implements ICommandExceptionHandler {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultExceptionHandler.class);
+
     @Override
-    public void handleException(final ICommandExceptionContext context)throws RuntimeException {
+    public void handleException(final ICommandExceptionContext context) throws RuntimeException {
+
+	LOGGER.error("Command={} returned an exception {}", context.getCommand(), context.getException());
 	throw new CommandExecutionException(context.getCommand(), context.getException());
 
     }

@@ -1,4 +1,4 @@
-package com.byoskill.spring.cqrs.gate.impl;
+package com.byoskill.spring.cqrs.gate.impl.fakeapp;
 
 import org.junit.Assert;
 import org.springframework.context.annotation.Bean;
@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import com.byoskill.spring.cqrs.gate.api.Gate;
 import com.byoskill.spring.cqrs.gate.api.ICommandExceptionHandler;
 import com.byoskill.spring.cqrs.gate.conf.CqrsConfiguration;
+import com.byoskill.spring.cqrs.gate.impl.DummyObjectCommandHandler;
 
 @Configuration
 @ComponentScan("com.byoskill")

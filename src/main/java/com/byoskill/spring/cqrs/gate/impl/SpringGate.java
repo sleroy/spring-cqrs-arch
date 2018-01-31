@@ -9,7 +9,10 @@
  */
 package com.byoskill.spring.cqrs.gate.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,8 +39,10 @@ public class SpringGate implements Gate {
     /**
      * Instantiates a new spring gate.
      *
-     * @param commandExecutorService the command executor service
-     * @param eventBusService the event bus service
+     * @param commandExecutorService
+     *            the command executor service
+     * @param eventBusService
+     *            the event bus service
      */
     @Autowired
     public SpringGate(final CommandExecutorService commandExecutorService, final IEventBusService eventBusService) {
@@ -58,6 +63,20 @@ public class SpringGate implements Gate {
     @Override
     public <R> R dispatch(final Object command, final Class<R> returnType) {
 	return returnType.cast(commandExecutorService.run(command, returnType).join());
+    }
+
+    @Override
+    public <R> List<R> dispatchAll(final List<?> commands, final Class<R> expectedReturnType) {
+
+	final List<CompletableFuture<R>> futures = new ArrayList<>();
+	for (final Object command : commands) {
+	    futures.add(dispatchAsync(command, expectedReturnType));
+	}
+	final CompletableFuture<R>[] array = futures.toArray(new CompletableFuture[0]);
+	final CompletableFuture<Void> barrier = CompletableFuture.allOf(array);
+
+	return barrier.thenApply(v -> futures.stream().map(future -> future.join()).collect(Collectors.toList())).join();
+
     }
 
     /*

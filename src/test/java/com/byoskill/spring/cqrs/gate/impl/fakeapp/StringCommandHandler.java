@@ -1,4 +1,4 @@
-package com.byoskill.spring.cqrs.gate.impl;
+package com.byoskill.spring.cqrs.gate.impl.fakeapp;
 
 import java.util.ArrayList;
 import java.util.List;

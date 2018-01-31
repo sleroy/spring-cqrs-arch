@@ -56,7 +56,6 @@ public class GuavaEventBusServicAsyncTest {
 	try {
 	    Thread.sleep(1000);
 	} catch (final InterruptedException e) {
-	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	}
 	Assert.assertEquals(testEventSuscriber.events.size(), 1);
@@ -68,7 +67,6 @@ public class GuavaEventBusServicAsyncTest {
 	try {
 	    Thread.sleep(1000);
 	} catch (final InterruptedException e) {
-	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	}
 	Assert.assertEquals(testEventSuscriber.events.size(), 1);
