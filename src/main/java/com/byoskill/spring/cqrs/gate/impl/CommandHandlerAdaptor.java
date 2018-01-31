@@ -1,3 +1,6 @@
+/**
+ * Copyright (C) 2017-2018 Credifix
+ */
 package com.byoskill.spring.cqrs.gate.impl;
 
 import org.apache.commons.lang3.Validate;
@@ -24,8 +27,9 @@ public class CommandHandlerAdaptor {
     /**
      * Adapt.
      *
-     * @param bean
-     *            the bean
+     * @param <T> the command type
+     * @param <R> the return type
+     * @param bean            the bean
      * @return the i async command handler
      */
     public <T, R> IAsyncCommandHandler<T, R> adapt(final Object bean) {

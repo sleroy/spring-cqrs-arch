@@ -29,8 +29,8 @@ public interface Gate {
     /**
      * Dispatch a command and executes it sequentially.
      *
-     * @param command
-     *            the command.
+     * @param <R> the generic type
+     * @param command            the command.
      * @return the result of the command.
      */
     public <R> R dispatch(Object command);
@@ -59,8 +59,8 @@ public interface Gate {
     /**
      * Dispatch a command and executes it asynchronously.
      *
-     * @param command
-     *            the command.
+     * @param <R> the generic type
+     * @param command            the command.
      * @return the result of the command.
      */
     public <R> CompletableFuture<R> dispatchAsync(Object command);
