@@ -12,8 +12,9 @@ package com.byoskill.spring.utils.validation;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
 import javax.validation.Validator;
+
+import org.springframework.stereotype.Component;
 
 import com.byoskill.spring.cqrs.api.CommandNotValidException;
 
@@ -23,25 +24,38 @@ import com.byoskill.spring.cqrs.api.CommandNotValidException;
  * @author sleroy
  *
  */
+@Component
 public class ObjectValidation {
-
-    public final static String URL_SAFE_PATTERN = "[\\w[-]?]*";
 
     private final Validator validator;
 
     /**
      * Instantiates a new object validation.
+     *
+     * @param _validator
+     *            the validator
      */
-    public ObjectValidation() {
+    public ObjectValidation(final Validator _validator) {
 	super();
-	validator = Validation.buildDefaultValidatorFactory().getValidator();
+	validator = _validator;
     }
 
+    /**
+     * Checks if is valid.
+     *
+     * @param _object the object
+     * @return true, if is valid
+     */
     public boolean isValid(final Object _object) {
 	final Set<ConstraintViolation<Object>> constraints = validator.validate(_object);
 	return constraints.isEmpty();
     }
 
+    /**
+     * Validate.
+     *
+     * @param _object the object
+     */
     public void validate(final Object _object) {
 	final Set<ConstraintViolation<Object>> constraints = validator.validate(_object);
 	if (!constraints.isEmpty()) {

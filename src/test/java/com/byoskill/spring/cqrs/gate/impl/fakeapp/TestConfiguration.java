@@ -1,5 +1,8 @@
 package com.byoskill.spring.cqrs.gate.impl.fakeapp;
 
+import javax.validation.Validation;
+import javax.validation.Validator;
+
 import org.junit.Assert;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -14,8 +17,6 @@ import com.byoskill.spring.cqrs.gate.impl.DummyObjectCommandHandler;
 @ComponentScan("com.byoskill")
 
 public class TestConfiguration {
-
-
 
 
     @Bean
@@ -39,6 +40,10 @@ public class TestConfiguration {
 	    Assert.fail(context.getException().getMessage());
 
 	};
+    }
+
+    @Bean Validator validator() {
+	return Validation.buildDefaultValidatorFactory().getValidator();
     }
 
 }

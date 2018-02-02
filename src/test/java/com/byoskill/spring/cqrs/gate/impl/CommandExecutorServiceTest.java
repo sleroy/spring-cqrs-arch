@@ -8,11 +8,11 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutionException;
 
+import javax.validation.Validation;
 import javax.validation.constraints.NotNull;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 
 import com.byoskill.spring.cqrs.api.HandlersProvider;
@@ -21,6 +21,7 @@ import com.byoskill.spring.cqrs.api.ICommandExecutionListener;
 import com.byoskill.spring.cqrs.api.ICommandProfilingService;
 import com.byoskill.spring.cqrs.gate.api.ICommandExceptionHandler;
 import com.byoskill.spring.cqrs.gate.conf.CqrsConfiguration;
+import com.byoskill.spring.utils.validation.ObjectValidation;
 
 public class CommandExecutorServiceTest {
 
@@ -31,20 +32,27 @@ public class CommandExecutorServiceTest {
 
     private static final String COMMAND = "SALUT";
 
-    private final CqrsConfiguration configuration = new CqrsConfiguration();
+    private CqrsConfiguration configuration;
+    private HandlersProvider  handlersProvider;
 
-    private final HandlersProvider handlersProvider = Mockito.mock(HandlersProvider.class);
+    private ICommandProfilingService profilingService;
 
-    private final ICommandProfilingService profilingService = Mockito.mock(ICommandProfilingService.class);
+    private CommandExecutorService service;
 
-    @InjectMocks
-    private final CommandExecutorService service = new CommandExecutorService(configuration, handlersProvider, null,
-	    profilingService, Optional.<ICommandExceptionHandler>empty());
+    private final ObjectValidation validator = new ObjectValidation(
+	    Validation.buildDefaultValidatorFactory().getValidator());
 
     @Before
     public void before() {
+
+	configuration = new CqrsConfiguration();
+	handlersProvider = Mockito.mock(HandlersProvider.class);
+	profilingService = Mockito.mock(ICommandProfilingService.class);
+	service = new CommandExecutorService(configuration, handlersProvider, null, profilingService,
+		Optional.<ICommandExceptionHandler>empty(), validator);
 	service.setConfiguration(configuration);
 	service.setListeners(new ICommandExecutionListener[0]);
+
     }
 
     @Test
@@ -69,7 +77,9 @@ public class CommandExecutorServiceTest {
 	configuration.setProfilingEnabled(false);
 	Mockito.when(handlersProvider.getHandler(COMMAND)).thenReturn((IAsyncCommandHandler) command -> {
 
-	    return CompletableFuture.supplyAsync(() -> { throw new UnsupportedOperationException();});
+	    return CompletableFuture.supplyAsync(() -> {
+		throw new UnsupportedOperationException();
+	    });
 	});
 	assertNull(service.run(COMMAND, String.class).join());
     }

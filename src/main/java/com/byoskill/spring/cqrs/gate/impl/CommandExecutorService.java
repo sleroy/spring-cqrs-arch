@@ -81,26 +81,24 @@ public class CommandExecutorService {
 
     private ICommandExecutionListener[] listeners;
 
+    private final ObjectValidation objectValidation;
+
     private final ICommandProfilingService profilingService;
 
     /**
      * Instantiates a new sequential command executor service.
      *
-     * @param configuration
-     *            the configuration
-     * @param handlersProvider
-     *            the handlers provider
-     * @param listeners
-     *            the listeners
-     * @param profilingService
-     *            the profiling service
-     * @param commandExceptionHandler
-     *            the command exception handler
+     * @param configuration            the configuration
+     * @param handlersProvider            the handlers provider
+     * @param listeners            the listeners
+     * @param profilingService            the profiling service
+     * @param commandExceptionHandler            the command exception handler
+     * @param objectValidation the object validation
      */
     @Autowired
     public CommandExecutorService(final CqrsConfiguration configuration, final HandlersProvider handlersProvider,
 	    final ICommandExecutionListener[] listeners, final ICommandProfilingService profilingService,
-	    final Optional<ICommandExceptionHandler> commandExceptionHandler) {
+	    final Optional<ICommandExceptionHandler> commandExceptionHandler, final ObjectValidation objectValidation) {
 	super();
 	this.configuration = configuration;
 	this.handlersProvider = handlersProvider;
@@ -108,6 +106,7 @@ public class CommandExecutorService {
 	this.profilingService = profilingService;
 	this.commandExceptionHandler = commandExceptionHandler;
 	defaultExceptionHandler = new DefaultExceptionHandler();
+	this.objectValidation = objectValidation;
     }
 
     /**
@@ -175,7 +174,7 @@ public class CommandExecutorService {
     }
 
     private void commandValidation(final Object command) {
-	final ObjectValidation objectValidation = new ObjectValidation();
+
 	LOGGER.debug("Validation of the command {}", command);
 	try {
 	    objectValidation.validate(command);

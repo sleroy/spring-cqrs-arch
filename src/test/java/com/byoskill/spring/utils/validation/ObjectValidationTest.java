@@ -1,6 +1,7 @@
 package com.byoskill.spring.utils.validation;
 
 import javax.validation.ConstraintViolationException;
+import javax.validation.Validation;
 import javax.validation.constraints.NotEmpty;
 
 import org.junit.Assert;
@@ -24,18 +25,18 @@ public class ObjectValidationTest {
 
     @Test
     public final void testIsValid() {
-	Assert.assertFalse(new ObjectValidation().isValid(new ObjectWithValidation()));
-	Assert.assertTrue(new ObjectValidation().isValid(new ObjectWithValidation("try")));
+	Assert.assertFalse(new ObjectValidation(Validation.buildDefaultValidatorFactory().getValidator()).isValid(new ObjectWithValidation()));
+	Assert.assertTrue(new ObjectValidation(Validation.buildDefaultValidatorFactory().getValidator()).isValid(new ObjectWithValidation("try")));
     }
 
     @Test(expected=ConstraintViolationException.class)
     public final void testValidateWithErrors() {
-	new ObjectValidation().validate(new ObjectWithValidation());
+	new ObjectValidation(Validation.buildDefaultValidatorFactory().getValidator()).validate(new ObjectWithValidation());
     }
 
     @Test()
     public final void testValidateWithoutErrors() {
-	new ObjectValidation().validate(new ObjectWithValidation("str"));
+	new ObjectValidation(Validation.buildDefaultValidatorFactory().getValidator()).validate(new ObjectWithValidation("str"));
     }
 
 }

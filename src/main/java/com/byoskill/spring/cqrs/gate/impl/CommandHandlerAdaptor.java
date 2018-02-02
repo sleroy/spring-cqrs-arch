@@ -27,7 +27,7 @@ public class CommandHandlerAdaptor {
     /**
      * Adapt.
      *
-     * @param <T> the command type
+     * @param <T> the co type
      * @param <R> the return type
      * @param bean            the bean
      * @return the i async command handler

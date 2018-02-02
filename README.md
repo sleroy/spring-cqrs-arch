@@ -9,6 +9,8 @@
 
 # Changelog
 
+* 0.4.1 : Now the Object validator is compatible with Spring custom validators.
+
 * 0.4.0 : Added a new method to dispatch all commands
 
 * 0.3.1 : Fixed exception message for constraint violations.
