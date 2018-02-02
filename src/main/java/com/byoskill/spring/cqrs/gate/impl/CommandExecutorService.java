@@ -28,7 +28,7 @@ import com.byoskill.spring.cqrs.gate.api.ICommandExceptionContext;
 import com.byoskill.spring.cqrs.gate.api.ICommandExceptionHandler;
 import com.byoskill.spring.cqrs.gate.api.InvalidCommandException;
 import com.byoskill.spring.cqrs.gate.conf.CqrsConfiguration;
-import com.byoskill.spring.utils.validation.ObjectValidation;
+import com.byoskill.spring.cqrs.utils.validation.ObjectValidation;
 
 /**
  * This class prepares the command to be executed. It can override the default

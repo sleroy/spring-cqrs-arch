@@ -7,7 +7,7 @@
  * You should have received a copy of the MIT license with
  * this file. If not, please write to: , or visit :
  */
-package com.byoskill.spring.utils.validation;
+package com.byoskill.spring.cqrs.utils.validation;
 
 import java.util.Set;
 

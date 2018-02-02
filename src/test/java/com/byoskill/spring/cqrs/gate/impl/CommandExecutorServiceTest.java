@@ -21,7 +21,7 @@ import com.byoskill.spring.cqrs.api.ICommandExecutionListener;
 import com.byoskill.spring.cqrs.api.ICommandProfilingService;
 import com.byoskill.spring.cqrs.gate.api.ICommandExceptionHandler;
 import com.byoskill.spring.cqrs.gate.conf.CqrsConfiguration;
-import com.byoskill.spring.utils.validation.ObjectValidation;
+import com.byoskill.spring.cqrs.utils.validation.ObjectValidation;
 
 public class CommandExecutorServiceTest {
 
