@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
+import com.byoskill.spring.cqrs.api.IThrottlingInterface;
 import com.byoskill.spring.cqrs.gate.api.Gate;
 import com.byoskill.spring.cqrs.gate.api.ICommandExceptionHandler;
 import com.byoskill.spring.cqrs.gate.conf.CqrsConfiguration;
@@ -40,6 +41,11 @@ public class TestConfiguration {
 	    Assert.fail(context.getException().getMessage());
 
 	};
+    }
+
+    @Bean
+    public IThrottlingInterface throttle() {
+	return new Throttler();
     }
 
     @Bean Validator validator() {

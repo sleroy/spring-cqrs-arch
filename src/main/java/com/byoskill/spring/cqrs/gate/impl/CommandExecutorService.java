@@ -23,6 +23,8 @@ import com.byoskill.spring.cqrs.api.HandlersProvider;
 import com.byoskill.spring.cqrs.api.IAsyncCommandHandler;
 import com.byoskill.spring.cqrs.api.ICommandExecutionListener;
 import com.byoskill.spring.cqrs.api.ICommandProfilingService;
+import com.byoskill.spring.cqrs.api.IThrottlingInterface;
+import com.byoskill.spring.cqrs.api.Throttle;
 import com.byoskill.spring.cqrs.gate.api.CommandHandlerNotFoundException;
 import com.byoskill.spring.cqrs.gate.api.ICommandExceptionContext;
 import com.byoskill.spring.cqrs.gate.api.ICommandExceptionHandler;
@@ -85,6 +87,8 @@ public class CommandExecutorService {
 
     private final ICommandProfilingService profilingService;
 
+    private final IThrottlingInterface throttlingInterface;
+
     /**
      * Instantiates a new sequential command executor service.
      *
@@ -94,17 +98,19 @@ public class CommandExecutorService {
      * @param profilingService            the profiling service
      * @param commandExceptionHandler            the command exception handler
      * @param objectValidation the object validation
+     * @param throttlingInterface the throttling interface
      */
     @Autowired
     public CommandExecutorService(final CqrsConfiguration configuration, final HandlersProvider handlersProvider,
 	    final ICommandExecutionListener[] listeners, final ICommandProfilingService profilingService,
-	    final Optional<ICommandExceptionHandler> commandExceptionHandler, final ObjectValidation objectValidation) {
+	    final Optional<ICommandExceptionHandler> commandExceptionHandler, final ObjectValidation objectValidation, final IThrottlingInterface throttlingInterface) {
 	super();
 	this.configuration = configuration;
 	this.handlersProvider = handlersProvider;
 	this.listeners = listeners;
 	this.profilingService = profilingService;
 	this.commandExceptionHandler = commandExceptionHandler;
+	this.throttlingInterface = throttlingInterface;
 	defaultExceptionHandler = new DefaultExceptionHandler();
 	this.objectValidation = objectValidation;
     }
@@ -136,6 +142,17 @@ public class CommandExecutorService {
 	// security, transaction management, logging, profiling, spying,
 	// storing
 	// commands, etc);
+
+	// Decorate with throttling
+	final Throttle throttle = command.getClass().getAnnotation(Throttle.class);
+	if (throttle != null) {
+	    promise = promise.thenApply((c) -> {
+		// Requiring throttling
+		LOGGER.debug("Requiring permit from rate limiter named {}", throttle.name());
+		throttlingInterface.acquirePermit(throttle.name());
+		return c;
+	    });
+	}
 
 	// Decorate with profiling
 	IProfiler profiler = null;

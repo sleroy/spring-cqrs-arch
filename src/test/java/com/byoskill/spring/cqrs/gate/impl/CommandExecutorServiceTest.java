@@ -19,6 +19,7 @@ import com.byoskill.spring.cqrs.api.HandlersProvider;
 import com.byoskill.spring.cqrs.api.IAsyncCommandHandler;
 import com.byoskill.spring.cqrs.api.ICommandExecutionListener;
 import com.byoskill.spring.cqrs.api.ICommandProfilingService;
+import com.byoskill.spring.cqrs.api.IThrottlingInterface;
 import com.byoskill.spring.cqrs.gate.api.ICommandExceptionHandler;
 import com.byoskill.spring.cqrs.gate.conf.CqrsConfiguration;
 import com.byoskill.spring.cqrs.utils.validation.ObjectValidation;
@@ -39,6 +40,8 @@ public class CommandExecutorServiceTest {
 
     private CommandExecutorService service;
 
+    private IThrottlingInterface throttlin;
+
     private final ObjectValidation validator = new ObjectValidation(
 	    Validation.buildDefaultValidatorFactory().getValidator());
 
@@ -48,8 +51,9 @@ public class CommandExecutorServiceTest {
 	configuration = new CqrsConfiguration();
 	handlersProvider = Mockito.mock(HandlersProvider.class);
 	profilingService = Mockito.mock(ICommandProfilingService.class);
+	throttlin = Mockito.mock(IThrottlingInterface.class);
 	service = new CommandExecutorService(configuration, handlersProvider, null, profilingService,
-		Optional.<ICommandExceptionHandler>empty(), validator);
+		Optional.<ICommandExceptionHandler>empty(), validator, throttlin);
 	service.setConfiguration(configuration);
 	service.setListeners(new ICommandExecutionListener[0]);
 

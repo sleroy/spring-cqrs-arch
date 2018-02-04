@@ -14,6 +14,7 @@ import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.byoskill.spring.cqrs.api.CommandNotValidException;
@@ -35,6 +36,7 @@ public class ObjectValidation {
      * @param _validator
      *            the validator
      */
+    @Autowired
     public ObjectValidation(final Validator _validator) {
 	super();
 	validator = _validator;
