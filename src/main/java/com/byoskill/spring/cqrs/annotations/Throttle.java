@@ -1,4 +1,4 @@
-package com.byoskill.spring.cqrs.api;
+package com.byoskill.spring.cqrs.annotations;
 
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
@@ -13,5 +13,5 @@ import java.lang.annotation.Target;
 @Retention(RUNTIME)
 @Target({ TYPE, FIELD, METHOD })
 public @interface Throttle {
-    String name();
+    String value();
 }

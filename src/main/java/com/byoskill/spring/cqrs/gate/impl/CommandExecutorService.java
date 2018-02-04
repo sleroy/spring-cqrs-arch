@@ -14,17 +14,18 @@ import java.util.concurrent.CompletableFuture;
 
 import javax.validation.ConstraintViolationException;
 
+import org.jboss.logging.MDC;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.byoskill.spring.cqrs.annotations.Throttle;
 import com.byoskill.spring.cqrs.api.HandlersProvider;
 import com.byoskill.spring.cqrs.api.IAsyncCommandHandler;
 import com.byoskill.spring.cqrs.api.ICommandExecutionListener;
 import com.byoskill.spring.cqrs.api.ICommandProfilingService;
 import com.byoskill.spring.cqrs.api.IThrottlingInterface;
-import com.byoskill.spring.cqrs.api.Throttle;
 import com.byoskill.spring.cqrs.gate.api.CommandHandlerNotFoundException;
 import com.byoskill.spring.cqrs.gate.api.ICommandExceptionContext;
 import com.byoskill.spring.cqrs.gate.api.ICommandExceptionHandler;
@@ -92,18 +93,26 @@ public class CommandExecutorService {
     /**
      * Instantiates a new sequential command executor service.
      *
-     * @param configuration            the configuration
-     * @param handlersProvider            the handlers provider
-     * @param listeners            the listeners
-     * @param profilingService            the profiling service
-     * @param commandExceptionHandler            the command exception handler
-     * @param objectValidation the object validation
-     * @param throttlingInterface the throttling interface
+     * @param configuration
+     *            the configuration
+     * @param handlersProvider
+     *            the handlers provider
+     * @param listeners
+     *            the listeners
+     * @param profilingService
+     *            the profiling service
+     * @param commandExceptionHandler
+     *            the command exception handler
+     * @param objectValidation
+     *            the object validation
+     * @param throttlingInterface
+     *            the throttling interface
      */
     @Autowired
     public CommandExecutorService(final CqrsConfiguration configuration, final HandlersProvider handlersProvider,
 	    final ICommandExecutionListener[] listeners, final ICommandProfilingService profilingService,
-	    final Optional<ICommandExceptionHandler> commandExceptionHandler, final ObjectValidation objectValidation, final IThrottlingInterface throttlingInterface) {
+	    final Optional<ICommandExceptionHandler> commandExceptionHandler, final ObjectValidation objectValidation,
+	    final IThrottlingInterface throttlingInterface) {
 	super();
 	this.configuration = configuration;
 	this.handlersProvider = handlersProvider;
@@ -148,8 +157,8 @@ public class CommandExecutorService {
 	if (throttle != null) {
 	    promise = promise.thenApply((c) -> {
 		// Requiring throttling
-		LOGGER.debug("Requiring permit from rate limiter named {}", throttle.name());
-		throttlingInterface.acquirePermit(throttle.name());
+		LOGGER.debug("Requiring permit from rate limiter named {}", throttle.value());
+		throttlingInterface.acquirePermit(throttle.value());
 		return c;
 	    });
 	}
@@ -166,7 +175,17 @@ public class CommandExecutorService {
 	// Promise chaining listeners begin
 	promise = promise.thenCompose(c -> notifyListenersBegin(c, handler));
 	// Promise command handler (now argument is the returned type)
-	promise = promise.thenCompose(c -> handler.handle(c)); // handle
+	promise = promise.thenCompose(
+		c -> {
+		    try {
+			MDC.put("command", command.getClass().getName());
+			return handler.handle(c);
+		    } finally {
+			MDC.remove("command");
+
+		    }
+		}
+		); // handle
 	// handle result
 	promise.handle((r, e) -> {
 	    if (e != null) {
