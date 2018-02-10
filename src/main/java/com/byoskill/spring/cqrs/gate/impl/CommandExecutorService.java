@@ -11,27 +11,21 @@ package com.byoskill.spring.cqrs.gate.impl;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ForkJoinPool;
 
-import javax.validation.ConstraintViolationException;
-
-import org.jboss.logging.MDC;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import com.byoskill.spring.cqrs.annotations.Throttle;
 import com.byoskill.spring.cqrs.api.HandlersProvider;
-import com.byoskill.spring.cqrs.api.IAsyncCommandHandler;
 import com.byoskill.spring.cqrs.api.ICommandExecutionListener;
+import com.byoskill.spring.cqrs.api.ICommandHandler;
 import com.byoskill.spring.cqrs.api.ICommandProfilingService;
 import com.byoskill.spring.cqrs.api.IThrottlingInterface;
-import com.byoskill.spring.cqrs.gate.api.CommandHandlerNotFoundException;
-import com.byoskill.spring.cqrs.gate.api.ICommandExceptionContext;
 import com.byoskill.spring.cqrs.gate.api.ICommandExceptionHandler;
-import com.byoskill.spring.cqrs.gate.api.InvalidCommandException;
 import com.byoskill.spring.cqrs.gate.conf.CqrsConfiguration;
 import com.byoskill.spring.cqrs.utils.validation.ObjectValidation;
 
@@ -45,35 +39,6 @@ import com.byoskill.spring.cqrs.utils.validation.ObjectValidation;
 @Service
 public class CommandExecutorService {
 
-    private final class ICommandExceptionContextImplementation implements ICommandExceptionContext {
-	private final Object			 command;
-	private final Throwable			 e;
-	private final IAsyncCommandHandler<?, ?> handler;
-
-	ICommandExceptionContextImplementation(final Object command, final Throwable e,
-		final IAsyncCommandHandler<?, ?> handler) {
-	    this.command = command;
-	    this.e = e;
-	    this.handler = handler;
-	}
-
-	@Override
-	public Object getCommand() {
-	    return command;
-	}
-
-	@Override
-	public Throwable getException() {
-
-	    return e;
-	}
-
-	@Override
-	public Object getHandler() {
-	    return handler;
-	}
-    }
-
     private static final Logger LOGGER = LoggerFactory.getLogger(CommandExecutorService.class);
 
     private final Optional<ICommandExceptionHandler> commandExceptionHandler;
@@ -86,12 +51,12 @@ public class CommandExecutorService {
 
     private ICommandExecutionListener[] listeners;
 
+
     private final ObjectValidation objectValidation;
 
     private final ICommandProfilingService profilingService;
 
-    private final ThreadPoolTaskExecutor threadPoolTaskExecutor;
-
+    private final ForkJoinPool threadPool;
 
     private final IThrottlingInterface throttlingInterface;
 
@@ -111,7 +76,8 @@ public class CommandExecutorService {
     public CommandExecutorService(final CqrsConfiguration configuration, final HandlersProvider handlersProvider,
 	    final ICommandExecutionListener[] listeners, final ICommandProfilingService profilingService,
 	    final Optional<ICommandExceptionHandler> commandExceptionHandler, final ObjectValidation objectValidation,
-	    final IThrottlingInterface throttlingInterface, @Qualifier("cqrs-executor") final ThreadPoolTaskExecutor threadPoolTaskExecutor) {
+	    final IThrottlingInterface throttlingInterface,
+	    @Qualifier("cqrs-executor") final ForkJoinPool threadPoolTaskExecutor) {
 	super();
 	this.configuration = configuration;
 	this.handlersProvider = handlersProvider;
@@ -119,7 +85,7 @@ public class CommandExecutorService {
 	this.profilingService = profilingService;
 	this.commandExceptionHandler = commandExceptionHandler;
 	this.throttlingInterface = throttlingInterface;
-	this.threadPoolTaskExecutor = threadPoolTaskExecutor;
+	threadPool = threadPoolTaskExecutor;
 	defaultExceptionHandler = new DefaultExceptionHandler();
 	this.objectValidation = objectValidation;
 
@@ -137,17 +103,15 @@ public class CommandExecutorService {
      * @return the result of the command
      */
     public <R> CompletableFuture<R> run(final Object command, final Class<R> expectedType) {
-	final IAsyncCommandHandler<Object, Object> handler = handlersProvider.getHandler(command);
+	final ICommandHandler<?, ?> handler = handlersProvider.getHandler(command);
+	LOGGER.debug("Lauching the command {} with the expected type {}", command, expectedType);
 
-	CompletableFuture<Object> promise = CompletableFuture.supplyAsync(() -> command, threadPoolTaskExecutor);
-	promise = promise.thenApply((c) -> {
-	    commandValidation(c);
+	final CommandRunner commandRunner = new CommandRunner(handler, objectValidation, expectedType);
+	commandRunner.setListeners(listeners);
+	commandRunner.setCommandExceptionHandler(commandExceptionHandler);
+	commandRunner.setDefaultExceptionHandler(defaultExceptionHandler);
+	commandRunner.setCommand(command);
 
-	    if (handler == null) {
-		throw new CommandHandlerNotFoundException(command);
-	    }
-	    return c;
-	});
 	// You can add Your own capabilities here: dependency injection,
 	// security, transaction management, logging, profiling, spying,
 	// storing
@@ -156,50 +120,22 @@ public class CommandExecutorService {
 	// Decorate with throttling
 	final Throttle throttle = command.getClass().getAnnotation(Throttle.class);
 	if (throttle != null) {
-	    promise = promise.thenApply((c) -> {
-		// Requiring throttling
+	    commandRunner.throttle(() -> {
 		LOGGER.debug("Requiring permit from rate limiter named {}", throttle.value());
 		throttlingInterface.acquirePermit(throttle.value());
-		return c;
 	    });
 	}
 
 	// Decorate with profiling
-	IProfiler profiler = null;
+
 	if (configuration.isProfilingEnabled()) {
+	    IProfiler profiler = null;
 	    profiler = profilingService.newProfiler(handler);
 	    final IProfiler p = profiler; // Scopes
-	    promise = promise.thenCompose((c) -> p.begin(c));
+	    commandRunner.setProfiler(profiler);
 
 	}
-	final R result = null;
-	// Promise chaining listeners begin
-	promise = promise.thenCompose(c -> notifyListenersBegin(c, handler));
-	// Promise command handler (now argument is the returned type)
-	promise = promise.thenCompose(
-		c -> {
-		    try {
-			MDC.put("command", command.getClass().getName());
-			return handler.handle(c);
-		    } finally {
-			MDC.remove("command");
-
-		    }
-		}
-		); // handle
-	// handle result
-	promise.handle((r, e) -> {
-	    if (e != null) {
-
-		notifyListenersFailure(command, e, handler);
-		return expectedType.cast(r);
-	    } else {
-		notifyListenersSuccess(command, r);
-		return expectedType.cast(r);
-	    }
-	});
-
-	return (CompletableFuture<R>) promise;
+	return CompletableFuture.supplyAsync(commandRunner, threadPool);
     }
 
     public void setConfiguration(final CqrsConfiguration _configuration) {
@@ -210,44 +146,5 @@ public class CommandExecutorService {
 	listeners = _listeners;
     }
 
-    private void commandValidation(final Object command) {
 
-	LOGGER.debug("Validation of the command {}", command);
-	try {
-	    objectValidation.validate(command);
-	} catch (final ConstraintViolationException e) {
-	    throw new InvalidCommandException(command, e);
-	}
-    }
-
-    private CompletableFuture<Object> notifyListenersBegin(final Object command, final Object commandHandler) {
-	return CompletableFuture.supplyAsync(() -> {
-	    for (final ICommandExecutionListener commandExecutionListener : listeners) {
-		commandExecutionListener.beginExecution(command, commandHandler);
-	    }
-	    return command;
-	}, threadPoolTaskExecutor);
-    }
-
-    private void notifyListenersFailure(final Object command, final Throwable e,
-	    final IAsyncCommandHandler<?, ?> handler) {
-	final ICommandExceptionContext exceptionContext = new ICommandExceptionContextImplementation(command, e,
-		handler);
-	for (final ICommandExecutionListener commandExecutionListener : listeners) {
-	    commandExecutionListener.onFailure(command, exceptionContext);
-	}
-	// The command exception handler may wrap exceptions or rethrow it
-	if (commandExceptionHandler.isPresent()) {
-
-	    commandExceptionHandler.get().handleException(exceptionContext);
-	} else {
-	    defaultExceptionHandler.handleException(exceptionContext);
-	}
-    }
-
-    private void notifyListenersSuccess(final Object command, final Object result) {
-	for (final ICommandExecutionListener commandExecutionListener : listeners) {
-	    commandExecutionListener.onSuccess(command, result);
-	}
-    }
 }

@@ -10,7 +10,7 @@
 package com.byoskill.spring.cqrs.api;
 
 /**
- * The Interface HandlersProvider
+ * The Interface HandlersProvider.
  */
 @FunctionalInterface
 public interface HandlersProvider {
@@ -19,7 +19,7 @@ public interface HandlersProvider {
      * Gets the handler.
      *
      * @param command the command
-     * @return the handler
+     * @return the command runner
      */
-    IAsyncCommandHandler<Object, Object> getHandler(Object command);
+    ICommandHandler getHandler(Object command);
 }

@@ -4,9 +4,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ForkJoinPool;
 
 import javax.validation.Validation;
 import javax.validation.constraints.NotNull;
@@ -17,8 +17,8 @@ import org.mockito.Mockito;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.byoskill.spring.cqrs.api.HandlersProvider;
-import com.byoskill.spring.cqrs.api.IAsyncCommandHandler;
 import com.byoskill.spring.cqrs.api.ICommandExecutionListener;
+import com.byoskill.spring.cqrs.api.ICommandHandler;
 import com.byoskill.spring.cqrs.api.ICommandProfilingService;
 import com.byoskill.spring.cqrs.api.IThrottlingInterface;
 import com.byoskill.spring.cqrs.gate.api.ICommandExceptionHandler;
@@ -46,7 +46,6 @@ public class CommandExecutorServiceTest {
     private final ObjectValidation validator = new ObjectValidation(
 	    Validation.buildDefaultValidatorFactory().getValidator());
 
-
     ThreadPoolTaskExecutor tpool;
 
     public void after() {
@@ -63,7 +62,7 @@ public class CommandExecutorServiceTest {
 	throttlin = Mockito.mock(IThrottlingInterface.class);
 	tpool = new ThreadPoolTaskExecutor();
 	service = new CommandExecutorService(configuration, handlersProvider, null, profilingService,
-		Optional.<ICommandExceptionHandler>empty(), validator, throttlin, tpool);
+		Optional.<ICommandExceptionHandler>empty(), validator, throttlin, ForkJoinPool.commonPool());
 	service.setConfiguration(configuration);
 	service.setListeners(new ICommandExecutionListener[0]);
 	tpool.initialize();
@@ -73,10 +72,7 @@ public class CommandExecutorServiceTest {
     @Test
     public final void testRun() {
 	configuration.setProfilingEnabled(false);
-	Mockito.when(handlersProvider.getHandler(COMMAND)).thenReturn((IAsyncCommandHandler) command -> {
-
-	    return CompletableFuture.supplyAsync(() -> command + " LA TERRE");
-	});
+	Mockito.when(handlersProvider.getHandler(COMMAND)).thenReturn((ICommandHandler<String, String>) command -> command + " LA TERRE");
 
 	assertEquals("SALUT LA TERRE", service.run(COMMAND, String.class).join());
     }
@@ -90,12 +86,7 @@ public class CommandExecutorServiceTest {
     @Test(expected = CompletionException.class)
     public final void testRun_withFailingHandler() {
 	configuration.setProfilingEnabled(false);
-	Mockito.when(handlersProvider.getHandler(COMMAND)).thenReturn((IAsyncCommandHandler) command -> {
-
-	    return CompletableFuture.supplyAsync(() -> {
-		throw new UnsupportedOperationException();
-	    });
-	});
+	Mockito.when(handlersProvider.getHandler(COMMAND)).thenReturn((ICommandHandler<String, String>) command -> {throw new UnsupportedOperationException();});
 	assertNull(service.run(COMMAND, String.class).join());
     }
 

@@ -99,6 +99,10 @@ public class CqrsConfiguration {
     }
 
 
+    public int getParallelism() {
+	return 8;
+    }
+
     /**
      * Gets the queue capacity.
      *
@@ -126,6 +130,7 @@ public class CqrsConfiguration {
 	return traceSize;
     }
 
+
     /**
      * Checks if is async event queries.
      *
@@ -134,7 +139,6 @@ public class CqrsConfiguration {
     public boolean isAsyncEventQueries() {
 	return asyncEventQueries;
     }
-
 
     public boolean isAwaitingOnShutdown() {
 	return false;
@@ -171,6 +175,7 @@ public class CqrsConfiguration {
 	return tracingEnabled;
     }
 
+
     /**
      * Sets the async event queries.
      *
@@ -179,7 +184,6 @@ public class CqrsConfiguration {
     public void setAsyncEventQueries(final boolean asyncEventQueries) {
 	this.asyncEventQueries = asyncEventQueries;
     }
-
 
     /**
      * Sets the core pool size.

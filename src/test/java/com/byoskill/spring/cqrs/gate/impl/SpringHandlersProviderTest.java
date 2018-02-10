@@ -7,9 +7,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.omg.PortableServer.AdapterActivatorOperations;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 
 import com.byoskill.spring.cqrs.api.ICommandHandler;
@@ -26,12 +24,10 @@ public class SpringHandlersProviderTest {
     }
 
     private static final String BEAN = "BEAN";
-    @Spy
-    private final CommandHandlerAdaptor adaptor = new CommandHandlerAdaptor();
 
     @Mock
     private ConfigurableListableBeanFactory beanFactory;
-    
+
 
     @InjectMocks
     private SpringHandlersProvider springHandlersProvider;

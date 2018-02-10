@@ -9,6 +9,12 @@
 
 # Changelog
 
+* 0.7.0 : Added its own ThreadPoolExecutor
+
+* 0.6.0 : Added Throttling on Commands if necessary using @Throttle annotation
+
+* 0.5.0 : Fixing important bugs
+  
 * 0.4.2 : Fixing bug.
 
 * 0.4.1 : Now the Object validator is compatible with Spring custom validators.

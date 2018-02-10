@@ -20,7 +20,6 @@ import org.springframework.stereotype.Component;
 
 import com.byoskill.spring.cqrs.annotations.CommandHandler;
 import com.byoskill.spring.cqrs.api.HandlersProvider;
-import com.byoskill.spring.cqrs.api.IAsyncCommandHandler;
 import com.byoskill.spring.cqrs.api.ICommandHandler;
 import com.byoskill.spring.cqrs.gate.api.CommandHandlerNotFoundException;
 import com.byoskill.spring.cqrs.gate.api.CqrsException;
@@ -49,7 +48,6 @@ public class SpringHandlersProvider implements HandlersProvider, BeanPostProcess
 	throw new CqrsException("Invalid command handler definition, cannot retrieve the type of command handled");
     }
 
-    private final CommandHandlerAdaptor adaptor;
 
     private final ConfigurableListableBeanFactory beanFactory;
 
@@ -64,11 +62,9 @@ public class SpringHandlersProvider implements HandlersProvider, BeanPostProcess
      *            the adaptor
      */
     @Autowired
-    public SpringHandlersProvider(final ConfigurableListableBeanFactory beanFactory,
-	    final CommandHandlerAdaptor adaptor) {
+    public SpringHandlersProvider(final ConfigurableListableBeanFactory beanFactory) {
 	super();
 	this.beanFactory = beanFactory;
-	this.adaptor = adaptor;
     }
 
     /*
@@ -79,13 +75,18 @@ public class SpringHandlersProvider implements HandlersProvider, BeanPostProcess
      */
     @SuppressWarnings("unchecked")
     @Override
-    public IAsyncCommandHandler<Object, Object> getHandler(final Object command) {
+    public ICommandHandler<?, ?> getHandler(final Object command) {
 	final String beanName = handlers.get(command.getClass());
 	if (beanName == null) {
 	    throw new CommandHandlerNotFoundException(
 		    "command handler not found. Command class is " + command.getClass());
 	}
-	return adaptor.adapt(beanFactory.getBean(beanName));
+	final Object bean = beanFactory.getBean(beanName);
+	Validate.notNull(bean);
+	if (bean instanceof ICommandHandler) {
+	    return (ICommandHandler) bean;
+	}
+	throw new UnsupportedOperationException("Unsupported type of command handler " + bean);
     }
 
     /*
@@ -99,9 +100,6 @@ public class SpringHandlersProvider implements HandlersProvider, BeanPostProcess
 	if (bean instanceof ICommandHandler) {
 	    LOGGER.info("Loading an command handler {}->{}", beanName, bean);
 	    handlers.put(getHandledCommandType(bean), beanName);
-	} else if (bean instanceof IAsyncCommandHandler) {
-	    LOGGER.info("Loading an asynchronous command handler {}->{}", beanName, bean);
-	    handlers.put(getHandledAsyncCommandType(bean), beanName);
 	}
 	return bean;
     }
@@ -116,20 +114,6 @@ public class SpringHandlersProvider implements HandlersProvider, BeanPostProcess
     public Object postProcessBeforeInitialization(final Object bean, final String beanName) throws BeansException {
 
 	return bean;
-    }
-
-    /**
-     * Gets the handled command type.
-     *
-     * @param bean
-     *            the bean
-     * @return the handled command type
-     */
-    private Class<?> getHandledAsyncCommandType(final Object bean) {
-	Validate.notNull(bean);
-	final Type[] genericInterfaces = bean.getClass().getGenericInterfaces();
-	final ParameterizedType type = findByRawType(genericInterfaces, IAsyncCommandHandler.class);
-	return (Class<?>) type.getActualTypeArguments()[0];
     }
 
     /**
