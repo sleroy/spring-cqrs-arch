@@ -53,6 +53,14 @@ public class CqrsConfiguration {
     /** The tracing enabled. */
     private boolean tracingEnabled   = false;
 
+    public boolean getAllowCoreTimeout() {
+	return false;
+    }
+
+    public int getAwaitTerminationSeconds() {
+	return 0;
+    }
+
     /**
      * Gets the core pool size.
      *
@@ -90,6 +98,7 @@ public class CqrsConfiguration {
 	return maxPoolSize;
     }
 
+
     /**
      * Gets the queue capacity.
      *
@@ -97,6 +106,11 @@ public class CqrsConfiguration {
      */
     public int getQueueCapacity() {
 	return queueCapacity;
+    }
+
+    public int getThreadPriority() {
+
+	return Thread.NORM_PRIORITY;
     }
 
     /**
@@ -107,7 +121,6 @@ public class CqrsConfiguration {
     public File getTraceFile() {
 	return traceFile;
     }
-
 
     public int getTraceSize() {
 	return traceSize;
@@ -120,6 +133,15 @@ public class CqrsConfiguration {
      */
     public boolean isAsyncEventQueries() {
 	return asyncEventQueries;
+    }
+
+
+    public boolean isAwaitingOnShutdown() {
+	return false;
+    }
+
+    public boolean isDaemon() {
+	return false;
     }
 
     /**
@@ -149,7 +171,6 @@ public class CqrsConfiguration {
 	return tracingEnabled;
     }
 
-
     /**
      * Sets the async event queries.
      *
@@ -158,6 +179,7 @@ public class CqrsConfiguration {
     public void setAsyncEventQueries(final boolean asyncEventQueries) {
 	this.asyncEventQueries = asyncEventQueries;
     }
+
 
     /**
      * Sets the core pool size.
@@ -203,7 +225,6 @@ public class CqrsConfiguration {
     public void setMaxPoolSize(final int _maxPoolSize) {
 	maxPoolSize = _maxPoolSize;
     }
-
 
     /**
      * Sets the profiling enabled.

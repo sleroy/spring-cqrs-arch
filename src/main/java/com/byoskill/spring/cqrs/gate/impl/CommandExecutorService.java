@@ -18,6 +18,8 @@ import org.jboss.logging.MDC;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import com.byoskill.spring.cqrs.annotations.Throttle;
@@ -88,31 +90,28 @@ public class CommandExecutorService {
 
     private final ICommandProfilingService profilingService;
 
+    private final ThreadPoolTaskExecutor threadPoolTaskExecutor;
+
+
     private final IThrottlingInterface throttlingInterface;
 
     /**
      * Instantiates a new sequential command executor service.
      *
-     * @param configuration
-     *            the configuration
-     * @param handlersProvider
-     *            the handlers provider
-     * @param listeners
-     *            the listeners
-     * @param profilingService
-     *            the profiling service
-     * @param commandExceptionHandler
-     *            the command exception handler
-     * @param objectValidation
-     *            the object validation
-     * @param throttlingInterface
-     *            the throttling interface
+     * @param configuration            the configuration
+     * @param handlersProvider            the handlers provider
+     * @param listeners            the listeners
+     * @param profilingService            the profiling service
+     * @param commandExceptionHandler            the command exception handler
+     * @param objectValidation            the object validation
+     * @param throttlingInterface            the throttling interface
+     * @param threadPoolTaskExecutor the thread pool task executor
      */
     @Autowired
     public CommandExecutorService(final CqrsConfiguration configuration, final HandlersProvider handlersProvider,
 	    final ICommandExecutionListener[] listeners, final ICommandProfilingService profilingService,
 	    final Optional<ICommandExceptionHandler> commandExceptionHandler, final ObjectValidation objectValidation,
-	    final IThrottlingInterface throttlingInterface) {
+	    final IThrottlingInterface throttlingInterface, @Qualifier("cqrs-executor") final ThreadPoolTaskExecutor threadPoolTaskExecutor) {
 	super();
 	this.configuration = configuration;
 	this.handlersProvider = handlersProvider;
@@ -120,8 +119,10 @@ public class CommandExecutorService {
 	this.profilingService = profilingService;
 	this.commandExceptionHandler = commandExceptionHandler;
 	this.throttlingInterface = throttlingInterface;
+	this.threadPoolTaskExecutor = threadPoolTaskExecutor;
 	defaultExceptionHandler = new DefaultExceptionHandler();
 	this.objectValidation = objectValidation;
+
     }
 
     /**
@@ -138,7 +139,7 @@ public class CommandExecutorService {
     public <R> CompletableFuture<R> run(final Object command, final Class<R> expectedType) {
 	final IAsyncCommandHandler<Object, Object> handler = handlersProvider.getHandler(command);
 
-	CompletableFuture<Object> promise = CompletableFuture.supplyAsync(() -> command);
+	CompletableFuture<Object> promise = CompletableFuture.supplyAsync(() -> command, threadPoolTaskExecutor);
 	promise = promise.thenApply((c) -> {
 	    commandValidation(c);
 
@@ -225,7 +226,7 @@ public class CommandExecutorService {
 		commandExecutionListener.beginExecution(command, commandHandler);
 	    }
 	    return command;
-	});
+	}, threadPoolTaskExecutor);
     }
 
     private void notifyListenersFailure(final Object command, final Throwable e,

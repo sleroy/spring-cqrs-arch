@@ -14,6 +14,7 @@ import javax.validation.constraints.NotNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.byoskill.spring.cqrs.api.HandlersProvider;
 import com.byoskill.spring.cqrs.api.IAsyncCommandHandler;
@@ -45,6 +46,14 @@ public class CommandExecutorServiceTest {
     private final ObjectValidation validator = new ObjectValidation(
 	    Validation.buildDefaultValidatorFactory().getValidator());
 
+
+    ThreadPoolTaskExecutor tpool;
+
+    public void after() {
+
+	tpool.destroy();
+    }
+
     @Before
     public void before() {
 
@@ -52,10 +61,12 @@ public class CommandExecutorServiceTest {
 	handlersProvider = Mockito.mock(HandlersProvider.class);
 	profilingService = Mockito.mock(ICommandProfilingService.class);
 	throttlin = Mockito.mock(IThrottlingInterface.class);
+	tpool = new ThreadPoolTaskExecutor();
 	service = new CommandExecutorService(configuration, handlersProvider, null, profilingService,
-		Optional.<ICommandExceptionHandler>empty(), validator, throttlin);
+		Optional.<ICommandExceptionHandler>empty(), validator, throttlin, tpool);
 	service.setConfiguration(configuration);
 	service.setListeners(new ICommandExecutionListener[0]);
+	tpool.initialize();
 
     }
 
