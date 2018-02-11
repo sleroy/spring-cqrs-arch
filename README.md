@@ -9,9 +9,11 @@
 
 # Changelog
 
-* 0.7.0 : Added its own ThreadPoolExecutor
+* 0.6.0 : 
 
-* 0.6.0 : Added Throttling on Commands if necessary using @Throttle annotation
+- Added Throttling on Commands if necessary using @Throttle annotation
+- Added its own ThreadPoolExecutor
+- Refactored the Command execution to use less promises (and avoid thread exhaustion on java 8)
 
 * 0.5.0 : Fixing important bugs
   
