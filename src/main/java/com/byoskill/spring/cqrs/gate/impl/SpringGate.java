@@ -73,9 +73,15 @@ public class SpringGate implements Gate {
 	    futures.add(dispatchAsync(command, expectedReturnType));
 	}
 	final CompletableFuture<R>[] array = futures.toArray(new CompletableFuture[0]);
-	final CompletableFuture<Void> barrier = CompletableFuture.allOf(array);
+	CompletableFuture.allOf(array).whenComplete((aVoid, thr) -> {
+	    if (thr == null) {
+		LOGGER.debug("Execution of the tasks executed with success");
+	    } else {
+		LOGGER.error("Execution of the tasks has failed : {}", thr.getMessage(), thr);
+	    }
+	}).join();
 
-	return barrier.thenApply(v -> futures.stream().map(future -> future.join()).collect(Collectors.toList())).join();
+	return futures.stream().map(future -> future.join()).collect(Collectors.toList());
 
     }
 

@@ -12,6 +12,9 @@ package com.byoskill.spring.cqrs.gate.impl;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.TimeUnit;
+
+import javax.annotation.PreDestroy;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,6 +92,17 @@ public class CommandExecutorService {
 	defaultExceptionHandler = new DefaultExceptionHandler();
 	this.objectValidation = objectValidation;
 
+    }
+
+    @PreDestroy
+    public void destroy() {
+	LOGGER.warn("Closing CQRS Thread pool");
+	try {
+	    threadPool.awaitTermination(1, TimeUnit.MINUTES);
+	} catch (final InterruptedException e) {
+	    LOGGER.error("One or more threads didn't finish correctly : {}", e.getMessage(), e);
+	}
+	threadPool.shutdown();
     }
 
     /**
