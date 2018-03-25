@@ -9,6 +9,10 @@
 
 # Changelog
 
+* 0.6.2 : Second Refactoring adding a grace period of 30 seconds before brute-force closing.
+
+* 0.6.1 : Refactoring to fix a long closing issue with CQRS Command Executor
+
 * 0.6.0 : 
 
 - Added Throttling on Commands if necessary using @Throttle annotation
