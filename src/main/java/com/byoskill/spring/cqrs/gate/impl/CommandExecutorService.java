@@ -1,11 +1,11 @@
-/**
- * Copyright (C) 2017 Sylvain Leroy - BYOS Company All Rights Reserved
+/*
+ * Copyright (C) 2017 Sylvain Leroy - BYOSkill Company All Rights Reserved
  * You may use, distribute and modify this code under the
  * terms of the MIT license, which unfortunately won't be
  * written for another century.
  *
  * You should have received a copy of the MIT license with
- * this file. If not, please write to: contact@sylvainleroy.com, or visit : https://sylvainleroy.com
+ * this file. If not, please write to: , or visit :
  */
 package com.byoskill.spring.cqrs.gate.impl;
 
@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PreDestroy;
 
@@ -54,7 +55,6 @@ public class CommandExecutorService {
 
     private ICommandExecutionListener[] listeners;
 
-
     private final ObjectValidation objectValidation;
 
     private final ICommandProfilingService profilingService;
@@ -66,14 +66,22 @@ public class CommandExecutorService {
     /**
      * Instantiates a new sequential command executor service.
      *
-     * @param configuration            the configuration
-     * @param handlersProvider            the handlers provider
-     * @param listeners            the listeners
-     * @param profilingService            the profiling service
-     * @param commandExceptionHandler            the command exception handler
-     * @param objectValidation            the object validation
-     * @param throttlingInterface            the throttling interface
-     * @param threadPoolTaskExecutor the thread pool task executor
+     * @param configuration
+     *            the configuration
+     * @param handlersProvider
+     *            the handlers provider
+     * @param listeners
+     *            the listeners
+     * @param profilingService
+     *            the profiling service
+     * @param commandExceptionHandler
+     *            the command exception handler
+     * @param objectValidation
+     *            the object validation
+     * @param throttlingInterface
+     *            the throttling interface
+     * @param threadPoolTaskExecutor
+     *            the thread pool task executor
      */
     @Autowired
     public CommandExecutorService(final CqrsConfiguration configuration, final HandlersProvider handlersProvider,
@@ -97,7 +105,12 @@ public class CommandExecutorService {
     @PreDestroy
     public void destroy() {
 	LOGGER.warn("Closing CQRS Thread pool");
-
+	try {
+	    LOGGER.warn("Waiting 30 seconds for threads to stop");
+	    threadPool.awaitTermination(30, TimeUnit.SECONDS);
+	} catch (final InterruptedException e) {
+	    LOGGER.error("One or more threads didn't finish correctly : {}", e.getMessage(), e);
+	}
 	final List<Runnable> list = threadPool.shutdownNow();
 	LOGGER.warn("{} threads were still running", list.size());
     }
@@ -142,7 +155,6 @@ public class CommandExecutorService {
 	if (configuration.isProfilingEnabled()) {
 	    IProfiler profiler = null;
 	    profiler = profilingService.newProfiler(handler);
-	    final IProfiler p = profiler; // Scopes
 	    commandRunner.setProfiler(profiler);
 
 	}
@@ -156,6 +168,5 @@ public class CommandExecutorService {
     public void setListeners(final ICommandExecutionListener[] _listeners) {
 	listeners = _listeners;
     }
-
 
 }
