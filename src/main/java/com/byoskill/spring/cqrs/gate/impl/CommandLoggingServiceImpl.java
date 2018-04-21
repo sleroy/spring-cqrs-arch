@@ -56,7 +56,8 @@ public class CommandLoggingServiceImpl implements CommandExecutionListener {
 	if (configuration.isLoggingEnabled()) {
 	    if (_cause != null) {
 		LOGGER.error("Command {} has failed with informations {} for the reason {}",
-			_command.getClass().getName(), _command,
+			_command.getClass().getName(),
+			_command,
 			_cause.getException());
 	    } else {
 		LOGGER.error("Command {} with informations {} has failed.", _command.getClass().getName(), _command);
