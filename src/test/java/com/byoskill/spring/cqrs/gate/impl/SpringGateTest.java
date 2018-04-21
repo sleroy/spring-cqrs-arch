@@ -12,7 +12,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.byoskill.spring.cqrs.gate.api.IEventBusService;
+import com.byoskill.spring.cqrs.gate.api.EventBusService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SpringGateTest {
@@ -20,41 +20,41 @@ public class SpringGateTest {
 
 
     @Mock
-    private CommandExecutorService commandExecutorService;
+    private CommandExecutorServiceImpl commandExecutorServiceImpl;
 
     @Mock
-    private IEventBusService eventBus;
+    private EventBusService eventBus;
 
     @InjectMocks
     private SpringGate springGate;
 
     @Test
     public void testDispatch() throws Exception {
-	when(commandExecutorService.run(COMMAND, Object.class)).thenReturn(CompletableFuture.supplyAsync(() -> null));
+	when(commandExecutorServiceImpl.run(COMMAND, Object.class)).thenReturn(CompletableFuture.supplyAsync(() -> null));
 	springGate.dispatch(COMMAND);
-	verify(commandExecutorService, Mockito.times(1)).run(COMMAND, Object.class);
+	verify(commandExecutorServiceImpl, Mockito.times(1)).run(COMMAND, Object.class);
     }
 
     @Test
     public void testDispatchAsync() throws Exception {
-	when(commandExecutorService.run(COMMAND, Object.class)).thenReturn(CompletableFuture.supplyAsync(() -> null));
+	when(commandExecutorServiceImpl.run(COMMAND, Object.class)).thenReturn(CompletableFuture.supplyAsync(() -> null));
 	springGate.dispatchAsync(COMMAND);
-	verify(commandExecutorService, Mockito.times(1)).run(COMMAND, Object.class);
+	verify(commandExecutorServiceImpl, Mockito.times(1)).run(COMMAND, Object.class);
     }
 
 
     @Test
     public void testDispatchExpect() throws Exception {
-	when(commandExecutorService.run(COMMAND, String.class)).thenReturn(CompletableFuture.supplyAsync(() -> null));
+	when(commandExecutorServiceImpl.run(COMMAND, String.class)).thenReturn(CompletableFuture.supplyAsync(() -> null));
 	springGate.dispatch(COMMAND, String.class);
-	verify(commandExecutorService, Mockito.times(1)).run(COMMAND, String.class);
+	verify(commandExecutorServiceImpl, Mockito.times(1)).run(COMMAND, String.class);
     }
 
     @Test
     public void testDispatchExpectAsync() throws Exception {
-	when(commandExecutorService.run(COMMAND, String.class)).thenReturn(CompletableFuture.supplyAsync(() -> null));
+	when(commandExecutorServiceImpl.run(COMMAND, String.class)).thenReturn(CompletableFuture.supplyAsync(() -> null));
 	springGate.dispatchAsync(COMMAND, String.class);
-	verify(commandExecutorService, Mockito.times(1)).run(COMMAND, String.class);
+	verify(commandExecutorServiceImpl, Mockito.times(1)).run(COMMAND, String.class);
     }
 
 }

@@ -3,13 +3,13 @@
  */
 package com.byoskill.spring.cqrs.gate.impl;
 
-import com.byoskill.spring.cqrs.api.ICommandHandler;
-import com.byoskill.spring.cqrs.gate.api.ICommandExceptionContext;
+import com.byoskill.spring.cqrs.api.CommandServiceSpec;
+import com.byoskill.spring.cqrs.gate.api.CommandExceptionContext;
 
-final class CommandExceptionContextImplementation implements ICommandExceptionContext {
+final class CommandExceptionContextImpl implements CommandExceptionContext {
     private final Object			 command;
     private final Throwable			 e;
-    private final ICommandHandler<?, ?> handler;
+    private final CommandServiceSpec<?, ?> handler;
 
     /**
      * Instantiates a new command exception context implementation.
@@ -18,8 +18,8 @@ final class CommandExceptionContextImplementation implements ICommandExceptionCo
      * @param e the e
      * @param handler the handler
      */
-    public CommandExceptionContextImplementation(final Object command, final Throwable e,
-	    final ICommandHandler<?, ?> handler) {
+    public CommandExceptionContextImpl(final Object command, final Throwable e,
+	    final CommandServiceSpec<?, ?> handler) {
 	this.command = command;
 	this.e = e;
 	this.handler = handler;

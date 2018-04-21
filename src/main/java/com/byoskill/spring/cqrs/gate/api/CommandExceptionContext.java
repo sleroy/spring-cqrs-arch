@@ -9,7 +9,7 @@
  */
 package com.byoskill.spring.cqrs.gate.api;
 
-public interface ICommandExceptionContext {
+public interface CommandExceptionContext {
 
     /**
      * Gets the command.

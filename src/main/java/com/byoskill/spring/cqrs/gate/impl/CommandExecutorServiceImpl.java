@@ -5,7 +5,8 @@
  * written for another century.
  *
  * You should have received a copy of the MIT license with
- * this file. If not, please write to: , or visit :
+ * this file. If not, please write to: sleroy at byoskill.com, or visit : www.byoskill.com
+ *
  */
 package com.byoskill.spring.cqrs.gate.impl;
 
@@ -21,16 +22,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
 
 import com.byoskill.spring.cqrs.annotations.Throttle;
-import com.byoskill.spring.cqrs.api.HandlersProvider;
-import com.byoskill.spring.cqrs.api.ICommandExecutionListener;
-import com.byoskill.spring.cqrs.api.ICommandHandler;
-import com.byoskill.spring.cqrs.api.ICommandProfilingService;
-import com.byoskill.spring.cqrs.api.IThrottlingInterface;
-import com.byoskill.spring.cqrs.gate.api.ICommandExceptionHandler;
-import com.byoskill.spring.cqrs.gate.conf.CqrsConfiguration;
+import com.byoskill.spring.cqrs.api.CommandExecutionListener;
+import com.byoskill.spring.cqrs.api.CommandProfilingService;
+import com.byoskill.spring.cqrs.api.CommandServiceProvider;
+import com.byoskill.spring.cqrs.api.CommandServiceSpec;
+import com.byoskill.spring.cqrs.api.LoggingConfiguration;
+import com.byoskill.spring.cqrs.api.ThrottlingInterface;
+import com.byoskill.spring.cqrs.gate.api.CommandExceptionHandler;
 import com.byoskill.spring.cqrs.utils.validation.ObjectValidation;
 
 /**
@@ -40,34 +40,33 @@ import com.byoskill.spring.cqrs.utils.validation.ObjectValidation;
  *
  * @author Slawek
  */
-@Service
-public class CommandExecutorService {
+public class CommandExecutorServiceImpl {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CommandExecutorService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CommandExecutorServiceImpl.class);
 
-    private final Optional<ICommandExceptionHandler> commandExceptionHandler;
+    private final Optional<CommandExceptionHandler> commandExceptionHandler;
 
-    private CqrsConfiguration configuration;
+    private final LoggingConfiguration configuration;
 
     private final DefaultExceptionHandler defaultExceptionHandler;
 
-    private final HandlersProvider handlersProvider;
+    private final CommandServiceProvider handlersProvider;
 
-    private ICommandExecutionListener[] listeners;
+    private final CommandExecutionListener[] listeners;
 
     private final ObjectValidation objectValidation;
 
-    private final ICommandProfilingService profilingService;
+    private final CommandProfilingService profilingService;
 
     private final ForkJoinPool threadPool;
 
-    private final IThrottlingInterface throttlingInterface;
+    private final ThrottlingInterface throttlingInterface;
 
     /**
      * Instantiates a new sequential command executor service.
      *
      * @param configuration
-     *            the configuration
+     *            the logging configuration
      * @param handlersProvider
      *            the handlers provider
      * @param listeners
@@ -84,10 +83,11 @@ public class CommandExecutorService {
      *            the thread pool task executor
      */
     @Autowired
-    public CommandExecutorService(final CqrsConfiguration configuration, final HandlersProvider handlersProvider,
-	    final ICommandExecutionListener[] listeners, final ICommandProfilingService profilingService,
-	    final Optional<ICommandExceptionHandler> commandExceptionHandler, final ObjectValidation objectValidation,
-	    final IThrottlingInterface throttlingInterface,
+    public CommandExecutorServiceImpl(final LoggingConfiguration configuration,
+	    final CommandServiceProvider handlersProvider,
+	    final CommandExecutionListener[] listeners, final CommandProfilingService profilingService,
+	    final Optional<CommandExceptionHandler> commandExceptionHandler, final ObjectValidation objectValidation,
+	    final ThrottlingInterface throttlingInterface,
 	    @Qualifier("cqrs-executor") final ForkJoinPool threadPoolTaskExecutor) {
 	super();
 	this.configuration = configuration;
@@ -106,8 +106,8 @@ public class CommandExecutorService {
     public void destroy() {
 	LOGGER.warn("Closing CQRS Thread pool");
 	try {
-	    LOGGER.warn("Waiting 30 seconds for threads to stop");
-	    threadPool.awaitTermination(30, TimeUnit.SECONDS);
+	    LOGGER.warn("Waiting 1 second for threads to stop");
+	    threadPool.awaitTermination(1, TimeUnit.SECONDS);
 	} catch (final InterruptedException e) {
 	    LOGGER.error("One or more threads didn't finish correctly : {}", e.getMessage(), e);
 	}
@@ -127,7 +127,7 @@ public class CommandExecutorService {
      * @return the result of the command
      */
     public <R> CompletableFuture<R> run(final Object command, final Class<R> expectedType) {
-	final ICommandHandler<?, ?> handler = handlersProvider.getHandler(command);
+	final CommandServiceSpec<?, ?> handler = handlersProvider.getService(command);
 	LOGGER.debug("Lauching the command {} with the expected type {}", command, expectedType);
 
 	final CommandRunner commandRunner = new CommandRunner(handler, objectValidation, expectedType);
@@ -159,14 +159,6 @@ public class CommandExecutorService {
 
 	}
 	return CompletableFuture.supplyAsync(commandRunner, threadPool);
-    }
-
-    public void setConfiguration(final CqrsConfiguration _configuration) {
-	configuration = _configuration;
-    }
-
-    public void setListeners(final ICommandExecutionListener[] _listeners) {
-	listeners = _listeners;
     }
 
 }

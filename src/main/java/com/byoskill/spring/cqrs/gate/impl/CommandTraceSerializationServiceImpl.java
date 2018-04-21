@@ -1,11 +1,12 @@
-/**
- * Copyright (C) 2017 Sylvain Leroy - BYOS Company All Rights Reserved
+/*
+ * Copyright (C) 2017 Sylvain Leroy - BYOSkill Company All Rights Reserved
  * You may use, distribute and modify this code under the
  * terms of the MIT license, which unfortunately won't be
  * written for another century.
  *
  * You should have received a copy of the MIT license with
- * this file. If not, please write to: contact@sylvainleroy.com, or visit : https://sylvainleroy.com
+ * this file. If not, please write to: sleroy at byoskill.com, or visit : www.byoskill.com
+ *
  */
 
 package com.byoskill.spring.cqrs.gate.impl;
@@ -17,11 +18,10 @@ import javax.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import com.byoskill.spring.cqrs.api.ICommandExecutionListener;
-import com.byoskill.spring.cqrs.gate.api.ICommandExceptionContext;
-import com.byoskill.spring.cqrs.gate.conf.CqrsConfiguration;
+import com.byoskill.spring.cqrs.api.CommandExecutionListener;
+import com.byoskill.spring.cqrs.api.TraceConfiguration;
+import com.byoskill.spring.cqrs.gate.api.CommandExceptionContext;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,18 +33,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @author sleroy
  *
  */
-@Service
-public class CommandTraceSerializationService implements ICommandExecutionListener {
+public class CommandTraceSerializationServiceImpl implements CommandExecutionListener {
 
     /** The Constant LOGGER. */
-    private static final Logger LOGGER = LoggerFactory.getLogger(CommandTraceSerializationService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CommandTraceSerializationServiceImpl.class);
 
     /** The command trace. */
     private CommandTrace commandTrace = new CommandTrace();
 
     /** The configuration. */
-    @Autowired
-    private final CqrsConfiguration configuration;
+
+    private final TraceConfiguration traceConfiguration;
 
     /** The object mapper. */
     private ObjectMapper objectMapper;
@@ -52,11 +51,12 @@ public class CommandTraceSerializationService implements ICommandExecutionListen
     /**
      * Instantiates a new command trace serialization service.
      *
-     * @param cqrsConfiguration
+     * @param traceConfiguration
      *            the cqrs configuration
      */
-    public CommandTraceSerializationService(final CqrsConfiguration cqrsConfiguration) {
-	configuration = cqrsConfiguration;
+    @Autowired
+    public CommandTraceSerializationServiceImpl(final TraceConfiguration traceConfiguration) {
+	this.traceConfiguration = traceConfiguration;
 	init();
 
     }
@@ -78,7 +78,7 @@ public class CommandTraceSerializationService implements ICommandExecutionListen
      *             Signals that an I/O exception has occurred.
      */
     public synchronized void flushFile() throws Exception {
-	objectMapper.writeValue(configuration.getTraceFile(), commandTrace);
+	objectMapper.writeValue(traceConfiguration.getTraceFile(), commandTrace);
 	commandTrace = new CommandTrace();
     }
 
@@ -91,63 +91,47 @@ public class CommandTraceSerializationService implements ICommandExecutionListen
 	return !commandTrace.commands.isEmpty();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.byoskill.spring.cqrs.api.ICommandExecutionListener#onFailure(java.
-     * lang.Object, java.lang.Throwable)
-     */
-    @Override
-    public void onFailure(final Object command, final ICommandExceptionContext cause) {
-	if (configuration.isTracingEnabled()) {
-	    serializeTrace(CommandExecution.failure( command, cause.getException()));
-	}
-
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.byoskill.spring.cqrs.api.ICommandExecutionListener#onSuccess(java.
-     * lang.Object, java.lang.Object)
-     */
-    @Override
-    public void onSuccess(final Object command, final Object executionResult) {
-	if (configuration.isTracingEnabled()) {
-	    serializeTrace(CommandExecution.success( command,  executionResult));
-	}
-
-    }
-
-    /**
-     * Shutdown.
-     */
-    @PreDestroy
-    public void shutdown() {
-	try {
-	    flushFile();
-	} catch (final Exception e) {
-	    LOGGER.error("Error during the serialization of the command trace {} -> {}", configuration.getTraceFile(),
-		    e);
-	}
-
-    }
-
     /**
      * Inits the.
      */
     private final void init() {
 	objectMapper = new ObjectMapper();
 	try {
-	    if (configuration.getTraceFile().createNewFile()) {
+	    if (traceConfiguration.getTraceFile().createNewFile()) {
 		final CommandTrace trace = new CommandTrace();
-		objectMapper.writeValue(configuration.getTraceFile(), trace);
+		objectMapper.writeValue(traceConfiguration.getTraceFile(), trace);
 	    }
 	} catch (final IOException e) {
 	    LOGGER.error("Could not create the trace, already existing -> {}", e);
 	}
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see com.byoskill.spring.cqrs.api.ICommandExecutionListener#onFailure(java.
+     * lang.Object, java.lang.Throwable)
+     */
+    @Override
+    public void onFailure(final Object command, final CommandExceptionContext cause) {
+	if (traceConfiguration.isTracingEnabled()) {
+	    serializeTrace(CommandExecution.failure(command, cause.getException()));
+	}
+
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see com.byoskill.spring.cqrs.api.ICommandExecutionListener#onSuccess(java.
+     * lang.Object, java.lang.Object)
+     */
+    @Override
+    public void onSuccess(final Object command, final Object executionResult) {
+	if (traceConfiguration.isTracingEnabled()) {
+	    serializeTrace(CommandExecution.success(command, executionResult));
+	}
+
     }
 
     /**
@@ -159,13 +143,28 @@ public class CommandTraceSerializationService implements ICommandExecutionListen
     private synchronized void serializeTrace(final CommandExecution _command) {
 	try {
 	    commandTrace.addCommand(_command);
-	    if (commandTrace.getCommands().size() >= configuration.getTraceSize()) {
+	    if (commandTrace.getCommands().size() >= traceConfiguration.getTraceSize()) {
 		flushFile();
 	    }
 	} catch (final Exception e) {
-	    LOGGER.error("Error during the serialization of the command {} -> {}", configuration.getTraceFile(),
+	    LOGGER.error("Error during the serialization of the command {} -> {}", traceConfiguration.getTraceFile(),
 		    _command, e);
 	}
+    }
+
+    /**
+     * Shutdown.
+     */
+    @PreDestroy
+    public void shutdown() {
+	try {
+	    flushFile();
+	} catch (final Exception e) {
+	    LOGGER.error("Error during the serialization of the command trace {} -> {}",
+		    traceConfiguration.getTraceFile(),
+		    e);
+	}
+
     }
 
 }

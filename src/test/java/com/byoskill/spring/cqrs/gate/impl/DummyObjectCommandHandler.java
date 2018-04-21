@@ -1,8 +1,8 @@
 package com.byoskill.spring.cqrs.gate.impl;
 
-import com.byoskill.spring.cqrs.api.ICommandHandler;
+import com.byoskill.spring.cqrs.api.CommandServiceSpec;
 
-public class DummyObjectCommandHandler implements ICommandHandler<DummyObject, Integer> {
+public class DummyObjectCommandHandler implements CommandServiceSpec<DummyObject, Integer> {
 
     @Override
     public Integer handle(final DummyObject command)  {

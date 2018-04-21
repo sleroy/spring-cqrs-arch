@@ -13,7 +13,7 @@ import java.util.concurrent.CompletableFuture;
  *
  * @param <R> returned type
  */
-public interface ICommandCallback<R> {
+public interface CommandCallback<R> {
     /**
      * Computes a result, or throws an exception if unable to do so.
      *

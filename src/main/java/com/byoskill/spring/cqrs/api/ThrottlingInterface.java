@@ -3,7 +3,7 @@
  */
 package com.byoskill.spring.cqrs.api;
 
-public interface IThrottlingInterface {
+public interface ThrottlingInterface {
 
     /**
      * Acquire permit.

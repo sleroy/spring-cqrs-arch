@@ -7,24 +7,15 @@
  * You should have received a copy of the MIT license with
  * this file. If not, please write to: contact@sylvainleroy.com, or visit : https://sylvainleroy.com
  */
-package com.byoskill.spring.cqrs.api;
+package com.byoskill.spring.cqrs.gate.api;
 
-import com.byoskill.spring.cqrs.gate.impl.IProfiler;
+import org.springframework.context.ApplicationEventPublisher;
 
 /**
- * Default interface to implement a Profile service.
- * @author sleroy
- *
+ * The Interface IEventBusService is a wrapper above the Spring Application Event Publisher.
  */
-public interface ICommandProfilingService {
+public interface EventBusService extends ApplicationEventPublisher {
 
-
-    /**
-     * New profiler.
-     *
-     * @param handler the handler
-     * @return the profiler
-     */
-    IProfiler newProfiler(Object handler);
+    //
 
 }

@@ -9,17 +9,22 @@
  */
 package com.byoskill.spring.cqrs.api;
 
+import com.byoskill.spring.cqrs.gate.impl.IProfiler;
+
 /**
- * The Interface HandlersProvider.
+ * Default interface to implement a Profile service.
+ * @author sleroy
+ *
  */
-@FunctionalInterface
-public interface HandlersProvider {
+public interface CommandProfilingService {
+
 
     /**
-     * Gets the handler.
+     * New profiler.
      *
-     * @param command the command
-     * @return the command runner
+     * @param handler the handler
+     * @return the profiler
      */
-    ICommandHandler getHandler(Object command);
+    IProfiler newProfiler(Object handler);
+
 }

@@ -1,3 +1,13 @@
+/*
+ * Copyright (C) 2017 Sylvain Leroy - BYOSkill Company All Rights Reserved
+ * You may use, distribute and modify this code under the
+ * terms of the MIT license, which unfortunately won't be
+ * written for another century.
+ *
+ * You should have received a copy of the MIT license with
+ * this file. If not, please write to: sleroy at byoskill.com, or visit : www.byoskill.com
+ *
+ */
 package com.byoskill.spring.cqrs.gate.impl;
 
 import java.util.Properties;
@@ -10,17 +20,19 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.byoskill.spring.cqrs.gate.api.CommandHandlerNotFoundException;
 import com.byoskill.spring.cqrs.gate.api.Gate;
+import com.byoskill.spring.cqrs.gate.conf.CqrsInjectionConfiguration;
+import com.byoskill.spring.cqrs.gate.conf.DefaultCqrsConfiguration;
+import com.byoskill.spring.cqrs.gate.conf.GuavaAsyncEventBusConfiguration;
 import com.byoskill.spring.cqrs.gate.impl.fakeapp.TestConfiguration;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = TestConfiguration.class)
-@ActiveProfiles("guava_bus")
+@ContextConfiguration(classes = { TestConfiguration.class, DefaultCqrsConfiguration.class,
+	GuavaAsyncEventBusConfiguration.class, CqrsInjectionConfiguration.class, CommandServicePostProcessor.class })
 public class RunModuleTest {
 
     @Autowired
@@ -55,7 +67,7 @@ public class RunModuleTest {
 
     @Test(expected = CommandHandlerNotFoundException.class)
     public void testPromised_onFailure() throws InterruptedException, ExecutionException {
-	final Object promise = springGate.dispatchAsync(new Properties()).join();
+	springGate.dispatchAsync(new Properties()).join();
 	Thread.sleep(5000);
     }
 

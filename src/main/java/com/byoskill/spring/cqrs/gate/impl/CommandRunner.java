@@ -12,11 +12,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
-import com.byoskill.spring.cqrs.api.ICommandExecutionListener;
-import com.byoskill.spring.cqrs.api.ICommandHandler;
+import com.byoskill.spring.cqrs.api.CommandExecutionListener;
+import com.byoskill.spring.cqrs.api.CommandServiceSpec;
 import com.byoskill.spring.cqrs.gate.api.CommandHandlerNotFoundException;
-import com.byoskill.spring.cqrs.gate.api.ICommandExceptionContext;
-import com.byoskill.spring.cqrs.gate.api.ICommandExceptionHandler;
+import com.byoskill.spring.cqrs.gate.api.CommandExceptionContext;
+import com.byoskill.spring.cqrs.gate.api.CommandExceptionHandler;
 import com.byoskill.spring.cqrs.gate.api.InvalidCommandException;
 import com.byoskill.spring.cqrs.utils.validation.ObjectValidation;
 
@@ -25,15 +25,15 @@ public class CommandRunner<T, R> implements Supplier<R> {
 
     private T command;
 
-    private Optional<ICommandExceptionHandler> commandExceptionHandler;
+    private Optional<CommandExceptionHandler> commandExceptionHandler;
 
-    private final ICommandHandler<T, R> commandHandler;
+    private final CommandServiceSpec<T, R> commandServiceSpec;
 
     private DefaultExceptionHandler defaultExceptionHandler;
 
     private final Class<?> expectedType;
 
-    private ICommandExecutionListener[] listeners;
+    private CommandExecutionListener[] listeners;
 
     private final ObjectValidation objectValidation;
 
@@ -52,10 +52,10 @@ public class CommandRunner<T, R> implements Supplier<R> {
      * @param expectedType
      *            the expected type
      */
-    public CommandRunner(final ICommandHandler<T, R> commandHandler, final ObjectValidation objectValidation,
+    public CommandRunner(final CommandServiceSpec<T, R> commandHandler, final ObjectValidation objectValidation,
 	    final Class<R> expectedType) {
 	this.expectedType = expectedType;
-	this.commandHandler = commandHandler;
+	this.commandServiceSpec = commandHandler;
 	this.objectValidation = objectValidation;
 
     }
@@ -83,13 +83,13 @@ public class CommandRunner<T, R> implements Supplier<R> {
 	    }
 
 	    // Promise command handler (now argument is the returned type)
-	    result = commandHandler.handle(command);
+	    result = commandServiceSpec.handle(command);
 
 	    // handle result
 	    notifyListenersSuccess(command, result);
 	    return (R) expectedType.cast(result);
 	} catch (final Exception e) {
-	    notifyListenersFailure(command, e, commandHandler);
+	    notifyListenersFailure(command, e, commandServiceSpec);
 
 	} finally {
 	    if (profiler != null) {
@@ -110,7 +110,7 @@ public class CommandRunner<T, R> implements Supplier<R> {
      * @param commandExceptionHandler
      *            the new command exception handler
      */
-    public void setCommandExceptionHandler(final Optional<ICommandExceptionHandler> commandExceptionHandler) {
+    public void setCommandExceptionHandler(final Optional<CommandExceptionHandler> commandExceptionHandler) {
 	this.commandExceptionHandler = commandExceptionHandler;
 
     }
@@ -132,7 +132,7 @@ public class CommandRunner<T, R> implements Supplier<R> {
      * @param listeners
      *            the new listeners
      */
-    public void setListeners(final ICommandExecutionListener[] listeners) {
+    public void setListeners(final CommandExecutionListener[] listeners) {
 	this.listeners = listeners;
 
     }
@@ -161,14 +161,14 @@ public class CommandRunner<T, R> implements Supplier<R> {
 
     @Override
     public String toString() {
-	return "CommandRunner [command=" + command + ", commandHandler=" + commandHandler + ", expectedType="
+	return "CommandRunner [command=" + command + ", commandHandler=" + commandServiceSpec + ", expectedType="
 		+ expectedType + "]";
     }
 
     private void notifyListenersBegin() {
 	LOGGER.debug("Command {} being executed");
-	for (final ICommandExecutionListener commandExecutionListener : listeners) {
-	    commandExecutionListener.beginExecution(command, commandHandler);
+	for (final CommandExecutionListener commandExecutionListener : listeners) {
+	    commandExecutionListener.beginExecution(command, commandServiceSpec);
 	}
     }
 
@@ -183,11 +183,11 @@ public class CommandRunner<T, R> implements Supplier<R> {
      *            the command handler 2
      */
     private void notifyListenersFailure(final T command, final Throwable e,
-	    final ICommandHandler<T, R> commandHandler2) {
+	    final CommandServiceSpec<T, R> commandHandler2) {
 	LOGGER.debug("Command {} has failed => {}", command, e);
-	final ICommandExceptionContext exceptionContext = new CommandExceptionContextImplementation(command, e,
-		commandHandler);
-	for (final ICommandExecutionListener commandExecutionListener : listeners) {
+	final CommandExceptionContext exceptionContext = new CommandExceptionContextImpl(command, e,
+		commandServiceSpec);
+	for (final CommandExecutionListener commandExecutionListener : listeners) {
 	    commandExecutionListener.onFailure(command, exceptionContext);
 	}
 	// The command exception handler may wrap exceptions or rethrow it
@@ -209,7 +209,7 @@ public class CommandRunner<T, R> implements Supplier<R> {
      */
     private void notifyListenersSuccess(final Object command, final R result) {
 	LOGGER.debug("Command {} has been executed with success => {}", command, result);
-	for (final ICommandExecutionListener commandExecutionListener : listeners) {
+	for (final CommandExecutionListener commandExecutionListener : listeners) {
 	    commandExecutionListener.onSuccess(command, result);
 	}
     }
@@ -228,7 +228,7 @@ public class CommandRunner<T, R> implements Supplier<R> {
 	    throw new InvalidCommandException(command, e);
 	}
 
-	if (commandHandler == null) {
+	if (commandServiceSpec == null) {
 	    throw new CommandHandlerNotFoundException(command);
 	}
 

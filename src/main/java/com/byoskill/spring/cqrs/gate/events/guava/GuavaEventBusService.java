@@ -1,16 +1,19 @@
-/**
- * Copyright (C) 2017 Sylvain Leroy - BYOS Company All Rights Reserved
+/*
+ * Copyright (C) 2017 Sylvain Leroy - BYOSkill Company All Rights Reserved
  * You may use, distribute and modify this code under the
  * terms of the MIT license, which unfortunately won't be
  * written for another century.
  *
  * You should have received a copy of the MIT license with
- * this file. If not, please write to: contact@sylvainleroy.com, or visit : https://sylvainleroy.com
+ * this file. If not, please write to: sleroy at byoskill.com, or visit : www.byoskill.com
+ *
  */
 package com.byoskill.spring.cqrs.gate.events.guava;
 
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.annotation.PreDestroy;
 
@@ -21,26 +24,19 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.PayloadApplicationEvent;
-import org.springframework.context.annotation.Profile;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.stereotype.Service;
 
 import com.byoskill.spring.cqrs.annotations.EventHandler;
-import com.byoskill.spring.cqrs.gate.api.IEventBusService;
-import com.byoskill.spring.cqrs.gate.conf.CqrsConfiguration;
+import com.byoskill.spring.cqrs.gate.api.EventBusService;
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
 
-@Service
-@Profile("guava_bus")
-public class GuavaEventBusService implements ApplicationContextAware, IEventBusService {
+public class GuavaEventBusService implements ApplicationContextAware, EventBusService {
 
-    private static final Logger	    LOGGER = LoggerFactory.getLogger(GuavaEventBusService.class);
-    private ApplicationContext	    applicationContext;
-    private final CqrsConfiguration cqrsConfiguration;
-    private EventBus		    eventBus;
+    private static final Logger	LOGGER = LoggerFactory.getLogger(GuavaEventBusService.class);
+    private ApplicationContext	applicationContext;
+    private EventBus		eventBus;
 
-    private ThreadPoolTaskExecutor threadPoolTaskExecutor;
+    private ExecutorService threadPoolTaskExecutor;
 
     /**
      * Instantiates a new guava event bus service.
@@ -48,18 +44,10 @@ public class GuavaEventBusService implements ApplicationContextAware, IEventBusS
      * @param cqrsConfiguration
      *            the cqrs configuration
      */
-    public GuavaEventBusService(final CqrsConfiguration cqrsConfiguration) {
-	this.cqrsConfiguration = cqrsConfiguration;
-	if (cqrsConfiguration.isAsyncEventQueries()) {
+    public GuavaEventBusService(final boolean asyncExecution) {
+	if (asyncExecution) {
 	    // The event bus should handle async event processing.
-	    threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
-	    threadPoolTaskExecutor.setCorePoolSize(cqrsConfiguration.getCorePoolSize());
-	    threadPoolTaskExecutor.setMaxPoolSize(cqrsConfiguration.getMaxPoolSize());
-	    threadPoolTaskExecutor.setQueueCapacity(cqrsConfiguration.getQueueCapacity());
-	    threadPoolTaskExecutor.setKeepAliveSeconds(cqrsConfiguration.getKeepAliveSeconds());
-	    threadPoolTaskExecutor.setThreadGroupName("cqrs-event-bus");
-	    threadPoolTaskExecutor.setThreadNamePrefix("eventbus");
-	    threadPoolTaskExecutor.initialize();
+	    threadPoolTaskExecutor = Executors.newCachedThreadPool();
 	    eventBus = new AsyncEventBus(threadPoolTaskExecutor);
 	} else {
 	    eventBus = new EventBus();
@@ -75,36 +63,6 @@ public class GuavaEventBusService implements ApplicationContextAware, IEventBusS
 	}
     }
 
-    @Override
-    public void publishEvent(final ApplicationEvent event) {
-	eventBus.post(event);
-
-    }
-
-    @Override
-    public void publishEvent(final Object event) {
-	eventBus.post(new PayloadApplicationEvent(new Exception().getStackTrace()[1], event));
-
-    }
-
-    /**
-     * Register event suscriber.
-     *
-     * @param bean the bean
-     */
-    public void registerEventSuscriber(final Object bean) {
-	eventBus.register(bean);
-    }
-
-    @Override
-    public void setApplicationContext(final ApplicationContext _applicationContext) throws BeansException {
-	applicationContext = _applicationContext;
-
-
-	lookingForEventSuscriberBeans();
-
-    }
-
     private void lookingForEventSuscriberBeans() {
 	final Map<String, Object> beansWithAnnotation = applicationContext.getBeansWithAnnotation(EventHandler.class);
 	for (final Entry<String, Object> beanEntry : beansWithAnnotation.entrySet()) {
@@ -114,6 +72,46 @@ public class GuavaEventBusService implements ApplicationContextAware, IEventBusS
 	    registerEventSuscriber(bean);
 
 	}
+    }
+
+    /* (non-Javadoc)
+     * @see org.springframework.context.ApplicationEventPublisher#publishEvent(org.springframework.context.ApplicationEvent)
+     */
+    @Override
+    public void publishEvent(final ApplicationEvent event) {
+	eventBus.post(event);
+
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.springframework.context.ApplicationEventPublisher#publishEvent(java.lang.
+     * Object)
+     */
+    @Override
+    public void publishEvent(final Object event) {
+	eventBus.post(new PayloadApplicationEvent(new Exception().getStackTrace()[1], event));
+
+    }
+
+    /**
+     * Register event suscriber.
+     *
+     * @param bean
+     *            the bean
+     */
+    public void registerEventSuscriber(final Object bean) {
+	eventBus.register(bean);
+    }
+
+    @Override
+    public void setApplicationContext(final ApplicationContext _applicationContext) throws BeansException {
+	applicationContext = _applicationContext;
+
+	lookingForEventSuscriberBeans();
+
     }
 
 }

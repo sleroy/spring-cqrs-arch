@@ -133,7 +133,9 @@ dependencies {
 	testCompile group: 'org.springframework', name: 'spring-context', version: SPRING_VERSION
 	testCompile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: JACKSON
 	testCompile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: JACKSON
-	testCompile group: 'org.hibernate.validator', name: 'hibernate-validator', version: VALIDATOR
+	testCompile group: 'org.hibernate.validator', name: 'hibernate-validator', version: VALIDATOR	
+	testCompile group: 'ch.qos.logback', name: 'logback-classic', version: LOGBACK
+
 	// https://mvnrepository.com/artifact/org.springframework/spring-test
     testCompile group: 'org.springframework', name: 'spring-test', version: SPRING_VERSION
 	

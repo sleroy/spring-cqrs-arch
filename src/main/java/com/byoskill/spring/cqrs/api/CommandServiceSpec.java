@@ -26,8 +26,7 @@ import com.byoskill.spring.cqrs.annotations.CommandOptions;
  *            result type - for asynchronous {@link CommandOptions}commands
  *            (asynchronous=true) should be {@link Void}
  */
-@FunctionalInterface
-public interface ICommandHandler<C, R> {
+public interface CommandServiceSpec<C, R> {
 
     /**
      * Handle.

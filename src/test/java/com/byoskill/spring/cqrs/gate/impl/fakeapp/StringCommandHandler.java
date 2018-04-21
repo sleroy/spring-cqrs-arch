@@ -5,10 +5,10 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.byoskill.spring.cqrs.api.ICommandHandler;
+import com.byoskill.spring.cqrs.api.CommandServiceSpec;
 import com.byoskill.spring.cqrs.gate.api.Gate;
 
-public class StringCommandHandler implements ICommandHandler<String, Integer> {
+public class StringCommandHandler implements CommandServiceSpec<String, Integer> {
     private final List<String> commands = new ArrayList<>();
 
     private final Gate gate;

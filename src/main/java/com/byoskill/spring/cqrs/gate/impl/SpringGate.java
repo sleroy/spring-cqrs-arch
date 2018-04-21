@@ -1,11 +1,12 @@
-/**
- * Copyright (C) 2017 Sylvain Leroy - BYOS Company All Rights Reserved
+/*
+ * Copyright (C) 2017 Sylvain Leroy - BYOSkill Company All Rights Reserved
  * You may use, distribute and modify this code under the
  * terms of the MIT license, which unfortunately won't be
  * written for another century.
  *
  * You should have received a copy of the MIT license with
- * this file. If not, please write to: contact@sylvainleroy.com, or visit : https://sylvainleroy.com
+ * this file. If not, please write to: sleroy at byoskill.com, or visit : www.byoskill.com
+ *
  */
 package com.byoskill.spring.cqrs.gate.impl;
 
@@ -17,10 +18,9 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import com.byoskill.spring.cqrs.gate.api.Gate;
-import com.byoskill.spring.cqrs.gate.api.IEventBusService;
+import com.byoskill.spring.cqrs.gate.api.EventBusService;
 
 /**
  * This class defines the gate where the commands are dispatched for execution.
@@ -28,26 +28,25 @@ import com.byoskill.spring.cqrs.gate.api.IEventBusService;
  * @author sleroy
  *
  */
-@Service
 public class SpringGate implements Gate {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SpringGate.class);
 
-    private final CommandExecutorService commandExecutorService;
-    private final IEventBusService	 eventBusService;
+    private final CommandExecutorServiceImpl commandExecutorServiceImpl;
+    private final EventBusService	 eventBusService;
 
     /**
      * Instantiates a new spring gate.
      *
-     * @param commandExecutorService
+     * @param commandExecutorServiceImpl
      *            the command executor service
      * @param eventBusService
      *            the event bus service
      */
     @Autowired
-    public SpringGate(final CommandExecutorService commandExecutorService, final IEventBusService eventBusService) {
+    public SpringGate(final CommandExecutorServiceImpl commandExecutorServiceImpl, final EventBusService eventBusService) {
 	super();
-	this.commandExecutorService = commandExecutorService;
+	this.commandExecutorServiceImpl = commandExecutorServiceImpl;
 	this.eventBusService = eventBusService;
     }
 
@@ -56,13 +55,13 @@ public class SpringGate implements Gate {
      */
     @Override
     public <R> R dispatch(final Object _command) {
-	return (R) commandExecutorService.run(_command, Object.class).join();
+	return (R) commandExecutorServiceImpl.run(_command, Object.class).join();
 
     }
 
     @Override
     public <R> R dispatch(final Object command, final Class<R> returnType) {
-	return returnType.cast(commandExecutorService.run(command, returnType).join());
+	return returnType.cast(commandExecutorServiceImpl.run(command, returnType).join());
     }
 
     @Override
@@ -88,32 +87,29 @@ public class SpringGate implements Gate {
     /*
      * (non-Javadoc)
      *
-     * @see
-     * com.byoskill.spring.cqrs.gate.api.Gate#dispatchAsync(java.lang.Object)
+     * @see com.byoskill.spring.cqrs.gate.api.Gate#dispatchAsync(java.lang.Object)
      */
     @Override
     public <R> CompletableFuture<R> dispatchAsync(final Object command) {
-	return (CompletableFuture<R>) commandExecutorService.run(command, Object.class);
+	return (CompletableFuture<R>) commandExecutorServiceImpl.run(command, Object.class);
 
     }
 
     /*
      * (non-Javadoc)
      *
-     * @see
-     * com.byoskill.spring.cqrs.gate.api.Gate#dispatchAsync(java.lang.Object,
+     * @see com.byoskill.spring.cqrs.gate.api.Gate#dispatchAsync(java.lang.Object,
      * java.lang.Class)
      */
     @Override
     public <R> CompletableFuture<R> dispatchAsync(final Object command, final Class<R> expectedReturnType) {
-	return commandExecutorService.run(command, expectedReturnType);
+	return commandExecutorServiceImpl.run(command, expectedReturnType);
     }
 
     /*
      * (non-Javadoc)
      *
-     * @see
-     * com.byoskill.spring.cqrs.gate.api.Gate#dispatchEvent(java.lang.Object)
+     * @see com.byoskill.spring.cqrs.gate.api.Gate#dispatchEvent(java.lang.Object)
      */
     @Override
     public void dispatchEvent(final Object _event) {

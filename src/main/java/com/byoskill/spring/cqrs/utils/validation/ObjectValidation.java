@@ -1,11 +1,12 @@
 /*
- * Copyright (C) 2017 Sylvain Leroy - BYOS Company All Rights Reserved
+ * Copyright (C) 2017 Sylvain Leroy - BYOSkill Company All Rights Reserved
  * You may use, distribute and modify this code under the
  * terms of the MIT license, which unfortunately won't be
  * written for another century.
  *
  * You should have received a copy of the MIT license with
- * this file. If not, please write to: , or visit :
+ * this file. If not, please write to: sleroy at byoskill.com, or visit : www.byoskill.com
+ *
  */
 package com.byoskill.spring.cqrs.utils.validation;
 
@@ -15,7 +16,6 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import com.byoskill.spring.cqrs.api.CommandNotValidException;
 
@@ -25,7 +25,6 @@ import com.byoskill.spring.cqrs.api.CommandNotValidException;
  * @author sleroy
  *
  */
-@Component
 public class ObjectValidation {
 
     private final Validator validator;
@@ -45,7 +44,8 @@ public class ObjectValidation {
     /**
      * Checks if is valid.
      *
-     * @param _object the object
+     * @param _object
+     *            the object
      * @return true, if is valid
      */
     public boolean isValid(final Object _object) {
@@ -56,7 +56,8 @@ public class ObjectValidation {
     /**
      * Validate.
      *
-     * @param _object the object
+     * @param _object
+     *            the object
      */
     public void validate(final Object _object) {
 	final Set<ConstraintViolation<Object>> constraints = validator.validate(_object);

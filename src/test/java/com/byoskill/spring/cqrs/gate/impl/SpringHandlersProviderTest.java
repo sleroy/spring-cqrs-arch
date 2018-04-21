@@ -10,11 +10,11 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 
-import com.byoskill.spring.cqrs.api.ICommandHandler;
+import com.byoskill.spring.cqrs.api.CommandServiceSpec;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SpringHandlersProviderTest {
-    public static class FakeCommandHandler implements ICommandHandler<String, String> {
+    public static class FakeCommandHandler implements CommandServiceSpec<String, String> {
 
 	@Override
 	public String handle(final String _command) {
@@ -33,28 +33,18 @@ public class SpringHandlersProviderTest {
     private SpringHandlersProvider springHandlersProvider;
 
     @Test
-    public void testGetHandler() throws Exception {
-	initHandlers();
-	final ICommandHandler<String, String> value = new ICommandHandler<String, String>() {
+        public void testGetService() throws Exception {
+    	final CommandServiceSpec<String, String> value = new CommandServiceSpec<String, String>() {
+    
+    	    @Override
+    	    public String handle(String command) throws RuntimeException {
+    		return null;
+    	    }
+    	};
+    	springHandlersProvider.putCommand(value, BEAN);
+    
+    	Mockito.when(beanFactory.getBean(BEAN)).thenReturn(value);
+    	assertNotNull(springHandlersProvider.getService("COMMAND_AS_STRING"));
+        }
 
-	    @Override
-	    public String handle(String command) throws RuntimeException {
-		return null;
-	    }
-	};
-	springHandlersProvider.postProcessAfterInitialization(value, BEAN);
-
-	Mockito.when(beanFactory.getBean(BEAN)).thenReturn(value);
-	assertNotNull(springHandlersProvider.getHandler("COMMAND_AS_STRING"));
-    }
-
-    @Test
-    public void testOnApplicationEvent() throws Exception {
-	initHandlers();
-    }
-
-    private void initHandlers() {
-
-	springHandlersProvider.postProcessAfterInitialization(BEAN, BEAN);
-    }
 }

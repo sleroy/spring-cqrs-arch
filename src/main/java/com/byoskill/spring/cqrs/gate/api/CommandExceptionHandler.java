@@ -9,12 +9,12 @@
  */
 package com.byoskill.spring.cqrs.gate.api;
 
-public interface ICommandExceptionHandler {
+public interface CommandExceptionHandler {
 
     /**
      * Handle exception.
      *
      * @param context the context where occured the exception.
      */
-    public void handleException(ICommandExceptionContext context) throws RuntimeException;
+    public void handleException(CommandExceptionContext context) throws RuntimeException;
 }

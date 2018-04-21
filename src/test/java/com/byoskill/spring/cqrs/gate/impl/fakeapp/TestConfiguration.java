@@ -1,3 +1,13 @@
+/*
+ * Copyright (C) 2017 Sylvain Leroy - BYOSkill Company All Rights Reserved
+ * You may use, distribute and modify this code under the
+ * terms of the MIT license, which unfortunately won't be
+ * written for another century.
+ *
+ * You should have received a copy of the MIT license with
+ * this file. If not, please write to: sleroy at byoskill.com, or visit : www.byoskill.com
+ *
+ */
 package com.byoskill.spring.cqrs.gate.impl.fakeapp;
 
 import javax.validation.Validation;
@@ -5,26 +15,14 @@ import javax.validation.Validator;
 
 import org.junit.Assert;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
-import com.byoskill.spring.cqrs.api.IThrottlingInterface;
+import com.byoskill.spring.cqrs.gate.api.CommandExceptionHandler;
 import com.byoskill.spring.cqrs.gate.api.Gate;
-import com.byoskill.spring.cqrs.gate.api.ICommandExceptionHandler;
-import com.byoskill.spring.cqrs.gate.conf.CqrsConfiguration;
 import com.byoskill.spring.cqrs.gate.impl.DummyObjectCommandHandler;
 
 @Configuration
-@ComponentScan("com.byoskill")
-
 public class TestConfiguration {
-
-
-    @Bean
-    public CqrsConfiguration configuration() {
-	return new CqrsConfiguration();
-    }
-
     @Bean
     public DummyObjectCommandHandler dummyValidationHandler(final Gate gate) {
 	return new DummyObjectCommandHandler();
@@ -36,7 +34,7 @@ public class TestConfiguration {
     }
 
     @Bean
-    public ICommandExceptionHandler exceptionHandler() {
+    public CommandExceptionHandler exceptionHandler() {
 	return context -> {
 	    Assert.fail(context.getException().getMessage());
 
@@ -44,11 +42,17 @@ public class TestConfiguration {
     }
 
     @Bean
-    public IThrottlingInterface throttle() {
-	return new Throttler();
+    public RandomErrorNumberHandler randomErrorHandler(final Gate gate) {
+	return new RandomErrorNumberHandler(gate);
     }
 
-    @Bean Validator validator() {
+    @Bean
+    public RandomNumberHandler randomHandler(final Gate gate) {
+	return new RandomNumberHandler(gate);
+    }
+
+    @Bean
+    Validator validator() {
 	return Validation.buildDefaultValidatorFactory().getValidator();
     }
 

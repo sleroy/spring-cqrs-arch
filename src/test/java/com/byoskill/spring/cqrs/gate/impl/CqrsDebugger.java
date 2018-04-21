@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 import org.springframework.context.annotation.Profile;
 
 import com.byoskill.spring.cqrs.annotations.EventHandler;
-import com.byoskill.spring.cqrs.api.ICommandExecutionListener;
-import com.byoskill.spring.cqrs.gate.api.ICommandExceptionContext;
+import com.byoskill.spring.cqrs.api.CommandExecutionListener;
+import com.byoskill.spring.cqrs.gate.api.CommandExceptionContext;
 import com.google.common.eventbus.Subscribe;
 
 /**
@@ -27,7 +27,7 @@ import com.google.common.eventbus.Subscribe;
 
 @EventHandler
 @Profile({ "debug_cqrs" })
-public class CqrsDebugger implements ICommandExecutionListener {
+public class CqrsDebugger implements CommandExecutionListener {
 
     /**
      * The Class CommandResult.
@@ -227,7 +227,7 @@ public class CqrsDebugger implements ICommandExecutionListener {
      *            the cause
      */
     @Override
-    public void onFailure(final Object _command, final ICommandExceptionContext cause) {
+    public void onFailure(final Object _command, final CommandExceptionContext cause) {
 	commands.add(new CommandResult(_command, cause));
 
     }

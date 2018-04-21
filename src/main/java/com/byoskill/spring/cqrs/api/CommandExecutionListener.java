@@ -9,14 +9,14 @@
  */
 package com.byoskill.spring.cqrs.api;
 
-import com.byoskill.spring.cqrs.gate.api.ICommandExceptionContext;
+import com.byoskill.spring.cqrs.gate.api.CommandExceptionContext;
 
 /**
  * This interface defines how to implement a listener on the CQRS Module
  *
  * @author sleroy
  */
-public interface ICommandExecutionListener {
+public interface CommandExecutionListener {
 
     /**
      * Begin execution of a command.
@@ -32,7 +32,7 @@ public interface ICommandExecutionListener {
      * @param _command the command
      * @param exceptionContext the cause
      */
-    void onFailure(Object _command, ICommandExceptionContext exceptionContext);
+    void onFailure(Object _command, CommandExceptionContext exceptionContext);
 
     /**
      *  Invoked when command handling execution was successful.

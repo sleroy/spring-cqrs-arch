@@ -1,31 +1,28 @@
-/**
- * Copyright (C) 2017 Sylvain Leroy - BYOS Company All Rights Reserved
+/*
+ * Copyright (C) 2017 Sylvain Leroy - BYOSkill Company All Rights Reserved
  * You may use, distribute and modify this code under the
  * terms of the MIT license, which unfortunately won't be
  * written for another century.
  *
  * You should have received a copy of the MIT license with
- * this file. If not, please write to: contact@sylvainleroy.com, or visit : https://sylvainleroy.com
+ * this file. If not, please write to: sleroy at byoskill.com, or visit : www.byoskill.com
+ *
  */
 package com.byoskill.spring.cqrs.gate.events.guava;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Service;
 
 import com.byoskill.spring.cqrs.annotations.EventHandler;
-import com.byoskill.spring.cqrs.gate.conf.CqrsConfiguration;
+import com.byoskill.spring.cqrs.api.LoggingConfiguration;
 import com.google.common.eventbus.Subscribe;
 
-@Service
 @EventHandler
-@Profile("guava_bus")
 public class EventLoggerListener {
 
-    private static final Logger	    LOGGER = LoggerFactory.getLogger(EventLoggerListener.class);
-    private final CqrsConfiguration configuration;
+    private static final Logger	       LOGGER = LoggerFactory.getLogger(EventLoggerListener.class);
+    private final LoggingConfiguration configuration;
 
     /**
      * Instantiates a new event logger listener.
@@ -34,7 +31,7 @@ public class EventLoggerListener {
      *            the configuration
      */
     @Autowired
-    public EventLoggerListener(final CqrsConfiguration configuration) {
+    public EventLoggerListener(final LoggingConfiguration configuration) {
 	super();
 	this.configuration = configuration;
     }

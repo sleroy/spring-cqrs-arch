@@ -1,3 +1,13 @@
+/*
+ * Copyright (C) 2017 Sylvain Leroy - BYOSkill Company All Rights Reserved
+ * You may use, distribute and modify this code under the
+ * terms of the MIT license, which unfortunately won't be
+ * written for another century.
+ *
+ * You should have received a copy of the MIT license with
+ * this file. If not, please write to: sleroy at byoskill.com, or visit : www.byoskill.com
+ *
+ */
 package com.byoskill.spring.cqrs.gate.events.guava;
 
 import java.util.ArrayList;
@@ -11,7 +21,6 @@ import org.mockito.Mockito;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.PayloadApplicationEvent;
 
-import com.byoskill.spring.cqrs.gate.conf.CqrsConfiguration;
 import com.google.common.eventbus.Subscribe;
 
 public class GuavaEventBusServicAsyncTest {
@@ -40,11 +49,8 @@ public class GuavaEventBusServicAsyncTest {
 
     @Before
     public void before() {
-	final CqrsConfiguration cqrsConfiguration = new CqrsConfiguration();
 	applicationContext = Mockito.mock(ApplicationContext.class);
-	cqrsConfiguration.setAsyncEventQueries(true);
-	cqrsConfiguration.setLoggingEnabled(true);
-	guavaEventBusService = new GuavaEventBusService(cqrsConfiguration);
+	guavaEventBusService = new GuavaEventBusService(true);
 
 	guavaEventBusService.registerEventSuscriber(testEventSuscriber);
 
