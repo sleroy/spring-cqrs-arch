@@ -55,4 +55,4 @@ For the query part, I recommend a progressive approach :
 
 
 
-Credits and thanks here : (https://github.com/sleroy/spring-cqrs-arch/wiki/References-and-Credits)[Wiki]
+Credits and thanks here : [Wiki](https://github.com/sleroy/spring-cqrs-arch/wiki/References-and-Credits)
