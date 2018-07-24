@@ -1,15 +1,14 @@
-/**
- * Copyright (C) 2017 Sylvain Leroy - BYOS Company All Rights Reserved
+/*
+ * Copyright (C) 2017 Sylvain Leroy - BYOSkill Company All Rights Reserved
  * You may use, distribute and modify this code under the
  * terms of the MIT license, which unfortunately won't be
  * written for another century.
  *
  * You should have received a copy of the MIT license with
- * this file. If not, please write to: contact@sylvainleroy.com, or visit : https://sylvainleroy.com
+ * this file. If not, please write to: sleroy at byoskill.com, or visit : www.byoskill.com
+ *
  */
 package com.byoskill.spring.cqrs.api;
-
-import com.byoskill.spring.cqrs.gate.api.CommandExceptionContext;
 
 /**
  * This interface defines how to implement a listener on the CQRS Module
@@ -21,24 +20,28 @@ public interface CommandExecutionListener {
     /**
      * Begin execution of a command.
      *
-     * @param command the command
-     * @param commandHandler the command handler
+     * @param context
+     *            the command execution context
      */
-    void beginExecution(Object command, Object commandHandler);
+    void beginExecution(CommandExecutionContext context);
 
     /**
-     *  Invoked when command handling execution resulted in an error.
+     * Invoked when command handling execution resulted in an error.
      *
-     * @param _command the command
-     * @param exceptionContext the cause
+     * @param context
+     *            the command execution context
+     * @param cause
+     *            the cause
      */
-    void onFailure(Object _command, CommandExceptionContext exceptionContext);
+    void onFailure(CommandExecutionContext context, Throwable cause);
 
     /**
-     *  Invoked when command handling execution was successful.
+     * Invoked when command handling execution was successful.
      *
-     * @param _command the command
-     * @param result the result
+     * @param context
+     *            the command execution context
+     * @param result
+     *            the result
      */
-    void onSuccess(Object _command, Object result);
+    void onSuccess(CommandExecutionContext context, Object result);
 }

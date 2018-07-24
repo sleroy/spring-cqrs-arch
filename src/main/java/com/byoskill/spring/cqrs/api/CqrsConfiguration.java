@@ -12,9 +12,9 @@ package com.byoskill.spring.cqrs.api;
 
 import java.util.concurrent.ForkJoinPool;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Interface CqrsConfiguration.
+ * The Interface CqrsConfiguration defines the configuration required to boot
+ * the module.
  */
 public interface CqrsConfiguration {
 

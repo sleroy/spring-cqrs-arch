@@ -1,5 +1,12 @@
-/**
- * Copyright (C) 2017-2018 Credifix
+/*
+ * Copyright (C) 2017 Sylvain Leroy - BYOSkill Company All Rights Reserved
+ * You may use, distribute and modify this code under the
+ * terms of the MIT license, which unfortunately won't be
+ * written for another century.
+ *
+ * You should have received a copy of the MIT license with
+ * this file. If not, please write to: sleroy at byoskill.com, or visit : www.byoskill.com
+ *
  */
 package com.byoskill.spring.cqrs.gate.impl;
 
@@ -12,15 +19,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
+import com.byoskill.spring.cqrs.api.CommandExecutionContext;
 import com.byoskill.spring.cqrs.api.CommandExecutionListener;
 import com.byoskill.spring.cqrs.api.CommandServiceSpec;
-import com.byoskill.spring.cqrs.gate.api.CommandHandlerNotFoundException;
-import com.byoskill.spring.cqrs.gate.api.CommandExceptionContext;
+import com.byoskill.spring.cqrs.api.RunnerState;
 import com.byoskill.spring.cqrs.gate.api.CommandExceptionHandler;
+import com.byoskill.spring.cqrs.gate.api.CommandHandlerNotFoundException;
 import com.byoskill.spring.cqrs.gate.api.InvalidCommandException;
 import com.byoskill.spring.cqrs.utils.validation.ObjectValidation;
 
-public class CommandRunner<T, R> implements Supplier<R> {
+public class CommandRunner<T, R> implements Supplier<R>, CommandExecutionContext {
     private static final Logger LOGGER = LoggerFactory.getLogger(CommandRunner.class);
 
     private T command;
@@ -41,6 +49,8 @@ public class CommandRunner<T, R> implements Supplier<R> {
 
     private Runnable throttle = () -> {
     };
+
+    private final RunnerState runnerState = new RunnerStateImpl();
 
     /**
      * Instantiates a new command runner.
@@ -86,10 +96,10 @@ public class CommandRunner<T, R> implements Supplier<R> {
 	    result = commandServiceSpec.handle(command);
 
 	    // handle result
-	    notifyListenersSuccess(command, result);
+	    notifyListenersSuccess(result);
 	    return (R) expectedType.cast(result);
 	} catch (final Exception e) {
-	    notifyListenersFailure(command, e, commandServiceSpec);
+	    notifyListenersFailure(e, commandServiceSpec);
 
 	} finally {
 	    if (profiler != null) {
@@ -98,6 +108,26 @@ public class CommandRunner<T, R> implements Supplier<R> {
 	    MDC.remove("command");
 	}
 	return result;
+    }
+
+    @Override
+    public <T> T getCommand(final Class<T> impl) {
+	return impl.cast(command);
+    }
+
+    @Override
+    public Object getCommandHandler() {
+	return commandServiceSpec;
+    }
+
+    @Override
+    public Object getRawCommand() {
+	return command;
+    }
+
+    @Override
+    public RunnerState getRunnerState() {
+	return runnerState;
     }
 
     public void setCommand(final T command) {
@@ -168,34 +198,30 @@ public class CommandRunner<T, R> implements Supplier<R> {
     private void notifyListenersBegin() {
 	LOGGER.debug("Command {} being executed");
 	for (final CommandExecutionListener commandExecutionListener : listeners) {
-	    commandExecutionListener.beginExecution(command, commandServiceSpec);
+	    commandExecutionListener.beginExecution(this);
 	}
     }
 
     /**
      * Notify listeners failure.
      *
-     * @param command
-     *            the command
      * @param e
      *            the e
      * @param commandHandler2
      *            the command handler 2
      */
-    private void notifyListenersFailure(final T command, final Throwable e,
+    private void notifyListenersFailure(final Throwable e,
 	    final CommandServiceSpec<T, R> commandHandler2) {
 	LOGGER.debug("Command {} has failed => {}", command, e);
-	final CommandExceptionContext exceptionContext = new CommandExceptionContextImpl(command, e,
-		commandServiceSpec);
 	for (final CommandExecutionListener commandExecutionListener : listeners) {
-	    commandExecutionListener.onFailure(command, exceptionContext);
+	    commandExecutionListener.onFailure(this, e);
 	}
 	// The command exception handler may wrap exceptions or rethrow it
 	if (commandExceptionHandler.isPresent()) {
 
-	    commandExceptionHandler.get().handleException(exceptionContext);
+	    commandExceptionHandler.get().handleException(this, e);
 	} else {
-	    defaultExceptionHandler.handleException(exceptionContext);
+	    defaultExceptionHandler.handleException(this, e);
 	}
     }
 
@@ -204,13 +230,11 @@ public class CommandRunner<T, R> implements Supplier<R> {
      *
      * @param command
      *            the command
-     * @param result
-     *            the result
      */
-    private void notifyListenersSuccess(final Object command, final R result) {
+    private void notifyListenersSuccess(final Object result) {
 	LOGGER.debug("Command {} has been executed with success => {}", command, result);
 	for (final CommandExecutionListener commandExecutionListener : listeners) {
-	    commandExecutionListener.onSuccess(command, result);
+	    commandExecutionListener.onSuccess(this, result);
 	}
     }
 

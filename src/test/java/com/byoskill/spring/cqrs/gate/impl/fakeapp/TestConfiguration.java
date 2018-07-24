@@ -35,8 +35,8 @@ public class TestConfiguration {
 
     @Bean
     public CommandExceptionHandler exceptionHandler() {
-	return context -> {
-	    Assert.fail(context.getException().getMessage());
+	return (context, e) -> {
+	    Assert.fail(e.getMessage());
 
 	};
     }

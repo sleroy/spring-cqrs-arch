@@ -10,8 +10,12 @@
  */
 package com.byoskill.spring.cqrs.gate.impl;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.io.File;
 import java.io.IOException;
+import java.nio.channels.UnsupportedAddressTypeException;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -20,8 +24,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import com.byoskill.spring.cqrs.api.CommandExecutionContext;
 import com.byoskill.spring.cqrs.api.TraceConfiguration;
-import com.byoskill.spring.cqrs.gate.api.CommandExceptionContext;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CommandTraceSerializationServiceImplTest {
@@ -83,32 +87,19 @@ public class CommandTraceSerializationServiceImplTest {
 
     @Test
     public void testOnFailure() throws Exception {
-	commandTraceSerializationServiceImpl.onFailure(new FakeCommand("FIELDA"), new CommandExceptionContext() {
-
-	    @Override
-	    public Object getCommand() {
-		// TODO Auto-generated method stub
-		return null;
-	    }
-
-	    @Override
-	    public Exception getException() {
-
-		return new UnsupportedOperationException();
-	    }
-
-	    @Override
-	    public Object getHandler() {
-		// TODO Auto-generated method stub
-		return null;
-	    }
-	});
+	final FakeCommand fakeCommand = new FakeCommand("FIELDA");
+	final CommandExecutionContext commandExecutionContext = mock(CommandExecutionContext.class);
+	when(commandExecutionContext.getRawCommand()).thenReturn(fakeCommand);
+	commandTraceSerializationServiceImpl.onFailure(commandExecutionContext, new UnsupportedAddressTypeException());
 	Assert.assertFalse(commandTraceSerializationServiceImpl.hasTraces());
     }
 
     @Test
     public void testOnSuccess() throws Exception {
-	commandTraceSerializationServiceImpl.onSuccess(new FakeCommand("FIELDA"), "RESULT");
+	final FakeCommand fakeCommand = new FakeCommand("FIELDA");
+	final CommandExecutionContext commandExecutionContext = mock(CommandExecutionContext.class);
+	when(commandExecutionContext.getRawCommand()).thenReturn(fakeCommand);
+	commandTraceSerializationServiceImpl.onSuccess(commandExecutionContext, "RESULT");
 	Assert.assertFalse(commandTraceSerializationServiceImpl.hasTraces());
     }
 

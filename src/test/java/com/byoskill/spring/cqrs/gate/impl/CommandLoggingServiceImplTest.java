@@ -10,10 +10,16 @@
  */
 package com.byoskill.spring.cqrs.gate.impl;
 
+import static org.mockito.Mockito.when;
+
+import java.io.IOException;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import com.byoskill.spring.cqrs.api.CommandExecutionContext;
 import com.byoskill.spring.cqrs.gate.conf.DefaultLoggingConfiguration;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -23,12 +29,16 @@ public class CommandLoggingServiceImplTest {
 
     @Test
     public void testOnFailure() throws Exception {
-	service.onFailure("gni", null);
+	final CommandExecutionContext mock = Mockito.mock(CommandExecutionContext.class);
+	when(mock.getRawCommand()).thenReturn("EXAMPLE");
+	service.onFailure(mock, new IOException());
     }
 
     @Test
     public void testOnSuccess() throws Exception {
-	service.onSuccess("GNA", "NI");
+	final CommandExecutionContext mock = Mockito.mock(CommandExecutionContext.class);
+	when(mock.getRawCommand()).thenReturn("EXAMPLE");
+	service.onSuccess(mock, "NI");
     }
 
 }

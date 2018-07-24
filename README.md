@@ -11,6 +11,12 @@
 
 The WIKI contains the up-to-date documentation of the framework. Please check there for the configuration, the tutorial and other topics.
 
+
+* 0.8.0 : refactor the command execution listener to allow storing informations in the command runner.
+
+* 0.7.0 : Better integration with Spring Boot
+
+
 https://github.com/sleroy/spring-cqrs-arch/wiki
 
 

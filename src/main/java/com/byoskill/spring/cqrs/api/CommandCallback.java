@@ -1,5 +1,12 @@
-/**
- * Copyright (C) 2017-2018 Credifix
+/*
+ * Copyright (C) 2017 Sylvain Leroy - BYOSkill Company All Rights Reserved
+ * You may use, distribute and modify this code under the
+ * terms of the MIT license, which unfortunately won't be
+ * written for another century.
+ *
+ * You should have received a copy of the MIT license with
+ * this file. If not, please write to: sleroy at byoskill.com, or visit : www.byoskill.com
+ * 
  */
 package com.byoskill.spring.cqrs.api;
 
@@ -11,8 +18,10 @@ import java.util.concurrent.CompletableFuture;
  *
  * @author sleroy
  *
- * @param <R> returned type
+ * @param <R>
+ *            returned type
  */
+@FunctionalInterface
 public interface CommandCallback<R> {
     /**
      * Computes a result, or throws an exception if unable to do so.

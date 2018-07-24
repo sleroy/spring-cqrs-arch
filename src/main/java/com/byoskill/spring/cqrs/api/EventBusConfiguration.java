@@ -12,6 +12,7 @@ package com.byoskill.spring.cqrs.api;
 
 import com.byoskill.spring.cqrs.gate.api.EventBusService;
 
+@FunctionalInterface
 public interface EventBusConfiguration {
 
     /**

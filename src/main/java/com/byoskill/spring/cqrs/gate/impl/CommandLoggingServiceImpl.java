@@ -14,9 +14,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.byoskill.spring.cqrs.api.CommandExecutionContext;
 import com.byoskill.spring.cqrs.api.CommandExecutionListener;
 import com.byoskill.spring.cqrs.api.LoggingConfiguration;
-import com.byoskill.spring.cqrs.gate.api.CommandExceptionContext;
 
 public class CommandLoggingServiceImpl implements CommandExecutionListener {
 
@@ -37,46 +37,36 @@ public class CommandLoggingServiceImpl implements CommandExecutionListener {
     }
 
     @Override
-    public void beginExecution(final Object command, final Object commandHandler) {
+    public void beginExecution(final CommandExecutionContext commandExecutionContext) {
 	if (configuration.isLoggingEnabled()) {
-	    LOGGER.info("Command to be executed : {} with {}", command, commandHandler);
+	    LOGGER.info("Command to be executed : {} with {}", commandExecutionContext.getRawCommand(),
+		    commandExecutionContext.getCommandHandler());
 	}
 
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.byoskill.spring.cqrs.api.ICommandExecutionListener#onFailure(java.lang.
-     * Object, java.lang.Throwable)
-     */
     @Override
-    public void onFailure(final Object _command, final CommandExceptionContext _cause) {
+    public void onFailure(final CommandExecutionContext context, final Throwable cause) {
 	if (configuration.isLoggingEnabled()) {
-	    if (_cause != null) {
+	    final Object command = context.getRawCommand();
+
+	    if (cause != null) {
 		LOGGER.error("Command {} has failed with informations {} for the reason {}",
-			_command.getClass().getName(),
-			_command,
-			_cause.getException());
+			command.getClass().getName(),
+			command,
+			cause);
 	    } else {
-		LOGGER.error("Command {} with informations {} has failed.", _command.getClass().getName(), _command);
+		LOGGER.error("Command {} with informations {} has failed.", command.getClass().getName(), command);
 	    }
 	}
 
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.byoskill.spring.cqrs.api.ICommandExecutionListener#onSuccess(java.lang.
-     * Object, java.lang.Object)
-     */
     @Override
-    public void onSuccess(final Object _command, final Object _result) {
+    public void onSuccess(final CommandExecutionContext commandExecutionContext, final Object result) {
 	if (configuration.isLoggingEnabled()) {
-	    LOGGER.info("Command has been executed with success {} with the result {}", _command, _result);
+	    LOGGER.info("Command has been executed with success {} with the result {}",
+		    commandExecutionContext.getRawCommand(), result);
 	}
 
     }
