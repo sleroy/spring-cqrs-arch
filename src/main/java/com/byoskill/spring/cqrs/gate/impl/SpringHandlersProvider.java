@@ -58,27 +58,11 @@ public class SpringHandlersProvider implements CommandServiceProvider {
      *
      * @param beanFactory
      *            the bean factory
-     * @param adaptor
-     *            the adaptor
      */
     @Autowired
     public SpringHandlersProvider(final ConfigurableListableBeanFactory beanFactory) {
 	super();
 	this.beanFactory = beanFactory;
-    }
-
-    /**
-     * Gets the handled command type.
-     *
-     * @param bean
-     *            the bean
-     * @return the handled command type
-     */
-    private Class<?> getCommandServiceType(final Object bean) {
-	Validate.notNull(bean);
-	final Type[] genericInterfaces = bean.getClass().getGenericInterfaces();
-	final ParameterizedType type = findByRawType(genericInterfaces, CommandServiceSpec.class);
-	return (Class<?>) type.getActualTypeArguments()[0];
     }
 
     /*
@@ -106,6 +90,20 @@ public class SpringHandlersProvider implements CommandServiceProvider {
     @Override
     public void putCommand(final Object bean, final String beanName) {
 	handlers.put(getCommandServiceType(bean), beanName);
+    }
+
+    /**
+     * Gets the handled command type.
+     *
+     * @param bean
+     *            the bean
+     * @return the handled command type
+     */
+    private Class<?> getCommandServiceType(final Object bean) {
+	Validate.notNull(bean);
+	final Type[] genericInterfaces = bean.getClass().getGenericInterfaces();
+	final ParameterizedType type = findByRawType(genericInterfaces, CommandServiceSpec.class);
+	return (Class<?>) type.getActualTypeArguments()[0];
     }
 
 }

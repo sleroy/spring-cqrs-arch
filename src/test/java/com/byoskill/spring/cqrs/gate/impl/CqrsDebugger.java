@@ -17,8 +17,9 @@ import java.util.stream.Collectors;
 import org.springframework.context.annotation.Profile;
 
 import com.byoskill.spring.cqrs.annotations.EventHandler;
-import com.byoskill.spring.cqrs.api.CommandExecutionContext;
-import com.byoskill.spring.cqrs.api.CommandExecutionListener;
+import com.byoskill.spring.cqrs.executors.api.CommandExecutionContext;
+import com.byoskill.spring.cqrs.executors.api.CommandRunner;
+import com.byoskill.spring.cqrs.executors.api.CommandRunnerChain;
 import com.google.common.eventbus.Subscribe;
 
 /**
@@ -28,7 +29,7 @@ import com.google.common.eventbus.Subscribe;
 
 @EventHandler
 @Profile({ "debug_cqrs" })
-public class CqrsDebugger implements CommandExecutionListener {
+public class CqrsDebugger implements CommandRunner {
 
     /**
      * The Class CommandResult.
@@ -144,12 +145,6 @@ public class CqrsDebugger implements CommandExecutionListener {
 
     private final List<Object> events = new ArrayList<>();
 
-    @Override
-    public void beginExecution(final CommandExecutionContext context) {
-	//
-
-    }
-
     /**
      * Clear all the informations.
      */
@@ -197,6 +192,20 @@ public class CqrsDebugger implements CommandExecutionListener {
 	return events.stream().filter(it -> eventClass.isInstance(it)).count();
     }
 
+    @Override
+    public Object execute(final CommandExecutionContext context, final CommandRunnerChain chain)
+	    throws RuntimeException {
+	Object execute = null;
+	try {
+	    execute = chain.execute(context);
+	    commands.add(new CommandResult(context.getRawCommand(), execute));
+	} catch (final Exception e) {
+	    commands.add(new CommandResult(context.getRawCommand(), e));
+	}
+
+	return execute;
+    }
+
     /**
      * Count events.
      *
@@ -217,18 +226,6 @@ public class CqrsDebugger implements CommandExecutionListener {
     public int getSize() {
 
 	return commands.size();
-    }
-
-    @Override
-    public void onFailure(final CommandExecutionContext context, final Throwable cause) {
-	commands.add(new CommandResult(context.getRawCommand(), cause));
-
-    }
-
-    @Override
-    public void onSuccess(final CommandExecutionContext context, final Object result) {
-	commands.add(new CommandResult(context.getRawCommand(), result));
-
     }
 
     @Subscribe

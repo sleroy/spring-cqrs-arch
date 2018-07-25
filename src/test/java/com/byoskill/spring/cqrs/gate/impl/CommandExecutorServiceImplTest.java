@@ -12,8 +12,9 @@ package com.byoskill.spring.cqrs.gate.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-import java.util.Optional;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
@@ -26,14 +27,12 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import com.byoskill.spring.cqrs.api.CommandExecutionListener;
-import com.byoskill.spring.cqrs.api.CommandProfilingService;
 import com.byoskill.spring.cqrs.api.CommandServiceProvider;
 import com.byoskill.spring.cqrs.api.CommandServiceSpec;
-import com.byoskill.spring.cqrs.api.ThrottlingInterface;
-import com.byoskill.spring.cqrs.gate.api.CommandExceptionHandler;
 import com.byoskill.spring.cqrs.gate.conf.DefaultLoggingConfiguration;
 import com.byoskill.spring.cqrs.utils.validation.ObjectValidation;
+import com.byoskill.spring.cqrs.workflow.impl.CommandRunnerWorkflow;
+import com.byoskill.spring.cqrs.workflow.impl.CommandRunnerWorkflowService;
 
 public class CommandExecutorServiceImplTest {
 
@@ -47,16 +46,14 @@ public class CommandExecutorServiceImplTest {
     private DefaultLoggingConfiguration	configuration;
     private CommandServiceProvider	handlersProvider;
 
-    private CommandProfilingService profilingService;
-
     private CommandExecutorServiceImpl service;
-
-    private ThrottlingInterface throttlin;
 
     private final ObjectValidation validator = new ObjectValidation(
 	    Validation.buildDefaultValidatorFactory().getValidator());
 
     ThreadPoolTaskExecutor tpool;
+
+    private CommandRunnerWorkflowService workflowService;
 
     public void after() {
 
@@ -68,12 +65,13 @@ public class CommandExecutorServiceImplTest {
 
 	configuration = new DefaultLoggingConfiguration();
 	handlersProvider = Mockito.mock(CommandServiceProvider.class);
-	profilingService = Mockito.mock(CommandProfilingService.class);
-	throttlin = Mockito.mock(ThrottlingInterface.class);
+	workflowService = mock(CommandRunnerWorkflowService.class);
 	tpool = new ThreadPoolTaskExecutor();
-	service = new CommandExecutorServiceImpl(configuration, handlersProvider, new CommandExecutionListener[0],
-		profilingService,
-		Optional.<CommandExceptionHandler>empty(), validator, throttlin, ForkJoinPool.commonPool());
+	service = new CommandExecutorServiceImpl(configuration, handlersProvider, validator, workflowService,
+		ForkJoinPool.commonPool());
+
+	when(workflowService.getRunnerWorkflow()).thenReturn(new CommandRunnerWorkflow());
+
 	tpool.initialize();
 
     }

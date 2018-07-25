@@ -8,7 +8,7 @@
  * this file. If not, please write to: sleroy at byoskill.com, or visit : www.byoskill.com
  *
  */
-package com.byoskill.spring.cqrs.gate.events.guava;
+package com.byoskill.spring.cqrs.events.guava;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -41,8 +41,8 @@ public class GuavaEventBusService implements ApplicationContextAware, EventBusSe
     /**
      * Instantiates a new guava event bus service.
      *
-     * @param cqrsConfiguration
-     *            the cqrs configuration
+     * @param asyncExecution
+     *            the async execution
      */
     public GuavaEventBusService(final boolean asyncExecution) {
 	if (asyncExecution) {
@@ -63,19 +63,11 @@ public class GuavaEventBusService implements ApplicationContextAware, EventBusSe
 	}
     }
 
-    private void lookingForEventSuscriberBeans() {
-	final Map<String, Object> beansWithAnnotation = applicationContext.getBeansWithAnnotation(EventHandler.class);
-	for (final Entry<String, Object> beanEntry : beansWithAnnotation.entrySet()) {
-	    final String beanId = beanEntry.getKey();
-	    LOGGER.info("Registering an new event handler {}", beanId);
-	    final Object bean = beanEntry.getValue();
-	    registerEventSuscriber(bean);
-
-	}
-    }
-
-    /* (non-Javadoc)
-     * @see org.springframework.context.ApplicationEventPublisher#publishEvent(org.springframework.context.ApplicationEvent)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.springframework.context.ApplicationEventPublisher#publishEvent(org.
+     * springframework.context.ApplicationEvent)
      */
     @Override
     public void publishEvent(final ApplicationEvent event) {
@@ -85,7 +77,7 @@ public class GuavaEventBusService implements ApplicationContextAware, EventBusSe
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.springframework.context.ApplicationEventPublisher#publishEvent(java.lang.
      * Object)
@@ -112,6 +104,17 @@ public class GuavaEventBusService implements ApplicationContextAware, EventBusSe
 
 	lookingForEventSuscriberBeans();
 
+    }
+
+    private void lookingForEventSuscriberBeans() {
+	final Map<String, Object> beansWithAnnotation = applicationContext.getBeansWithAnnotation(EventHandler.class);
+	for (final Entry<String, Object> beanEntry : beansWithAnnotation.entrySet()) {
+	    final String beanId = beanEntry.getKey();
+	    LOGGER.info("Registering an new event handler {}", beanId);
+	    final Object bean = beanEntry.getValue();
+	    registerEventSuscriber(bean);
+
+	}
     }
 
 }

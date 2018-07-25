@@ -11,7 +11,6 @@
 package com.byoskill.spring.cqrs.gate.impl;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
@@ -23,15 +22,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import com.byoskill.spring.cqrs.annotations.Throttle;
-import com.byoskill.spring.cqrs.api.CommandExecutionListener;
-import com.byoskill.spring.cqrs.api.CommandProfilingService;
 import com.byoskill.spring.cqrs.api.CommandServiceProvider;
 import com.byoskill.spring.cqrs.api.CommandServiceSpec;
 import com.byoskill.spring.cqrs.api.LoggingConfiguration;
-import com.byoskill.spring.cqrs.api.ThrottlingInterface;
-import com.byoskill.spring.cqrs.gate.api.CommandExceptionHandler;
+import com.byoskill.spring.cqrs.executors.api.CommandRunnerChain;
+import com.byoskill.spring.cqrs.executors.impl.BootstrapRunner;
+import com.byoskill.spring.cqrs.executors.impl.DefaultCommandRunner;
 import com.byoskill.spring.cqrs.utils.validation.ObjectValidation;
+import com.byoskill.spring.cqrs.workflow.impl.CommandRunnerWorkflow;
+import com.byoskill.spring.cqrs.workflow.impl.CommandRunnerWorkflowService;
 
 /**
  * This class prepares the command to be executed. It can override the default
@@ -44,23 +43,15 @@ public class CommandExecutorServiceImpl {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CommandExecutorServiceImpl.class);
 
-    private final Optional<CommandExceptionHandler> commandExceptionHandler;
-
     private final LoggingConfiguration configuration;
-
-    private final DefaultExceptionHandler defaultExceptionHandler;
 
     private final CommandServiceProvider handlersProvider;
 
-    private final CommandExecutionListener[] listeners;
-
     private final ObjectValidation objectValidation;
-
-    private final CommandProfilingService profilingService;
 
     private final ForkJoinPool threadPool;
 
-    private final ThrottlingInterface throttlingInterface;
+    private final CommandRunnerWorkflowService commandWorkflowService;
 
     /**
      * Instantiates a new sequential command executor service.
@@ -69,35 +60,24 @@ public class CommandExecutorServiceImpl {
      *            the logging configuration
      * @param handlersProvider
      *            the handlers provider
-     * @param listeners
-     *            the listeners
-     * @param profilingService
-     *            the profiling service
-     * @param commandExceptionHandler
-     *            the command exception handler
      * @param objectValidation
      *            the object validation
-     * @param throttlingInterface
-     *            the throttling interface
+     * @param commandWorkflowService
+     *            the command workflow service
      * @param threadPoolTaskExecutor
      *            the thread pool task executor
      */
     @Autowired
     public CommandExecutorServiceImpl(final LoggingConfiguration configuration,
 	    final CommandServiceProvider handlersProvider,
-	    final CommandExecutionListener[] listeners, final CommandProfilingService profilingService,
-	    final Optional<CommandExceptionHandler> commandExceptionHandler, final ObjectValidation objectValidation,
-	    final ThrottlingInterface throttlingInterface,
+	    final ObjectValidation objectValidation,
+	    final CommandRunnerWorkflowService commandWorkflowService,
 	    @Qualifier("cqrs-executor") final ForkJoinPool threadPoolTaskExecutor) {
 	super();
 	this.configuration = configuration;
 	this.handlersProvider = handlersProvider;
-	this.listeners = listeners;
-	this.profilingService = profilingService;
-	this.commandExceptionHandler = commandExceptionHandler;
-	this.throttlingInterface = throttlingInterface;
+	this.commandWorkflowService = commandWorkflowService;
 	threadPool = threadPoolTaskExecutor;
-	defaultExceptionHandler = new DefaultExceptionHandler();
 	this.objectValidation = objectValidation;
 
     }
@@ -130,35 +110,15 @@ public class CommandExecutorServiceImpl {
 	final CommandServiceSpec<?, ?> handler = handlersProvider.getService(command);
 	LOGGER.debug("Lauching the command {} with the expected type {}", command, expectedType);
 
-	final CommandRunner commandRunner = new CommandRunner(handler, objectValidation, expectedType);
-	commandRunner.setListeners(listeners);
-	commandRunner.setCommandExceptionHandler(commandExceptionHandler);
-	commandRunner.setDefaultExceptionHandler(defaultExceptionHandler);
-	commandRunner.setCommand(command);
-
-	// You can add Your own capabilities here: dependency injection,
-	// security, transaction management, logging, profiling, spying,
-	// storing
-	// commands, etc);
-
-	// Decorate with throttling
-	final Throttle throttle = command.getClass().getAnnotation(Throttle.class);
-	if (throttle != null) {
-	    commandRunner.throttle(() -> {
-		LOGGER.debug("Requiring permit from rate limiter named {}", throttle.value());
-		throttlingInterface.acquirePermit(throttle.value());
-	    });
-	}
-
-	// Decorate with profiling
-
-	if (configuration.isProfilingEnabled()) {
-	    IProfiler profiler = null;
-	    profiler = profilingService.newProfiler(handler);
-	    commandRunner.setProfiler(profiler);
-
-	}
-	return CompletableFuture.supplyAsync(commandRunner, threadPool);
+	final DefaultCommandRunner defaultCommandRunner = new DefaultCommandRunner(handler);
+	final CommandRunnerWorkflow runnerWorkflow = commandWorkflowService.getRunnerWorkflow();
+	final CommandExecutionContextImpl commandExecutionContextImpl = new CommandExecutionContextImpl(
+		handlersProvider, command);
+	final CommandRunnerChain commandRunnerChain = runnerWorkflow.buildChain(defaultCommandRunner);
+	final BootstrapRunner bootstrap = new BootstrapRunner();
+	return CompletableFuture.supplyAsync(
+		() -> (R) bootstrap.execute(commandExecutionContextImpl, commandRunnerChain),
+		threadPool);
     }
 
 }

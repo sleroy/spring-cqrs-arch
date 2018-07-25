@@ -8,14 +8,13 @@
  * this file. If not, please write to: sleroy at byoskill.com, or visit : www.byoskill.com
  *
  */
-package com.byoskill.spring.cqrs.gate.impl;
+package com.byoskill.spring.cqrs.executors.tracing;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.channels.UnsupportedAddressTypeException;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -24,11 +23,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.byoskill.spring.cqrs.api.CommandExecutionContext;
 import com.byoskill.spring.cqrs.api.TraceConfiguration;
+import com.byoskill.spring.cqrs.executors.api.CommandExecutionContext;
+import com.byoskill.spring.cqrs.executors.api.CommandRunnerChain;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CommandTraceSerializationServiceImplTest {
+public class CommandTraceRunnerTest {
 
     static class FakeCommand {
 	private String field;
@@ -47,11 +47,11 @@ public class CommandTraceSerializationServiceImplTest {
 	}
     }
 
-    private CommandTraceSerializationServiceImpl commandTraceSerializationServiceImpl;
+    private CommandTraceRunner commandTraceRunner;
 
     @After
     public void after() {
-	commandTraceSerializationServiceImpl.shutdown();
+	commandTraceRunner.shutdown();
     }
 
     @Before
@@ -80,7 +80,7 @@ public class CommandTraceSerializationServiceImplTest {
 	    }
 
 	};
-	commandTraceSerializationServiceImpl = new CommandTraceSerializationServiceImpl(
+	commandTraceRunner = new CommandTraceRunner(
 		cqrsConfiguration);
 
     }
@@ -88,19 +88,24 @@ public class CommandTraceSerializationServiceImplTest {
     @Test
     public void testOnFailure() throws Exception {
 	final FakeCommand fakeCommand = new FakeCommand("FIELDA");
-	final CommandExecutionContext commandExecutionContext = mock(CommandExecutionContext.class);
-	when(commandExecutionContext.getRawCommand()).thenReturn(fakeCommand);
-	commandTraceSerializationServiceImpl.onFailure(commandExecutionContext, new UnsupportedAddressTypeException());
-	Assert.assertFalse(commandTraceSerializationServiceImpl.hasTraces());
+	final CommandExecutionContext context = mock(CommandExecutionContext.class);
+	when(context.getRawCommand()).thenReturn(fakeCommand);
+	final CommandRunnerChain commandRunnerChain = mock(CommandRunnerChain.class);
+	when(commandRunnerChain.execute(context)).thenThrow(IllegalArgumentException.class);
+	try {
+	    commandTraceRunner.execute(context, commandRunnerChain);
+	} catch (final Exception e) {
+	}
+	Assert.assertFalse(commandTraceRunner.hasTraces());
     }
 
     @Test
     public void testOnSuccess() throws Exception {
 	final FakeCommand fakeCommand = new FakeCommand("FIELDA");
-	final CommandExecutionContext commandExecutionContext = mock(CommandExecutionContext.class);
-	when(commandExecutionContext.getRawCommand()).thenReturn(fakeCommand);
-	commandTraceSerializationServiceImpl.onSuccess(commandExecutionContext, "RESULT");
-	Assert.assertFalse(commandTraceSerializationServiceImpl.hasTraces());
+	final CommandExecutionContext context = mock(CommandExecutionContext.class);
+	when(context.getRawCommand()).thenReturn(fakeCommand);
+	commandTraceRunner.execute(context, mock(CommandRunnerChain.class));
+	Assert.assertFalse(commandTraceRunner.hasTraces());
     }
 
 }

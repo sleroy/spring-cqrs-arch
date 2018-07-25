@@ -19,49 +19,90 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.byoskill.spring.cqrs.api.CommandExecutionListener;
-import com.byoskill.spring.cqrs.api.CommandProfilingService;
 import com.byoskill.spring.cqrs.api.CommandServiceProvider;
 import com.byoskill.spring.cqrs.api.LoggingConfiguration;
 import com.byoskill.spring.cqrs.api.ThrottlingInterface;
 import com.byoskill.spring.cqrs.api.TraceConfiguration;
-import com.byoskill.spring.cqrs.gate.api.CommandExceptionHandler;
+import com.byoskill.spring.cqrs.executors.exception.DefaultExceptionHandlerRunner;
+import com.byoskill.spring.cqrs.executors.logging.CommandLoggingRunner;
+import com.byoskill.spring.cqrs.executors.profiling.CommandProfilingRunner;
+import com.byoskill.spring.cqrs.executors.throttling.CommandThrottlingRunner;
+import com.byoskill.spring.cqrs.executors.tracing.CommandTraceRunner;
+import com.byoskill.spring.cqrs.executors.validating.CommandValidatingRunner;
 import com.byoskill.spring.cqrs.gate.api.EventBusService;
 import com.byoskill.spring.cqrs.gate.impl.CommandExecutorServiceImpl;
-import com.byoskill.spring.cqrs.gate.impl.CommandLoggingServiceImpl;
-import com.byoskill.spring.cqrs.gate.impl.CommandProfilingServiceImpl;
-import com.byoskill.spring.cqrs.gate.impl.CommandTraceSerializationServiceImpl;
 import com.byoskill.spring.cqrs.gate.impl.SpringGate;
 import com.byoskill.spring.cqrs.gate.impl.SpringHandlersProvider;
 import com.byoskill.spring.cqrs.utils.validation.ObjectValidation;
+import com.byoskill.spring.cqrs.workflow.api.CommandRunningWorkflowConfigurer;
+import com.byoskill.spring.cqrs.workflow.impl.CommandRunnerWorkflowService;
 
 @Configuration
 public class CqrsInjectionConfiguration {
 
+    /**
+     * Command executor service impl.
+     *
+     * @param configuration
+     *            the configuration
+     * @param handlersProvider
+     *            the handlers provider
+     * @param objectValidation
+     *            the object validation
+     * @param commandWorkflowService
+     *            the command workflow service
+     * @param threadPoolTaskExecutor
+     *            the thread pool task executor
+     * @return the command executor service impl
+     */
     @Bean
     public CommandExecutorServiceImpl commandExecutorServiceImpl(final LoggingConfiguration configuration,
-	    final CommandServiceProvider handlersProvider, final CommandExecutionListener[] listeners,
-	    final CommandProfilingService profilingService,
-	    final Optional<CommandExceptionHandler> commandExceptionHandler,
-	    final ObjectValidation objectValidation, final ThrottlingInterface throttlingInterface,
-	    final ForkJoinPool threadPoolTaskExecutor) {
-	return new CommandExecutorServiceImpl(configuration, handlersProvider, listeners, profilingService,
-		commandExceptionHandler, objectValidation, throttlingInterface, threadPoolTaskExecutor);
+	    final CommandServiceProvider handlersProvider, final ObjectValidation objectValidation,
+	    final CommandRunnerWorkflowService commandWorkflowService, final ForkJoinPool threadPoolTaskExecutor) {
+	return new CommandExecutorServiceImpl(configuration, handlersProvider, objectValidation, commandWorkflowService,
+		threadPoolTaskExecutor);
     }
 
     @Bean
-    public CommandLoggingServiceImpl commandLoggingServiceImpl(final LoggingConfiguration configuration) {
-	return new CommandLoggingServiceImpl(configuration);
+    public CommandLoggingRunner commandLoggingRunner(final LoggingConfiguration configuration) {
+	return new CommandLoggingRunner(configuration);
     }
 
     @Bean
-    public CommandProfilingService commandProfilingService(final LoggingConfiguration configuration) {
-	return new CommandProfilingServiceImpl();
+    public CommandProfilingRunner commandProfilingRunner(final LoggingConfiguration loggingConfiguration) {
+	return new CommandProfilingRunner(loggingConfiguration);
     }
 
     @Bean
-    public CommandTraceSerializationServiceImpl commandTrace(final TraceConfiguration traceConfiguration) {
-	return new CommandTraceSerializationServiceImpl(traceConfiguration);
+    public CommandThrottlingRunner commandThrottling(final ThrottlingInterface throttlingInterface) {
+	return new CommandThrottlingRunner(throttlingInterface);
+    }
+
+    @Bean
+    public CommandTraceRunner commandTrace(final TraceConfiguration traceConfiguration) {
+	return new CommandTraceRunner(traceConfiguration);
+    }
+
+    @Bean
+    public CommandValidatingRunner commandValidating(final ObjectValidation objectValidation) {
+	return new CommandValidatingRunner(objectValidation);
+    }
+
+    @Bean
+    public DefaultExceptionHandlerRunner defaultExceptionHandlerRunner() {
+	return new DefaultExceptionHandlerRunner();
+    }
+
+    @Bean
+    public CommandRunnerWorkflowService getCommandRunnerWorkflowService(
+	    final DefaultExceptionHandlerRunner defaultExceptionHandlerRunner,
+	    final CommandLoggingRunner commandLoggingRunner,
+	    final CommandProfilingRunner commandProfilingRunner, final CommandThrottlingRunner commandThrottlingRunner,
+	    final CommandTraceRunner commandTraceRunner, final CommandValidatingRunner commandValidatingRunner,
+	    final Optional<CommandRunningWorkflowConfigurer> configurer) {
+	return new CommandRunnerWorkflowService(defaultExceptionHandlerRunner, commandLoggingRunner,
+		commandProfilingRunner, commandThrottlingRunner, commandTraceRunner, commandValidatingRunner,
+		configurer);
     }
 
     @Bean

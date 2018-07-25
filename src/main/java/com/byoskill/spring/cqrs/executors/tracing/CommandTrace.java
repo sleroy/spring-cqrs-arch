@@ -1,8 +1,10 @@
-package com.byoskill.spring.cqrs.gate.impl;
+package com.byoskill.spring.cqrs.executors.tracing;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.byoskill.spring.cqrs.gate.impl.TraceCommandExecution;
 
 /**
  * The Class CommandTrace.
@@ -10,14 +12,14 @@ import java.util.List;
 public class CommandTrace implements Serializable {
 
     /** The commands. */
-    List<CommandExecution> commands = new ArrayList<>();
+    List<TraceCommandExecution> commands = new ArrayList<>();
 
     /**
      * Adds the command.
      *
      * @param _command the command
      */
-    public void addCommand(final CommandExecution _command) {
+    public void addCommand(final TraceCommandExecution _command) {
 	commands.add(_command);
     }
 
@@ -27,7 +29,7 @@ public class CommandTrace implements Serializable {
      *
      * @return the commands
      */
-    public List<CommandExecution> getCommands() {
+    public List<TraceCommandExecution> getCommands() {
 	return commands;
     }
 
@@ -36,7 +38,7 @@ public class CommandTrace implements Serializable {
      *
      * @param _commands the new commands
      */
-    public void setCommands(final List<CommandExecution> _commands) {
+    public void setCommands(final List<TraceCommandExecution> _commands) {
 	commands = _commands;
     }
 

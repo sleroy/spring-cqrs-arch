@@ -8,7 +8,7 @@
  * this file. If not, please write to: sleroy at byoskill.com, or visit : www.byoskill.com
  *
  */
-package com.byoskill.spring.cqrs.gate.events.guava;
+package com.byoskill.spring.cqrs.events.guava;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

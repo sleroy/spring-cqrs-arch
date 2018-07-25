@@ -11,27 +11,27 @@
 package com.byoskill.spring.cqrs.gate.impl;
 
 /**
- * The Class CommandExecution contains the context to be executed. Mainly the
+ * The Class TraceCommandExecution contains the context to be executed. Mainly the
  * command and the result of the execution.
  */
-public class CommandExecution {
+public class TraceCommandExecution {
 
-    public static CommandExecution failure(final Object command, final Throwable executionResult) {
+    public static TraceCommandExecution failure(final Object command, final Throwable executionResult) {
 
-	final CommandExecution commandExecution = new CommandExecution();
-	commandExecution.command = command;
-	commandExecution.result = executionResult;
-	commandExecution.executionStatus = ExecutionStatus.SUCCESS;
-	return commandExecution;
+	final TraceCommandExecution traceCommandExecution = new TraceCommandExecution();
+	traceCommandExecution.command = command;
+	traceCommandExecution.result = executionResult;
+	traceCommandExecution.executionStatus = ExecutionStatus.FAILURE;
+	return traceCommandExecution;
     }
 
-    public static CommandExecution success(final Object command, final Object executionResult) {
+    public static TraceCommandExecution success(final Object command, final Object executionResult) {
 
-	final CommandExecution commandExecution = new CommandExecution();
-	commandExecution.command = command;
-	commandExecution.result = executionResult;
-	commandExecution.executionStatus = ExecutionStatus.SUCCESS;
-	return commandExecution;
+	final TraceCommandExecution traceCommandExecution = new TraceCommandExecution();
+	traceCommandExecution.command = command;
+	traceCommandExecution.result = executionResult;
+	traceCommandExecution.executionStatus = ExecutionStatus.SUCCESS;
+	return traceCommandExecution;
     }
 
     private Object command;
@@ -42,7 +42,7 @@ public class CommandExecution {
 
     private Object result;
 
-    public CommandExecution() {
+    public TraceCommandExecution() {
 	super();
     }
 

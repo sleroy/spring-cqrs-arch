@@ -9,7 +9,7 @@
  *
  */
 
-package com.byoskill.spring.cqrs.gate.impl;
+package com.byoskill.spring.cqrs.executors.tracing;
 
 import java.io.IOException;
 
@@ -19,9 +19,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.byoskill.spring.cqrs.api.CommandExecutionContext;
-import com.byoskill.spring.cqrs.api.CommandExecutionListener;
 import com.byoskill.spring.cqrs.api.TraceConfiguration;
+import com.byoskill.spring.cqrs.executors.api.CommandExecutionContext;
+import com.byoskill.spring.cqrs.executors.api.CommandRunner;
+import com.byoskill.spring.cqrs.executors.api.CommandRunnerChain;
+import com.byoskill.spring.cqrs.gate.impl.TraceCommandExecution;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,10 +35,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @author sleroy
  *
  */
-public class CommandTraceSerializationServiceImpl implements CommandExecutionListener {
+public class CommandTraceRunner implements CommandRunner {
 
     /** The Constant LOGGER. */
-    private static final Logger LOGGER = LoggerFactory.getLogger(CommandTraceSerializationServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CommandTraceRunner.class);
 
     /** The command trace. */
     private CommandTrace commandTrace = new CommandTrace();
@@ -55,16 +57,37 @@ public class CommandTraceSerializationServiceImpl implements CommandExecutionLis
      *            the cqrs configuration
      */
     @Autowired
-    public CommandTraceSerializationServiceImpl(final TraceConfiguration traceConfiguration) {
+    public CommandTraceRunner(final TraceConfiguration traceConfiguration) {
 	this.traceConfiguration = traceConfiguration;
 	init();
 
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * com.byoskill.spring.cqrs.executors.api.CommandRunner#execute(com.byoskill.
+     * spring.cqrs.executors.api.CommandExecutionContext,
+     * com.byoskill.spring.cqrs.executors.api.CommandRunnerChain)
+     */
     @Override
-    public void beginExecution(final CommandExecutionContext context) {
-	// Nothing to do
+    public Object execute(final CommandExecutionContext context, final CommandRunnerChain chain)
+	    throws RuntimeException {
+	Object result = null;
+	try {
+	    result = chain.execute(context);
 
+	    if (traceConfiguration.isTracingEnabled()) {
+		serializeTrace(TraceCommandExecution.success(context.getRawCommand(), result));
+	    }
+	} catch (final Exception t) {
+	    if (traceConfiguration.isTracingEnabled()) {
+		serializeTrace(TraceCommandExecution.failure(context.getRawCommand(), t));
+	    }
+	    throw t;
+	}
+	return result;
     }
 
     /**
@@ -89,22 +112,6 @@ public class CommandTraceSerializationServiceImpl implements CommandExecutionLis
      */
     public boolean hasTraces() {
 	return !commandTrace.commands.isEmpty();
-    }
-
-    @Override
-    public void onFailure(final CommandExecutionContext context, final Throwable cause) {
-	if (traceConfiguration.isTracingEnabled()) {
-	    serializeTrace(CommandExecution.failure(context.getRawCommand(), cause));
-	}
-
-    }
-
-    @Override
-    public void onSuccess(final CommandExecutionContext context, final Object result) {
-	if (traceConfiguration.isTracingEnabled()) {
-	    serializeTrace(CommandExecution.success(context.getRawCommand(), result));
-	}
-
     }
 
     /**
@@ -143,7 +150,7 @@ public class CommandTraceSerializationServiceImpl implements CommandExecutionLis
      * @param _command
      *            the command
      */
-    private synchronized void serializeTrace(final CommandExecution _command) {
+    private synchronized void serializeTrace(final TraceCommandExecution _command) {
 	try {
 	    commandTrace.addCommand(_command);
 	    if (commandTrace.getCommands().size() >= traceConfiguration.getTraceSize()) {

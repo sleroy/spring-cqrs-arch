@@ -8,22 +8,21 @@
  * this file. If not, please write to: sleroy at byoskill.com, or visit : www.byoskill.com
  *
  */
-package com.byoskill.spring.cqrs.gate.api;
+package com.byoskill.spring.cqrs.executors.api;
 
-import com.byoskill.spring.cqrs.api.CommandExecutionContext;
-
-@FunctionalInterface
-public interface CommandExceptionHandler {
-
+/**
+ * The Interface CommandRunnerChain defines the component that propagates the
+ * execution to the next step of the command workflow.
+ */
+public interface CommandRunnerChain {
     /**
-     * Handle exception.
+     * Execute the command.
      *
      * @param context
-     *            the context where occured the exception.
-     * @param exception
-     *            the exception
+     *            the context
+     * @return the returned value.
      * @throws RuntimeException
-     *             the runtime exception
+     *             the exception
      */
-    public void handleException(CommandExecutionContext context, Throwable exception) throws RuntimeException;
+    Object execute(CommandExecutionContext context) throws RuntimeException;
 }

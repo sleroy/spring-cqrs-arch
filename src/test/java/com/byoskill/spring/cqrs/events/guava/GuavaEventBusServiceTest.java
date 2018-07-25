@@ -8,7 +8,7 @@
  * this file. If not, please write to: sleroy at byoskill.com, or visit : www.byoskill.com
  *
  */
-package com.byoskill.spring.cqrs.gate.events.guava;
+package com.byoskill.spring.cqrs.events.guava;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,9 +21,10 @@ import org.mockito.Mockito;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.PayloadApplicationEvent;
 
+import com.byoskill.spring.cqrs.events.guava.GuavaEventBusService;
 import com.google.common.eventbus.Subscribe;
 
-public class GuavaEventBusServicAsyncTest {
+public class GuavaEventBusServiceTest {
 
     public static class TestEventSuscriber {
 
@@ -50,8 +51,7 @@ public class GuavaEventBusServicAsyncTest {
     @Before
     public void before() {
 	applicationContext = Mockito.mock(ApplicationContext.class);
-	guavaEventBusService = new GuavaEventBusService(true);
-
+	guavaEventBusService = new GuavaEventBusService(false);
 	guavaEventBusService.registerEventSuscriber(testEventSuscriber);
 
     }
@@ -59,22 +59,12 @@ public class GuavaEventBusServicAsyncTest {
     @Test
     public final void testPublishEventApplicationEvent() {
 	guavaEventBusService.publishEvent(new PayloadApplicationEvent(this, "EVENT1"));
-	try {
-	    Thread.sleep(1000);
-	} catch (final InterruptedException e) {
-	    e.printStackTrace();
-	}
 	Assert.assertEquals(testEventSuscriber.events.size(), 1);
     }
 
     @Test
     public final void testPublishEventObject() {
 	guavaEventBusService.publishEvent("EVENT1");
-	try {
-	    Thread.sleep(1000);
-	} catch (final InterruptedException e) {
-	    e.printStackTrace();
-	}
 	Assert.assertEquals(testEventSuscriber.events.size(), 1);
 
     }
