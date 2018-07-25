@@ -103,9 +103,9 @@ public class CommandRunnerWorkflow {
     public CommandRunnerWorkflow insertAfter(final CommandRunner commandRunner, final Class<?> afterStep) {
 	final ArrayList<CommandRunner> arrayList = new ArrayList<>();
 	for (int i = 0; i < runnerSteps.size(); i++) {
-	    runnerSteps.add(runnerSteps.get(i));
+	    arrayList.add(runnerSteps.get(i));
 	    if (afterStep.isAssignableFrom(runnerSteps.get(i).getClass())) {
-		runnerSteps.add(commandRunner);
+		arrayList.add(commandRunner);
 	    }
 	}
 

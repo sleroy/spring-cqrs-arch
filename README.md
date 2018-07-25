@@ -12,6 +12,10 @@
 The WIKI contains the up-to-date documentation of the framework. Please check there for the configuration, the tutorial and other topics.
 
 
+* 1.0.1 : Fixed a bug in the insertAfter step of a Workflow
+
+
+
 * 1.0.0 : brand new concept to execute a commmand using a so-called Workflow. 
 
 
