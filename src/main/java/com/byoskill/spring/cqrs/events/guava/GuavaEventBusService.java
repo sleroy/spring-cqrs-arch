@@ -10,8 +10,6 @@
  */
 package com.byoskill.spring.cqrs.events.guava;
 
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -20,16 +18,17 @@ import javax.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
+import org.springframework.core.annotation.AnnotationUtils;
 
 import com.byoskill.spring.cqrs.annotations.EventHandler;
 import com.byoskill.spring.cqrs.gate.api.EventBusService;
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
 
-public class GuavaEventBusService implements ApplicationContextAware, EventBusService {
+public class GuavaEventBusService implements BeanPostProcessor, EventBusService {
 
     private static final Logger	LOGGER = LoggerFactory.getLogger(GuavaEventBusService.class);
     private ApplicationContext	applicationContext;
@@ -60,6 +59,19 @@ public class GuavaEventBusService implements ApplicationContextAware, EventBusSe
 	if (threadPoolTaskExecutor != null) {
 	    threadPoolTaskExecutor.shutdown();
 	}
+    }
+
+    @Override
+    public Object postProcessAfterInitialization(final Object bean, final String beanName) throws BeansException {
+	if (AnnotationUtils.findAnnotation(bean.getClass(), EventHandler.class) != null) {
+	    registerEventSuscriber(bean);
+	}
+	return bean;
+    }
+
+    @Override
+    public Object postProcessBeforeInitialization(final Object bean, final String beanName) throws BeansException {
+	return bean;
     }
 
     /*
@@ -95,25 +107,6 @@ public class GuavaEventBusService implements ApplicationContextAware, EventBusSe
      */
     public void registerEventSuscriber(final Object bean) {
 	eventBus.register(bean);
-    }
-
-    @Override
-    public void setApplicationContext(final ApplicationContext _applicationContext) throws BeansException {
-	applicationContext = _applicationContext;
-
-	lookingForEventSuscriberBeans();
-
-    }
-
-    private void lookingForEventSuscriberBeans() {
-	final Map<String, Object> beansWithAnnotation = applicationContext.getBeansWithAnnotation(EventHandler.class);
-	for (final Entry<String, Object> beanEntry : beansWithAnnotation.entrySet()) {
-	    final String beanId = beanEntry.getKey();
-	    LOGGER.info("Registering an new event handler {}", beanId);
-	    final Object bean = beanEntry.getValue();
-	    registerEventSuscriber(bean);
-
-	}
     }
 
 }
