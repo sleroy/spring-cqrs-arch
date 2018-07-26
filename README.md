@@ -12,7 +12,12 @@
 The WIKI contains the up-to-date documentation of the framework. Please check there for the configuration, the tutorial and other topics.
 
 
-* 1.0.2 : Fixed bean scopes to force singleton scopes
+* 1.0.2 : 
+
+Fixed bean scopes to force singleton scopes.
+Better exception message for failed command validation.
+Fixed a bug in the Guava Event bus service.
+
 
 * 1.0.1 : Fixed a bug in the insertAfter step of a Workflow
 

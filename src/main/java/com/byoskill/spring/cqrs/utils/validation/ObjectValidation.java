@@ -62,7 +62,7 @@ public class ObjectValidation {
     public void validate(final Object _object) {
 	final Set<ConstraintViolation<Object>> constraints = validator.validate(_object);
 	if (!constraints.isEmpty()) {
-	    throw new CommandNotValidException("Object " + _object + " + is not valid", constraints);
+	    throw new CommandNotValidException("An object cannot be validated.\n Object : " + _object, constraints);
 	}
     }
 }

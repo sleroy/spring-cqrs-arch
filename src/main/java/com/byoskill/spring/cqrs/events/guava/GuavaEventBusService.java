@@ -23,7 +23,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
-import org.springframework.context.PayloadApplicationEvent;
 
 import com.byoskill.spring.cqrs.annotations.EventHandler;
 import com.byoskill.spring.cqrs.gate.api.EventBusService;
@@ -65,7 +64,7 @@ public class GuavaEventBusService implements ApplicationContextAware, EventBusSe
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.springframework.context.ApplicationEventPublisher#publishEvent(org.
      * springframework.context.ApplicationEvent)
      */
@@ -84,7 +83,7 @@ public class GuavaEventBusService implements ApplicationContextAware, EventBusSe
      */
     @Override
     public void publishEvent(final Object event) {
-	eventBus.post(new PayloadApplicationEvent(new Exception().getStackTrace()[1], event));
+	eventBus.post(event);
 
     }
 
