@@ -1,8 +1,10 @@
 ---
 title: Introduction
 permalink: /introduction/
+layout: default
+description: "Presentation of the Framework"
 ---
-# To conceive an application using CQRS, you need to think that way :
+# To conceive an application using CQRS, you need to think this way :
 
 *  *What are my use cases* : define your use-cases expressed as operation s(READ or Write) or eventually a sequence flow diagram per use-case
   
