@@ -21,6 +21,10 @@ jacoco {
         toolVersion = '0.7.9'
 }
 
+javadoc {
+    source = sourceSets.main.allJava
+}
+
 jacocoTestReport {
         reports {
             html.enabled = true
