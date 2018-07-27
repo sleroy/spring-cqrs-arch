@@ -31,7 +31,7 @@ public class CqrsImportationSelector implements ImportSelector {
 	for (int i = 0; i < customConfiguration.length; i++) {
 	    classNames[i] = customConfiguration[i].getName();
 	}
-	classNames[classNames.length - 1] = CqrsInjectionConfiguration.class.getName();
+	classNames[classNames.length - 1] = ImportCqrsInjectionConfiguration.class.getName();
 
 	return classNames;
     }

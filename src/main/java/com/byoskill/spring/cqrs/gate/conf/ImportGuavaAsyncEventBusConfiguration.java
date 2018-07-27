@@ -20,12 +20,12 @@ import com.byoskill.spring.cqrs.events.guava.GuavaEventBusPostProcessor;
 import com.byoskill.spring.cqrs.events.guava.GuavaEventBusService;
 
 @Configuration
-public class GuavaEventBusConfiguration implements EventBusConfiguration {
+public class ImportGuavaAsyncEventBusConfiguration implements EventBusConfiguration {
 
     @Bean
     @Override
     public GuavaEventBusService eventBus() {
-	return new GuavaEventBusService(false);
+	return new GuavaEventBusService(true);
     }
 
     @Bean

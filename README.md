@@ -17,6 +17,37 @@ The WIKI contains the up-to-date documentation of the framework. Please check th
 Fixed bean scopes to force singleton scopes.
 Better exception message for failed command validation.
 Fixed a bug in the Guava Event bus service.
+Added a new interface to throw events when a command is successful or failed.
+
+```
+public interface EventThrower {
+
+    /**
+     * Event on failure.
+     *
+     * @return the event that should be thrown (null does not send event)
+     */
+    Object eventOnFailure(Throwable failure);
+
+    /**
+     * Event on success.
+     *
+     * @param result
+     *            the result
+     * @return the event that should be thrown (null does not send event)
+     */
+    Object eventOnSuccess(Object result);
+}
+```
+
+Added a new annotation to return an event rather than a value in a CommandServiceSpec
+
+```
+@CommandService
+@ReturnEventOnSuccess
+public class NotifyCrawlStatusCommandHandler
+	implements CommandServiceSpec<NotifyCrawlStatusCommand, EventCrawlStatusUpdated> {
+```
 
 
 * 1.0.1 : Fixed a bug in the insertAfter step of a Workflow

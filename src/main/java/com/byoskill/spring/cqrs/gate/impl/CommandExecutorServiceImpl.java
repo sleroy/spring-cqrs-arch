@@ -112,12 +112,11 @@ public class CommandExecutorServiceImpl {
 
 	final DefaultCommandRunner defaultCommandRunner = new DefaultCommandRunner(handler);
 	final CommandRunnerWorkflow runnerWorkflow = commandWorkflowService.getRunnerWorkflow();
-	final CommandExecutionContextImpl commandExecutionContextImpl = new CommandExecutionContextImpl(
-		handlersProvider, command);
+	final CommandExecutionContextImpl commandExecutionContext = new CommandExecutionContextImpl(handler, command);
 	final CommandRunnerChain commandRunnerChain = runnerWorkflow.buildChain(defaultCommandRunner);
 	final BootstrapRunner bootstrap = new BootstrapRunner();
 	return CompletableFuture.supplyAsync(
-		() -> (R) bootstrap.execute(commandExecutionContextImpl, commandRunnerChain),
+		() -> (R) bootstrap.execute(commandExecutionContext, commandRunnerChain),
 		threadPool);
     }
 

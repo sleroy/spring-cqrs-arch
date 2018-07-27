@@ -25,9 +25,9 @@ import com.byoskill.spring.cqrs.api.TraceConfiguration;
 import com.byoskill.spring.cqrs.gate.impl.CqrsUncaughtExceptionhandler;
 
 @Configuration
-public class DefaultCqrsConfiguration implements CqrsConfiguration {
+public class ImportDefaultCqrsConfiguration implements CqrsConfiguration {
 
-    public DefaultCqrsConfiguration() {
+    public ImportDefaultCqrsConfiguration() {
 
     }
 

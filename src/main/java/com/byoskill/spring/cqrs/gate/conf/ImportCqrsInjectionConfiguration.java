@@ -24,6 +24,7 @@ import com.byoskill.spring.cqrs.api.CommandServiceProvider;
 import com.byoskill.spring.cqrs.api.LoggingConfiguration;
 import com.byoskill.spring.cqrs.api.ThrottlingInterface;
 import com.byoskill.spring.cqrs.api.TraceConfiguration;
+import com.byoskill.spring.cqrs.executors.event.EventThrowerRunner;
 import com.byoskill.spring.cqrs.executors.exception.DefaultExceptionHandlerRunner;
 import com.byoskill.spring.cqrs.executors.logging.CommandLoggingRunner;
 import com.byoskill.spring.cqrs.executors.profiling.CommandProfilingRunner;
@@ -39,7 +40,7 @@ import com.byoskill.spring.cqrs.workflow.api.CommandRunningWorkflowConfigurer;
 import com.byoskill.spring.cqrs.workflow.impl.CommandRunnerWorkflowService;
 
 @Configuration
-public class CqrsInjectionConfiguration {
+public class ImportCqrsInjectionConfiguration {
 
     /**
      * Command executor service impl.
@@ -103,15 +104,24 @@ public class CqrsInjectionConfiguration {
 
     @Bean
     @Scope(value = ConfigurableListableBeanFactory.SCOPE_SINGLETON)
+    public EventThrowerRunner eventThrower(final EventBusService eventBusService) {
+	return new EventThrowerRunner(eventBusService);
+    }
+
+    @Bean
+    @Scope(value = ConfigurableListableBeanFactory.SCOPE_SINGLETON)
     public CommandRunnerWorkflowService getCommandRunnerWorkflowService(
 	    final DefaultExceptionHandlerRunner defaultExceptionHandlerRunner,
 	    final CommandLoggingRunner commandLoggingRunner,
-	    final CommandProfilingRunner commandProfilingRunner, final CommandThrottlingRunner commandThrottlingRunner,
-	    final CommandTraceRunner commandTraceRunner, final CommandValidatingRunner commandValidatingRunner,
-	    final Optional<CommandRunningWorkflowConfigurer> configurer) {
+	    final CommandProfilingRunner commandProfilingRunner,
+	    final CommandThrottlingRunner commandThrottlingRunner,
+	    final CommandTraceRunner commandTraceRunner,
+	    final CommandValidatingRunner commandValidatingRunner,
+	    final Optional<CommandRunningWorkflowConfigurer> configurer,
+	    final EventThrowerRunner eventThrowerRunner) {
 	return new CommandRunnerWorkflowService(defaultExceptionHandlerRunner, commandLoggingRunner,
 		commandProfilingRunner, commandThrottlingRunner, commandTraceRunner, commandValidatingRunner,
-		configurer);
+		eventThrowerRunner, configurer);
     }
 
     @Bean

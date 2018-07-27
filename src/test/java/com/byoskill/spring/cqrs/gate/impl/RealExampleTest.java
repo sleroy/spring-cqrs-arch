@@ -23,16 +23,16 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.byoskill.spring.cqrs.gate.api.Gate;
-import com.byoskill.spring.cqrs.gate.conf.CqrsInjectionConfiguration;
-import com.byoskill.spring.cqrs.gate.conf.DefaultCqrsConfiguration;
-import com.byoskill.spring.cqrs.gate.conf.GuavaEventBusConfiguration;
+import com.byoskill.spring.cqrs.gate.conf.ImportCqrsInjectionConfiguration;
+import com.byoskill.spring.cqrs.gate.conf.ImportDefaultCqrsConfiguration;
+import com.byoskill.spring.cqrs.gate.conf.ImportGuavaEventBusConfiguration;
 import com.byoskill.spring.cqrs.gate.impl.fakeapp.RandomErrorNumber;
 import com.byoskill.spring.cqrs.gate.impl.fakeapp.RandomNumber;
 import com.byoskill.spring.cqrs.gate.impl.fakeapp.TestConfiguration;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { TestConfiguration.class, DefaultCqrsConfiguration.class,
-	GuavaEventBusConfiguration.class, CqrsInjectionConfiguration.class, CommandServicePostProcessor.class })
+@ContextConfiguration(classes = { TestConfiguration.class, ImportDefaultCqrsConfiguration.class,
+	ImportGuavaEventBusConfiguration.class, ImportCqrsInjectionConfiguration.class, CommandServicePostProcessor.class })
 
 public class RealExampleTest {
 

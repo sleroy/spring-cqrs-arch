@@ -17,10 +17,10 @@ import java.lang.annotation.Target;
 
 import org.springframework.context.annotation.Import;
 
-import com.byoskill.spring.cqrs.gate.conf.CommandServiceScanningConfiguration;
+import com.byoskill.spring.cqrs.gate.conf.ImportCommandServiceScanningConfiguration;
 import com.byoskill.spring.cqrs.gate.conf.CqrsImportationSelector;
-import com.byoskill.spring.cqrs.gate.conf.DefaultCqrsConfiguration;
-import com.byoskill.spring.cqrs.gate.conf.GuavaAsyncEventBusConfiguration;
+import com.byoskill.spring.cqrs.gate.conf.ImportDefaultCqrsConfiguration;
+import com.byoskill.spring.cqrs.gate.conf.ImportGuavaAsyncEventBusConfiguration;
 
 /**
  * This interface defines that the CQRS module should be enabled.
@@ -32,6 +32,6 @@ import com.byoskill.spring.cqrs.gate.conf.GuavaAsyncEventBusConfiguration;
 @Target(ElementType.TYPE)
 @Import(CqrsImportationSelector.class)
 public @interface EnableCqrsModule {
-    Class<?>[] customConfiguration() default { DefaultCqrsConfiguration.class, GuavaAsyncEventBusConfiguration.class,
-	    CommandServiceScanningConfiguration.class };
+    Class<?>[] customConfiguration() default { ImportDefaultCqrsConfiguration.class, ImportGuavaAsyncEventBusConfiguration.class,
+	    ImportCommandServiceScanningConfiguration.class };
 }

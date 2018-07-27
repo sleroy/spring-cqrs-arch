@@ -17,7 +17,7 @@ import com.byoskill.spring.cqrs.api.CommandServiceProvider;
 import com.byoskill.spring.cqrs.gate.impl.CommandServicePostProcessor;
 
 @Configuration
-public class CommandServiceScanningConfiguration {
+public class ImportCommandServiceScanningConfiguration {
 
     @Bean
     public CommandServicePostProcessor processor(final CommandServiceProvider commandServiceProvider) {

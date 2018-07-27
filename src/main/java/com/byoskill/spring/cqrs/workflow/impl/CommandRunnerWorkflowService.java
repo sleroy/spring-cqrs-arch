@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.byoskill.spring.cqrs.executors.api.CommandRunner;
+import com.byoskill.spring.cqrs.executors.event.EventThrowerRunner;
 import com.byoskill.spring.cqrs.executors.exception.DefaultExceptionHandlerRunner;
 import com.byoskill.spring.cqrs.executors.logging.CommandLoggingRunner;
 import com.byoskill.spring.cqrs.executors.profiling.CommandProfilingRunner;
@@ -43,29 +44,15 @@ public class CommandRunnerWorkflowService {
     private final CommandRunnerWorkflow	defaultWorkflow;
     private CommandRunnerWorkflow	runnerWorkflow;
 
-    /**
-     * Instantiates a new command running workflow.
-     *
-     * @param defaultExceptionHandlerRunner
-     *            the default exception handler runner
-     * @param commandLoggingRunner
-     *            the command logging runner
-     * @param commandProfilingRunner
-     *            the command profiling runner
-     * @param commandThrottlingRunner
-     *            the command throttling runner
-     * @param commandTraceRunner
-     *            the command trace runner
-     * @param commandValidatingRunner
-     *            the command validating runner
-     * @param configurer
-     *            the configurer
-     */
     @Autowired
-    public CommandRunnerWorkflowService(final DefaultExceptionHandlerRunner defaultExceptionHandlerRunner,
-	    final CommandLoggingRunner commandLoggingRunner, final CommandProfilingRunner commandProfilingRunner,
-	    final CommandThrottlingRunner commandThrottlingRunner, final CommandTraceRunner commandTraceRunner,
+    public CommandRunnerWorkflowService(
+	    final DefaultExceptionHandlerRunner defaultExceptionHandlerRunner,
+	    final CommandLoggingRunner commandLoggingRunner,
+	    final CommandProfilingRunner commandProfilingRunner,
+	    final CommandThrottlingRunner commandThrottlingRunner,
+	    final CommandTraceRunner commandTraceRunner,
 	    final CommandValidatingRunner commandValidatingRunner,
+	    final EventThrowerRunner eventThrowerRunner,
 	    final Optional<CommandRunningWorkflowConfigurer> configurer) {
 	super();
 	this.defaultExceptionHandlerRunner = defaultExceptionHandlerRunner;
@@ -75,9 +62,14 @@ public class CommandRunnerWorkflowService {
 	this.commandTraceRunner = commandTraceRunner;
 	this.commandValidatingRunner = commandValidatingRunner;
 	this.configurer = configurer;
-	defaultWorkflow = new CommandRunnerWorkflow().addSteps(commandLoggingRunner, commandThrottlingRunner,
+	defaultWorkflow = new CommandRunnerWorkflow().addSteps(
+		commandLoggingRunner,
+		commandThrottlingRunner,
 		commandValidatingRunner,
-		commandProfilingRunner, commandTraceRunner, defaultExceptionHandlerRunner);
+		commandProfilingRunner,
+		commandTraceRunner,
+		eventThrowerRunner,
+		defaultExceptionHandlerRunner);
 
     }
 

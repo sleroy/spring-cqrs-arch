@@ -12,6 +12,9 @@ package com.byoskill.spring.cqrs.executors.api;
 
 import java.lang.annotation.Annotation;
 
+import com.byoskill.spring.cqrs.api.CommandServiceSpec;
+
+// TODO: Auto-generated Javadoc
 /**
  * The Interface CommandExecutionContext.
  */
@@ -45,5 +48,12 @@ public interface CommandExecutionContext {
      * @return the raw command
      */
     Object getRawCommand();
+
+    /**
+     * Handler.
+     *
+     * @return the command service spec
+     */
+    CommandServiceSpec handler();
 
 }

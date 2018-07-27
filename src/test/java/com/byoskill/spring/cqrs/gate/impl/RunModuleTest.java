@@ -25,14 +25,14 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.byoskill.spring.cqrs.gate.api.CommandHandlerNotFoundException;
 import com.byoskill.spring.cqrs.gate.api.Gate;
-import com.byoskill.spring.cqrs.gate.conf.CqrsInjectionConfiguration;
-import com.byoskill.spring.cqrs.gate.conf.DefaultCqrsConfiguration;
-import com.byoskill.spring.cqrs.gate.conf.GuavaAsyncEventBusConfiguration;
+import com.byoskill.spring.cqrs.gate.conf.ImportCqrsInjectionConfiguration;
+import com.byoskill.spring.cqrs.gate.conf.ImportDefaultCqrsConfiguration;
+import com.byoskill.spring.cqrs.gate.conf.ImportGuavaAsyncEventBusConfiguration;
 import com.byoskill.spring.cqrs.gate.impl.fakeapp.TestConfiguration;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = { TestConfiguration.class, DefaultCqrsConfiguration.class,
-	GuavaAsyncEventBusConfiguration.class, CqrsInjectionConfiguration.class, CommandServicePostProcessor.class })
+@ContextConfiguration(classes = { TestConfiguration.class, ImportDefaultCqrsConfiguration.class,
+	ImportGuavaAsyncEventBusConfiguration.class, ImportCqrsInjectionConfiguration.class, CommandServicePostProcessor.class })
 public class RunModuleTest {
 
     @Autowired
