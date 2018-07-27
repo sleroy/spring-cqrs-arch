@@ -1,3 +1,8 @@
+---
+layout: page
+title: Introduction
+permalink: /introduction/
+---
 # To conceive an application using CQRS, you need to think that way :
 
 *  *What are my use cases* : define your use-cases expressed as operation s(READ or Write) or eventually a sequence flow diagram per use-case
