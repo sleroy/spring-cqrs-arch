@@ -9,7 +9,10 @@
 
 # WIKI
 
-The WIKI contains the up-to-date documentation of the framework. Please check there for the configuration, the tutorial and other topics.
+The web site contains the documentation : 
+
+https://sleroy.github.io/spring-cqrs-arch/
+
 
 
 * 1.0.2 : 
