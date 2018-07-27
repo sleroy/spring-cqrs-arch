@@ -8,31 +8,31 @@
  * this file. If not, please write to: sleroy at byoskill.com, or visit : www.byoskill.com
  *
  */
-package com.byoskill.spring.cqrs.gate.impl;
+package com.byoskill.spring.cqrs.events.guava;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 
-import com.byoskill.spring.cqrs.api.CommandServiceProvider;
-import com.byoskill.spring.cqrs.api.CommandServiceSpec;
+import com.byoskill.spring.cqrs.annotations.EventHandler;
 
-public class CommandServicePostProcessor implements BeanPostProcessor {
+public class GuavaEventBusPostProcessor implements BeanPostProcessor {
 
-    private static final Logger		 LOGGER	= LoggerFactory.getLogger(CommandServicePostProcessor.class);
-    private final CommandServiceProvider commandServiceProvider;
+    private static final Logger	       LOGGER = LoggerFactory.getLogger(GuavaEventBusPostProcessor.class);
+    private final GuavaEventBusService eventBusService;
 
     /**
      * Instantiates a new command service post processor.
      *
-     * @param commandServiceProvider
+     * @param eventBusService
      *            the command service provider
      */
     @Autowired
-    public CommandServicePostProcessor(final CommandServiceProvider commandServiceProvider) {
-	this.commandServiceProvider = commandServiceProvider;
+    public GuavaEventBusPostProcessor(final GuavaEventBusService eventBusService) {
+	this.eventBusService = eventBusService;
 
     }
 
@@ -46,9 +46,10 @@ public class CommandServicePostProcessor implements BeanPostProcessor {
      */
     @Override
     public Object postProcessAfterInitialization(final Object bean, final String beanName) throws BeansException {
-	if (bean instanceof CommandServiceSpec) {
-	    LOGGER.info("Loading an command handler {}->{}", beanName, bean);
-	    commandServiceProvider.putCommand(bean, beanName);
+	final Class<?> ultimateTargetClass = AopProxyUtils.ultimateTargetClass(bean);
+	if (ultimateTargetClass.isAnnotationPresent(EventHandler.class)) {
+	    LOGGER.info("Registering an event handler {}->{}", beanName, bean);
+	    eventBusService.registerEventSuscriber(bean);
 	}
 	return bean;
     }

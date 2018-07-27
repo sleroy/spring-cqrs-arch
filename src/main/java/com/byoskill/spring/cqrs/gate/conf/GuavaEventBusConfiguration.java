@@ -16,21 +16,25 @@ import org.springframework.context.annotation.Configuration;
 import com.byoskill.spring.cqrs.api.EventBusConfiguration;
 import com.byoskill.spring.cqrs.api.LoggingConfiguration;
 import com.byoskill.spring.cqrs.events.guava.EventLoggerListener;
+import com.byoskill.spring.cqrs.events.guava.GuavaEventBusPostProcessor;
 import com.byoskill.spring.cqrs.events.guava.GuavaEventBusService;
-import com.byoskill.spring.cqrs.gate.api.EventBusService;
 
 @Configuration
 public class GuavaEventBusConfiguration implements EventBusConfiguration {
 
     @Bean
     @Override
-    public EventBusService eventBus() {
+    public GuavaEventBusService eventBus() {
 	return new GuavaEventBusService(false);
+    }
+
+    @Bean
+    public GuavaEventBusPostProcessor eventHandlerScanner(final GuavaEventBusService eventBusService) {
+	return new GuavaEventBusPostProcessor(eventBusService);
     }
 
     @Bean
     public EventLoggerListener eventLoggerListener(final LoggingConfiguration loggingConfiguration) {
 	return new EventLoggerListener(loggingConfiguration);
     }
-
 }

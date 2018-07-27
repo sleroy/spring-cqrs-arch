@@ -14,9 +14,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.byoskill.spring.cqrs.annotations.EventHandler;
 import com.byoskill.spring.cqrs.api.LoggingConfiguration;
 import com.google.common.eventbus.Subscribe;
 
+@EventHandler
 public class EventLoggerListener {
 
     private static final Logger	       LOGGER = LoggerFactory.getLogger(EventLoggerListener.class);
