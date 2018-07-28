@@ -52,6 +52,7 @@ public class NotifyCrawlStatusCommandHandler
 	implements CommandServiceSpec<NotifyCrawlStatusCommand, EventCrawlStatusUpdated> {
 ```
 
+Allow trace configuration override.
 
 * 1.0.1 : Fixed a bug in the insertAfter step of a Workflow
 
