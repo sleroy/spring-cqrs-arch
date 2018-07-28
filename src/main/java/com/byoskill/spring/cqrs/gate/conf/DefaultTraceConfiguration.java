@@ -16,19 +16,42 @@ import com.byoskill.spring.cqrs.api.TraceConfiguration;
 
 public class DefaultTraceConfiguration implements TraceConfiguration {
 
+    private File traceFile = new File("cqrs-commands.trace");
+
+    private int traceSize = 10;
+
+    private boolean enabled = false;
+
+    public DefaultTraceConfiguration() {
+	super();
+    }
+
+    public DefaultTraceConfiguration(final File traceFile, final int traceSize, final boolean enabled) {
+	super();
+	this.traceFile = traceFile;
+	this.traceSize = traceSize;
+	this.enabled = enabled;
+    }
+
     @Override
     public File getTraceFile() {
-	return new File("cqrs-commands.trace");
+	return traceFile;
     }
 
     @Override
     public int getTraceSize() {
-	return 10;
+	return traceSize;
     }
 
     @Override
     public boolean isTracingEnabled() {
-	return false;
+	return enabled;
+    }
+
+    @Override
+    public String toString() {
+	return "DefaultTraceConfiguration [traceFile=" + traceFile + ", traceSize=" + traceSize + ", enabled=" + enabled
+		+ "]";
     }
 
 }
