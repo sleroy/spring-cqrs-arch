@@ -13,7 +13,9 @@ The web site contains the documentation :
 
 https://sleroy.github.io/spring-cqrs-arch/
 
+* 1.0.3 :
 
+Reworked the EventBusService method for easier mocking.
 
 * 1.0.2 : 
 

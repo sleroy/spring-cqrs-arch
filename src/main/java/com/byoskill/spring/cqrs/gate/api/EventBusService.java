@@ -1,21 +1,36 @@
-/**
- * Copyright (C) 2017 Sylvain Leroy - BYOS Company All Rights Reserved
+/*
+ * Copyright (C) 2017 Sylvain Leroy - BYOSkill Company All Rights Reserved
  * You may use, distribute and modify this code under the
  * terms of the MIT license, which unfortunately won't be
  * written for another century.
  *
  * You should have received a copy of the MIT license with
- * this file. If not, please write to: contact@sylvainleroy.com, or visit : https://sylvainleroy.com
+ * this file. If not, please write to: sleroy at byoskill.com, or visit : www.byoskill.com
+ *
  */
 package com.byoskill.spring.cqrs.gate.api;
 
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.PayloadApplicationEvent;
 
 /**
- * The Interface IEventBusService is a wrapper above the Spring Application Event Publisher.
+ * The Interface IEventBusService is a wrapper above the Spring Application
+ * Event Publisher.
  */
-public interface EventBusService extends ApplicationEventPublisher {
+public interface EventBusService {
 
-    //
+    /**
+     * Notify all <strong>matching</strong> listeners registered with this
+     * application of an event.
+     * <p>
+     * If the specified {@code event} is not an {@link ApplicationEvent}, it is
+     * wrapped in a {@link PayloadApplicationEvent}.
+     *
+     * @param event
+     *            the event to publish
+     * @since 4.2
+     * @see PayloadApplicationEvent
+     */
+    void publishEvent(Object event);
 
 }

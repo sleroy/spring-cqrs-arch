@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationEvent;
 import org.springframework.core.annotation.AnnotationUtils;
 
 import com.byoskill.spring.cqrs.annotations.EventHandler;
@@ -30,9 +29,9 @@ import com.google.common.eventbus.EventBus;
 
 public class GuavaEventBusService implements BeanPostProcessor, EventBusService {
 
-    private static final Logger	LOGGER = LoggerFactory.getLogger(GuavaEventBusService.class);
-    private ApplicationContext	applicationContext;
-    private EventBus		eventBus;
+    private static final Logger LOGGER = LoggerFactory.getLogger(GuavaEventBusService.class);
+    private ApplicationContext  applicationContext;
+    private EventBus            eventBus;
 
     private ExecutorService threadPoolTaskExecutor;
 
@@ -43,47 +42,35 @@ public class GuavaEventBusService implements BeanPostProcessor, EventBusService 
      *            the async execution
      */
     public GuavaEventBusService(final boolean asyncExecution) {
-	if (asyncExecution) {
-	    // The event bus should handle async event processing.
-	    threadPoolTaskExecutor = Executors.newCachedThreadPool();
-	    eventBus = new AsyncEventBus(threadPoolTaskExecutor);
-	} else {
-	    eventBus = new EventBus();
-	}
+        if (asyncExecution) {
+            // The event bus should handle async event processing.
+            threadPoolTaskExecutor = Executors.newCachedThreadPool();
+            eventBus = new AsyncEventBus(threadPoolTaskExecutor);
+        } else {
+            eventBus = new EventBus();
+        }
 
     }
 
     @PreDestroy
     public void destroy() {
-	eventBus = null;
-	if (threadPoolTaskExecutor != null) {
-	    threadPoolTaskExecutor.shutdown();
-	}
+        eventBus = null;
+        if (threadPoolTaskExecutor != null) {
+            threadPoolTaskExecutor.shutdown();
+        }
     }
 
     @Override
     public Object postProcessAfterInitialization(final Object bean, final String beanName) throws BeansException {
-	if (AnnotationUtils.findAnnotation(bean.getClass(), EventHandler.class) != null) {
-	    registerEventSuscriber(bean);
-	}
-	return bean;
+        if (AnnotationUtils.findAnnotation(bean.getClass(), EventHandler.class) != null) {
+            registerEventSuscriber(bean);
+        }
+        return bean;
     }
 
     @Override
     public Object postProcessBeforeInitialization(final Object bean, final String beanName) throws BeansException {
-	return bean;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.springframework.context.ApplicationEventPublisher#publishEvent(org.
-     * springframework.context.ApplicationEvent)
-     */
-    @Override
-    public void publishEvent(final ApplicationEvent event) {
-	eventBus.post(event);
-
+        return bean;
     }
 
     /*
@@ -95,7 +82,7 @@ public class GuavaEventBusService implements BeanPostProcessor, EventBusService 
      */
     @Override
     public void publishEvent(final Object event) {
-	eventBus.post(event);
+        eventBus.post(event);
 
     }
 
@@ -106,7 +93,7 @@ public class GuavaEventBusService implements BeanPostProcessor, EventBusService 
      *            the bean
      */
     public void registerEventSuscriber(final Object bean) {
-	eventBus.register(bean);
+        eventBus.register(bean);
     }
 
 }
