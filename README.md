@@ -13,6 +13,10 @@ The web site contains the documentation :
 
 https://sleroy.github.io/spring-cqrs-arch/
 
+* 1.0.4 :
+
+Upgrade to Guava 26.0
+
 * 1.0.3 :
 
 Reworked the EventBusService method for easier mocking.
