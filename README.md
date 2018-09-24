@@ -13,6 +13,10 @@ The web site contains the documentation :
 
 https://sleroy.github.io/spring-cqrs-arch/
 
+* 1.0.5
+
+Fix bug in insertBefore() in the Workflow Customizer bean.
+
 * 1.0.4 :
 
 Upgrade to Guava 26.0
