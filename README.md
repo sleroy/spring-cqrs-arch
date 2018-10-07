@@ -9,27 +9,13 @@
 
 # WIKI
 
-The web site contains the documentation : 
+Introduction there : https://sleroy.github.io/spring-cqrs-arch/
 
-https://sleroy.github.io/spring-cqrs-arch/
-
-* 1.0.6
-
-Added a new feature allowing to filter (and preprocess) commands before sending them to the CommandExecutor.
-
-* 1.0.5
-
-Fix bug in insertBefore() in the Workflow Customizer bean.
-
-* 1.0.4 :
-
-Upgrade to Guava 26.0
-
-* 1.0.3 :
-
-Reworked the EventBusService method for easier mocking.
-
-* 1.0.2 : 
+* Release *1.0.6*: Added a new feature allowing to filter (and preprocess) commands before sending them to the CommandExecutor.
+* Release *1.0.5*: Fix bug in insertBefore() in the Workflow Customizer bean.
+* Release *1.0.4*: Upgrade to Guava 26.0
+* Release *1.0.3*: Reworked the EventBusService method for easier mocking.
+* Release *1.0.2*:
 
 Fixed bean scopes to force singleton scopes.
 Better exception message for failed command validation.
@@ -68,13 +54,13 @@ public class NotifyCrawlStatusCommandHandler
 
 Allow trace configuration override.
 
-* 1.0.1 : Fixed a bug in the insertAfter step of a Workflow
+* Release *1.0.1*: Fixed a bug in the insertAfter step of a Workflow
 
-* 1.0.0 : brand new concept to execute a commmand using a so-called Workflow. 
+* Release *1.0.0* : brand new concept to execute a commmand using a so-called Workflow. 
 
-* 0.8.0 : refactor the command execution listener to allow storing informations in the command runner.
+* Release *0.8.0* : refactor the command execution listener to allow storing informations in the command runner.
 
-* 0.7.0 : Better integration with Spring Boot
+* Release *0.7.0* : Better integration with Spring Boot
 
 https://github.com/sleroy/spring-cqrs-arch/wiki
 
