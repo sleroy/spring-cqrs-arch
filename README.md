@@ -13,6 +13,9 @@ Introduction there : https://sleroy.github.io/spring-cqrs-arch/
 
 Documentation is there : https://github.com/sleroy/spring-cqrs-arch/wiki
 
+Changelog is there : https://github.com/sleroy/spring-cqrs-arch/wiki/Changelog
+
+For a quickstart, have a look on the page : https://github.com/sleroy/spring-cqrs-arch/wiki/Quickstart
 
 # Purpose
 
