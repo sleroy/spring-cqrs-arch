@@ -11,58 +11,7 @@
 
 Introduction there : https://sleroy.github.io/spring-cqrs-arch/
 
-* Release *1.0.6*: Added a new feature allowing to filter (and preprocess) commands before sending them to the CommandExecutor.
-* Release *1.0.5*: Fix bug in insertBefore() in the Workflow Customizer bean.
-* Release *1.0.4*: Upgrade to Guava 26.0
-* Release *1.0.3*: Reworked the EventBusService method for easier mocking.
-* Release *1.0.2*:
-
-Fixed bean scopes to force singleton scopes.
-Better exception message for failed command validation.
-Fixed a bug in the Guava Event bus service.
-Added a new interface to throw events when a command is successful or failed.
-
-```
-public interface EventThrower {
-
-    /**
-     * Event on failure.
-     *
-     * @return the event that should be thrown (null does not send event)
-     */
-    Object eventOnFailure(Throwable failure);
-
-    /**
-     * Event on success.
-     *
-     * @param result
-     *            the result
-     * @return the event that should be thrown (null does not send event)
-     */
-    Object eventOnSuccess(Object result);
-}
-```
-
-Added a new annotation to return an event rather than a value in a CommandServiceSpec
-
-```
-@CommandService
-@ReturnEventOnSuccess
-public class NotifyCrawlStatusCommandHandler
-	implements CommandServiceSpec<NotifyCrawlStatusCommand, EventCrawlStatusUpdated> {
-```
-
-Allow trace configuration override.
-
-* Release *1.0.1*: Fixed a bug in the insertAfter step of a Workflow
-
-* Release *1.0.0* : brand new concept to execute a commmand using a so-called Workflow. 
-
-* Release *0.8.0* : refactor the command execution listener to allow storing informations in the command runner.
-
-* Release *0.7.0* : Better integration with Spring Boot
-
-https://github.com/sleroy/spring-cqrs-arch/wiki
+Documentation is there : https://github.com/sleroy/spring-cqrs-arch/wiki
 
 
 # Purpose
