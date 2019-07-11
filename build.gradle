@@ -1,6 +1,6 @@
 plugins {
     id 'jacoco'
-    id 'com.github.kt3k.coveralls' version '2.8.2'
+    id 'com.github.kt3k.coveralls' version '2.8.4'
     id "com.jfrog.bintray" version "1.8.4"
 }
 
@@ -18,7 +18,7 @@ coveralls {
 
 
 jacoco {
-        toolVersion = '0.7.9'
+        toolVersion = '0.8.4'
 }
 
 javadoc {
@@ -60,12 +60,11 @@ publishing {
     publications {
         BintrayPublication(MavenPublication) {
             from components.java
-            artifact sourcesJar {
-                classifier "sources"
+            afterEvaluate {
+                artifact sourcesJar
+                artifact javadocJar
             }
-            artifact javadocJar {
-                classifier "javadoc"
-            }
+
             groupId 'com.byoskill.spring.cqrs'
             artifactId 'spring-cqrs-module'
             version project.version
@@ -93,9 +92,8 @@ bintray {
 		userOrg = user
 		licenses = ['Apache-2.0']
 		vcsUrl = 'https://github.com/bintray/gradle-bintray-plugin.git'
-		labels = ['gear', 'gore', 'gorilla']
+		labels = ['java', 'cqrs', 'spring', 'event']
 		publicDownloadNumbers = true
-		attributes= ['a': ['ay1', 'ay2'], 'b': ['bee'], c: 'cee'] //Optional package-level attributes
 		version {
 			name = project.version
 			desc = 'Module for Spring to program microservices as CQRS Architecture'
@@ -109,8 +107,6 @@ bintray {
 
 // In this section you declare where to find the dependencies of your project
 repositories {
-    // Use 'jcenter' for resolving your dependencies.
-    // You can declare any Maven/Ivy/file repository here.
     jcenter()
     maven { url "https://dl.bintray.com/tocea/spring-cqrs-arch" } 
 }
