@@ -2,6 +2,7 @@ plugins {
     id 'jacoco'
     id 'com.github.kt3k.coveralls' version '2.8.4'
     id "com.jfrog.bintray" version "1.8.4"
+    id "com.github.ben-manes.versions" version "0.21.0"
 }
 
 
@@ -114,27 +115,27 @@ repositories {
 // In this section you declare the dependencies for your production and test code
 dependencies {
     compile "org.slf4j:slf4j-api:$SLF4J_VERSION"
-    compile group: 'org.apache.commons', name: 'commons-lang3', version: COMMONS_LANG3
-	compile group: 'com.google.guava', name: 'guava', version: '23.5-jre'
-	compile group: 'javax.el', name: 'javax.el-api', version: '3.0.0'
-	compile group: 'org.glassfish', name: 'javax.el', version: '3.0.1-b08'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: COMMONS_LANG3_VERSION
+	compile group: 'com.google.guava', name: 'guava', version: GUAVA_VERSION
+	compile group: 'javax.el', name: 'javax.el-api', version: JAVAXEL_API_VERSION
+	compile group: 'org.glassfish', name: 'javax.el', version: JAVAXEL_VERSION
     
     
 	compileOnly group: 'org.springframework', name: 'spring-beans', version: SPRING_VERSION
 	compileOnly group: 'org.springframework', name: 'spring-context', version: SPRING_VERSION
-	compileOnly group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: JACKSON
-	compileOnly group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: JACKSON
-	compileOnly group: 'org.hibernate.validator', name: 'hibernate-validator', version: VALIDATOR
+	compileOnly group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: JACKSON_VERSION
+	compileOnly group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: JACKSON_VERSION
+	compileOnly group: 'org.hibernate.validator', name: 'hibernate-validator', version: VALIDATOR_VERSION
 	
 	
 	
 	testCompile group: 'org.mockito', name: 'mockito-all', version: MOCKITO	
 	testCompile group: 'org.springframework', name: 'spring-beans', version: SPRING_VERSION
 	testCompile group: 'org.springframework', name: 'spring-context', version: SPRING_VERSION
-	testCompile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: JACKSON
-	testCompile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: JACKSON
-	testCompile group: 'org.hibernate.validator', name: 'hibernate-validator', version: VALIDATOR	
-	testCompile group: 'ch.qos.logback', name: 'logback-classic', version: LOGBACK
+	testCompile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: JACKSON_VERSION
+	testCompile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: JACKSON_VERSION
+	testCompile group: 'org.hibernate.validator', name: 'hibernate-validator', version: VALIDATOR_VERSION
+	testCompile group: 'ch.qos.logback', name: 'logback-classic', version: LOGBACK_VERSION
 
 	// https://mvnrepository.com/artifact/org.springframework/spring-test
     testCompile group: 'org.springframework', name: 'spring-test', version: SPRING_VERSION
