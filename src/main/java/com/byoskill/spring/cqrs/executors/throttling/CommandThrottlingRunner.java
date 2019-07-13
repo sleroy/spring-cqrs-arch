@@ -10,28 +10,27 @@
  */
 package com.byoskill.spring.cqrs.executors.throttling;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.byoskill.spring.cqrs.annotations.Throttle;
 import com.byoskill.spring.cqrs.api.ThrottlingInterface;
 import com.byoskill.spring.cqrs.executors.api.CommandExecutionContext;
 import com.byoskill.spring.cqrs.executors.api.CommandRunner;
 import com.byoskill.spring.cqrs.executors.api.CommandRunnerChain;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class CommandThrottlingRunner implements CommandRunner {
-    private static final Logger	      LOGGER = LoggerFactory.getLogger(CommandThrottlingRunner.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CommandThrottlingRunner.class);
     private final ThrottlingInterface throttlingInterface;
 
     @Autowired
     public CommandThrottlingRunner(final ThrottlingInterface throttlingInterface) {
-	this.throttlingInterface = throttlingInterface;
+        this.throttlingInterface = throttlingInterface;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.byoskill.spring.cqrs.executors.api.CommandRunner#execute(com.byoskill.
      * spring.cqrs.executors.api.CommandExecutionContext,
@@ -39,16 +38,16 @@ public class CommandThrottlingRunner implements CommandRunner {
      */
     @Override
     public Object execute(final CommandExecutionContext context, final CommandRunnerChain chain)
-	    throws RuntimeException {
-	Object result = null;
-	// Decorate with throttling
-	final Throttle throttle = context.getAnnotation(Throttle.class);
-	if (throttle != null) {
-	    LOGGER.debug("Requiring permit from rate limiter named {}", throttle.value());
-	    throttlingInterface.acquirePermit(throttle.value());
-	}
-	result = chain.execute(context);
+            throws RuntimeException {
+        Object result = null;
+        // Decorate with throttling
+        final Throttle throttle = context.getAnnotation(Throttle.class);
+        if (throttle != null) {
+            LOGGER.debug("Requiring permit from rate limiter named {}", throttle.value());
+            throttlingInterface.acquirePermit(throttle.value());
+        }
+        result = chain.execute(context);
 
-	return result;
+        return result;
     }
 }

@@ -10,29 +10,27 @@
  */
 package com.byoskill.spring.cqrs.gate.impl;
 
+import com.byoskill.spring.cqrs.api.CommandServiceProvider;
+import com.byoskill.spring.cqrs.api.CommandServiceSpec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 
-import com.byoskill.spring.cqrs.api.CommandServiceProvider;
-import com.byoskill.spring.cqrs.api.CommandServiceSpec;
-
 public class CommandServicePostProcessor implements BeanPostProcessor {
 
-    private static final Logger		 LOGGER	= LoggerFactory.getLogger(CommandServicePostProcessor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CommandServicePostProcessor.class);
     private final CommandServiceProvider commandServiceProvider;
 
     /**
      * Instantiates a new command service post processor.
      *
-     * @param commandServiceProvider
-     *            the command service provider
+     * @param commandServiceProvider the command service provider
      */
     @Autowired
     public CommandServicePostProcessor(final CommandServiceProvider commandServiceProvider) {
-	this.commandServiceProvider = commandServiceProvider;
+        this.commandServiceProvider = commandServiceProvider;
 
     }
 
@@ -46,11 +44,11 @@ public class CommandServicePostProcessor implements BeanPostProcessor {
      */
     @Override
     public Object postProcessAfterInitialization(final Object bean, final String beanName) throws BeansException {
-	if (bean instanceof CommandServiceSpec) {
-	    LOGGER.info("Loading an command handler {}->{}", beanName, bean);
-	    commandServiceProvider.putCommand(bean, beanName);
-	}
-	return bean;
+        if (bean instanceof CommandServiceSpec) {
+            LOGGER.info("Loading an command handler {}->{}", beanName, bean);
+            commandServiceProvider.putCommand(bean, beanName);
+        }
+        return bean;
     }
 
     /*
@@ -62,6 +60,6 @@ public class CommandServicePostProcessor implements BeanPostProcessor {
     @Override
     public Object postProcessBeforeInitialization(final Object bean, final String beanName) throws BeansException {
 
-	return bean;
+        return bean;
     }
 }

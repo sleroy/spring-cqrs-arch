@@ -9,6 +9,9 @@
  */
 package com.byoskill.spring.cqrs.gate.api;
 
+/**
+ * This interface is defining the exception context.
+ */
 public interface CommandExceptionContext {
 
     /**

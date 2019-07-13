@@ -8,7 +8,7 @@ public interface SpringGateFilters {
      * Filter a command. The command may be returned modified or not returnd
      * (optional empty) in the case the command should be excluded.
      *
-     * @param         <T> the generic type
+     * @param <T>     the generic type
      * @param command the command
      * @return the optional result of the filtering
      */

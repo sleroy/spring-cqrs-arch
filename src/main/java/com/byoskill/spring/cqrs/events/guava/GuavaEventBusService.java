@@ -62,6 +62,13 @@ public class GuavaEventBusService implements BeanPostProcessor, EventBusService 
         }
     }
 
+    /**
+     * Searches for @EventHandler annotated beans.
+     * @param bean the bean
+     * @param beanName the bean name
+     * @return the bean
+     * @throws BeansException
+     */
     @Override
     public Object postProcessAfterInitialization(final Object bean, final String beanName) throws BeansException {
         if (AnnotationUtils.findAnnotation(bean.getClass(), EventHandler.class) != null) {
@@ -89,7 +96,7 @@ public class GuavaEventBusService implements BeanPostProcessor, EventBusService 
     }
 
     /**
-     * Register event suscriber.
+     * Register an event suscriber.
      *
      * @param bean the bean
      */

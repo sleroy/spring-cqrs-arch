@@ -10,13 +10,12 @@
  */
 package com.byoskill.spring.cqrs.executors.exception;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.byoskill.spring.cqrs.executors.api.CommandExecutionContext;
 import com.byoskill.spring.cqrs.executors.api.CommandRunner;
 import com.byoskill.spring.cqrs.executors.api.CommandRunnerChain;
 import com.byoskill.spring.cqrs.gate.api.CommandExecutionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Class DefaultExceptionHandlerRunner defines the last command runner.
@@ -26,7 +25,7 @@ public class DefaultExceptionHandlerRunner implements CommandRunner {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultExceptionHandlerRunner.class);
 
     public DefaultExceptionHandlerRunner() {
-	super();
+        super();
     }
 
     /*
@@ -38,17 +37,17 @@ public class DefaultExceptionHandlerRunner implements CommandRunner {
      */
     @Override
     public Object execute(final CommandExecutionContext context, final CommandRunnerChain chain)
-	    throws RuntimeException {
-	Object result = null;
-	try {
-	    result = chain.execute(context);
+            throws RuntimeException {
+        Object result = null;
+        try {
+            result = chain.execute(context);
 
-	} catch (final Exception t) {
-	    LOGGER.error("Command={} returned an exception {}", context.getRawCommand(), t.getMessage(), t);
-	    throw new CommandExecutionException(context.getRawCommand(), t);
+        } catch (final Exception t) {
+            LOGGER.error("Command={} returned an exception {}", context.getRawCommand(), t.getMessage(), t);
+            throw new CommandExecutionException(context.getRawCommand(), t);
 
-	}
-	return result;
+        }
+        return result;
     }
 
 }

@@ -10,47 +10,45 @@
  */
 package com.byoskill.spring.cqrs.gate.impl;
 
-import java.lang.annotation.Annotation;
-
 import com.byoskill.spring.cqrs.api.CommandServiceSpec;
 import com.byoskill.spring.cqrs.executors.api.CommandExecutionContext;
 
+import java.lang.annotation.Annotation;
+
 public class CommandExecutionContextImpl implements CommandExecutionContext {
-    private final Object	     command;
+    private final Object command;
     private final CommandServiceSpec handler;
 
     /**
      * Instantiates a new command execution context contains all references to the
      * command and its service.F
      *
-     * @param handler
-     *            the command handler
-     * @param command
-     *            the command
+     * @param handler the command handler
+     * @param command the command
      */
     public CommandExecutionContextImpl(final CommandServiceSpec handler, final Object command) {
-	this.handler = handler;
-	this.command = command;
+        this.handler = handler;
+        this.command = command;
     }
 
     @Override
     public <A extends Annotation> A getAnnotation(final Class<A> annotationClass) {
-	return command.getClass().getAnnotation(annotationClass);
+        return command.getClass().getAnnotation(annotationClass);
     }
 
     @Override
     public <T> T getCommand(final Class<T> impl) {
-	return impl.cast(command);
+        return impl.cast(command);
     }
 
     @Override
     public Object getRawCommand() {
-	return command;
+        return command;
     }
 
     @Override
     public CommandServiceSpec handler() {
-	return handler;
+        return handler;
     }
 
 }

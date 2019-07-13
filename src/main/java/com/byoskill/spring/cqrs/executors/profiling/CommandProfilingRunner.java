@@ -10,28 +10,27 @@
  */
 package com.byoskill.spring.cqrs.executors.profiling;
 
-import org.apache.commons.lang3.time.StopWatch;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.byoskill.spring.cqrs.api.LoggingConfiguration;
 import com.byoskill.spring.cqrs.executors.api.CommandExecutionContext;
 import com.byoskill.spring.cqrs.executors.api.CommandRunner;
 import com.byoskill.spring.cqrs.executors.api.CommandRunnerChain;
+import org.apache.commons.lang3.time.StopWatch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * The Class CommandProfilingService is handling command execution profiling.
  */
 public class CommandProfilingRunner implements CommandRunner {
 
-    private static final Logger	       LOGGER = LoggerFactory.getLogger(CommandProfilingRunner.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CommandProfilingRunner.class);
     private final LoggingConfiguration configuration;
 
     @Autowired
     public CommandProfilingRunner(final LoggingConfiguration configuration) {
-	super();
-	this.configuration = configuration;
+        super();
+        this.configuration = configuration;
     }
 
     /*
@@ -44,25 +43,25 @@ public class CommandProfilingRunner implements CommandRunner {
      */
     @Override
     public Object execute(final CommandExecutionContext context, final CommandRunnerChain chain)
-	    throws RuntimeException {
-	if (!configuration.isProfilingEnabled()) {
-	    return chain.execute(context);
-	}
+            throws RuntimeException {
+        if (!configuration.isProfilingEnabled()) {
+            return chain.execute(context);
+        }
 
-	Object res = null;
-	final StopWatch stopWatch = new StopWatch();
-	try {
+        Object res = null;
+        final StopWatch stopWatch = new StopWatch();
+        try {
 
-	    stopWatch.start();
-	    LOGGER.debug("[PROFILING][{}] started", context.getRawCommand());
+            stopWatch.start();
+            LOGGER.debug("[PROFILING][{}] started", context.getRawCommand());
 
-	    res = chain.execute(context);
-	} finally {
-	    stopWatch.stop();
-	    LOGGER.info("[PROFILING][{}]={} ms", context.getRawCommand(), stopWatch.getTime());
+            res = chain.execute(context);
+        } finally {
+            stopWatch.stop();
+            LOGGER.info("[PROFILING][{}]={} ms", context.getRawCommand(), stopWatch.getTime());
 
-	}
-	return res;
+        }
+        return res;
     }
 
 }

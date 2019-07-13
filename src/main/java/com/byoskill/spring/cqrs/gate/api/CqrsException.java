@@ -18,7 +18,7 @@ public class CqrsException extends RuntimeException {
      * Domain exception.
      */
     public CqrsException() {
-	this("");
+        this("");
     }
 
     /**
@@ -27,7 +27,7 @@ public class CqrsException extends RuntimeException {
      * @param _message the message
      */
     public CqrsException(final String _message) {
-	this(_message, null);
+        this(_message, null);
     }
 
     /**
@@ -37,11 +37,11 @@ public class CqrsException extends RuntimeException {
      * @param _cause the cause
      */
     public CqrsException(final String _message, final Throwable _cause) {
-	super(DOMAIN_EXCEPTION + _message, _cause);
+        super(DOMAIN_EXCEPTION + _message, _cause);
     }
 
     public CqrsException(final Throwable cause) {
-	this(cause.getMessage(), cause);
+        this(cause.getMessage(), cause);
     }
 
 }

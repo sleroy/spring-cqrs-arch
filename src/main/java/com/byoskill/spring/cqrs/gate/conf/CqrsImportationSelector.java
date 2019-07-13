@@ -10,11 +10,10 @@
  */
 package com.byoskill.spring.cqrs.gate.conf;
 
+import com.byoskill.spring.cqrs.annotations.EnableCqrsModule;
 import org.springframework.context.annotation.ImportSelector;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
-
-import com.byoskill.spring.cqrs.annotations.EnableCqrsModule;
 
 /**
  * The Class CqrsImportationSelector is selecting the configuration to load for
@@ -23,16 +22,16 @@ import com.byoskill.spring.cqrs.annotations.EnableCqrsModule;
 public class CqrsImportationSelector implements ImportSelector {
     @Override
     public String[] selectImports(final AnnotationMetadata importingClassMetadata) {
-	final AnnotationAttributes attributes = AnnotationAttributes.fromMap(
-		importingClassMetadata.getAnnotationAttributes(EnableCqrsModule.class.getName(), false));
-	final Class<?>[] customConfiguration = attributes.getClassArray("customConfiguration");
-	final String[] classNames = new String[customConfiguration.length + 1];
+        final AnnotationAttributes attributes = AnnotationAttributes.fromMap(
+                importingClassMetadata.getAnnotationAttributes(EnableCqrsModule.class.getName(), false));
+        final Class<?>[] customConfiguration = attributes.getClassArray("customConfiguration");
+        final String[] classNames = new String[customConfiguration.length + 1];
 
-	for (int i = 0; i < customConfiguration.length; i++) {
-	    classNames[i] = customConfiguration[i].getName();
-	}
-	classNames[classNames.length - 1] = ImportCqrsInjectionConfiguration.class.getName();
+        for (int i = 0; i < customConfiguration.length; i++) {
+            classNames[i] = customConfiguration[i].getName();
+        }
+        classNames[classNames.length - 1] = ImportCqrsInjectionConfiguration.class.getName();
 
-	return classNames;
+        return classNames;
     }
 }

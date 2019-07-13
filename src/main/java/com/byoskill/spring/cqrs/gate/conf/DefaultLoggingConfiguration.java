@@ -12,28 +12,33 @@ package com.byoskill.spring.cqrs.gate.conf;
 
 import com.byoskill.spring.cqrs.api.LoggingConfiguration;
 
+/**
+ * The type Default logging configuration defines the defqult configuration fo the logging and profiling command runners.
+ */
 public class DefaultLoggingConfiguration implements LoggingConfiguration {
-    /** The logging enabled. */
-    private boolean loggingEnabled   = true;
+    /**
+     * The logging enabled.
+     */
+    private boolean loggingEnabled = true;
     private boolean profilingEnabled = true;
 
     @Override
     public boolean isLoggingEnabled() {
-	return loggingEnabled;
+        return loggingEnabled;
+    }
+
+    public void setLoggingEnabled(final boolean loggingEnabled) {
+        this.loggingEnabled = loggingEnabled;
     }
 
     @Override
     public boolean isProfilingEnabled() {
 
-	return profilingEnabled;
-    }
-
-    public void setLoggingEnabled(final boolean loggingEnabled) {
-	this.loggingEnabled = loggingEnabled;
+        return profilingEnabled;
     }
 
     public void setProfilingEnabled(final boolean profilingEnabled) {
-	this.profilingEnabled = profilingEnabled;
+        this.profilingEnabled = profilingEnabled;
     }
 
 }

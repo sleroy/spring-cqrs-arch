@@ -10,10 +10,9 @@
  */
 package com.byoskill.spring.cqrs.gate.conf;
 
+import com.byoskill.spring.cqrs.api.ThrottlingInterface;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.byoskill.spring.cqrs.api.ThrottlingInterface;
 
 public class DefaultThrottlingInterface implements ThrottlingInterface {
 
@@ -21,7 +20,7 @@ public class DefaultThrottlingInterface implements ThrottlingInterface {
 
     @Override
     public void acquirePermit(final String name) {
-	LOGGER.warn("CQRS Default configuration does not provide support for @Throttle annotations");
+        LOGGER.warn("CQRS Default configuration does not provide support for @Throttle annotations");
 
     }
 

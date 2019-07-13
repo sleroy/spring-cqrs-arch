@@ -18,11 +18,9 @@ public interface CommandRunnerChain {
     /**
      * Execute the command.
      *
-     * @param context
-     *            the context
+     * @param context the context
      * @return the returned value.
-     * @throws RuntimeException
-     *             the exception
+     * @throws RuntimeException the exception
      */
     Object execute(CommandExecutionContext context) throws RuntimeException;
 }

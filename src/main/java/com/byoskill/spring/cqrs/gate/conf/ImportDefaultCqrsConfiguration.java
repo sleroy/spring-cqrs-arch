@@ -10,19 +10,18 @@
  */
 package com.byoskill.spring.cqrs.gate.conf;
 
-import java.lang.Thread.UncaughtExceptionHandler;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.ForkJoinPool.ForkJoinWorkerThreadFactory;
-import java.util.concurrent.ForkJoinWorkerThread;
-
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
 import com.byoskill.spring.cqrs.api.CqrsConfiguration;
 import com.byoskill.spring.cqrs.api.LoggingConfiguration;
 import com.byoskill.spring.cqrs.api.ThrottlingInterface;
 import com.byoskill.spring.cqrs.api.TraceConfiguration;
 import com.byoskill.spring.cqrs.gate.impl.CqrsUncaughtExceptionhandler;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import java.lang.Thread.UncaughtExceptionHandler;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinPool.ForkJoinWorkerThreadFactory;
+import java.util.concurrent.ForkJoinWorkerThread;
 
 @Configuration
 public class ImportDefaultCqrsConfiguration implements CqrsConfiguration {
@@ -34,14 +33,14 @@ public class ImportDefaultCqrsConfiguration implements CqrsConfiguration {
     @Bean
     @Override
     public ForkJoinPool getForkJoinPool() {
-	final ForkJoinWorkerThreadFactory factory = pool -> {
-	    final ForkJoinWorkerThread worker = ForkJoinPool.defaultForkJoinWorkerThreadFactory.newThread(pool);
-	    worker.setName("cqrs-command-" + worker.getPoolIndex());
-	    return worker;
-	};
+        final ForkJoinWorkerThreadFactory factory = pool -> {
+            final ForkJoinWorkerThread worker = ForkJoinPool.defaultForkJoinWorkerThreadFactory.newThread(pool);
+            worker.setName("cqrs-command-" + worker.getPoolIndex());
+            return worker;
+        };
 
-	return new ForkJoinPool(Runtime.getRuntime().availableProcessors(), factory,
-		uncaughtExceptionhandler(), true);
+        return new ForkJoinPool(Runtime.getRuntime().availableProcessors(), factory,
+                uncaughtExceptionhandler(), true);
 
     }
 
@@ -49,19 +48,19 @@ public class ImportDefaultCqrsConfiguration implements CqrsConfiguration {
     @Override
     public LoggingConfiguration getLoggingConfiguration() {
 
-	return new DefaultLoggingConfiguration();
+        return new DefaultLoggingConfiguration();
     }
 
     @Bean
     @Override
     public ThrottlingInterface getThrottlingInterface() {
-	return new DefaultThrottlingInterface();
+        return new DefaultThrottlingInterface();
     }
 
     @Bean
     @Override
     public TraceConfiguration getTraceConfiguration() {
-	return new DefaultTraceConfiguration();
+        return new DefaultTraceConfiguration();
     }
 
     /*
@@ -71,6 +70,6 @@ public class ImportDefaultCqrsConfiguration implements CqrsConfiguration {
      * com.byoskill.spring.cqrs.api.CqrsConfiguration#uncaughtExceptionhandler()
      */
     public UncaughtExceptionHandler uncaughtExceptionhandler() {
-	return new CqrsUncaughtExceptionhandler();
+        return new CqrsUncaughtExceptionhandler();
     }
 }

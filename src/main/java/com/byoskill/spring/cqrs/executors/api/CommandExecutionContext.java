@@ -10,11 +10,12 @@
  */
 package com.byoskill.spring.cqrs.executors.api;
 
-import java.lang.annotation.Annotation;
-
 import com.byoskill.spring.cqrs.api.CommandServiceSpec;
 
+import java.lang.annotation.Annotation;
+
 // TODO: Auto-generated Javadoc
+
 /**
  * The Interface CommandExecutionContext.
  */
@@ -23,10 +24,8 @@ public interface CommandExecutionContext {
     /**
      * Gets the annotation.
      *
-     * @param <A>
-     *            the generic type
-     * @param annotationClass
-     *            the annotation class
+     * @param <A>             the generic type
+     * @param annotationClass the annotation class
      * @return the annotation
      */
     <A extends Annotation> A getAnnotation(Class<A> annotationClass);
@@ -34,10 +33,8 @@ public interface CommandExecutionContext {
     /**
      * Gets the command.
      *
-     * @param <T>
-     *            the generic type
-     * @param impl
-     *            the implementation class
+     * @param <T>  the generic type
+     * @param impl the implementation class
      * @return the command
      */
     <T> T getCommand(Class<T> impl);

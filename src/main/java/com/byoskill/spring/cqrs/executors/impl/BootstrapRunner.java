@@ -18,7 +18,7 @@ public class BootstrapRunner implements CommandRunner {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.byoskill.spring.cqrs.executors.api.CommandRunner#execute(com.byoskill.
      * spring.cqrs.executors.api.CommandExecutionContext,
@@ -26,7 +26,7 @@ public class BootstrapRunner implements CommandRunner {
      */
     @Override
     public Object execute(final CommandExecutionContext context, final CommandRunnerChain chain)
-	    throws RuntimeException {
-	return chain.execute(context);
+            throws RuntimeException {
+        return chain.execute(context);
     }
 }

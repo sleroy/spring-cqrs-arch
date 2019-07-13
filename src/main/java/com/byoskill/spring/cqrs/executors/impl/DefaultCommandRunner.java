@@ -10,14 +10,13 @@
  */
 package com.byoskill.spring.cqrs.executors.impl;
 
-import org.apache.commons.lang3.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.byoskill.spring.cqrs.api.CommandServiceSpec;
 import com.byoskill.spring.cqrs.executors.api.CommandExecutionContext;
 import com.byoskill.spring.cqrs.executors.api.CommandRunner;
 import com.byoskill.spring.cqrs.executors.api.CommandRunnerChain;
+import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Class DefaultCommandRunner describes the default behaviour to execute a
@@ -25,21 +24,24 @@ import com.byoskill.spring.cqrs.executors.api.CommandRunnerChain;
  */
 public class DefaultCommandRunner implements CommandRunner {
 
-    /** The Constant LOGGER. */
+    /**
+     * The Constant LOGGER.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultCommandRunner.class);
 
-    /** The command service handler. */
+    /**
+     * The command service handler.
+     */
     private final CommandServiceSpec commandServiceHandler;
 
     /**
      * Instantiates a new default command runner.
      *
-     * @param commandServiceHandler
-     *            the command service handler
+     * @param commandServiceHandler the command service handler
      */
     public DefaultCommandRunner(final CommandServiceSpec<?, ?> commandServiceHandler) {
-	super();
-	this.commandServiceHandler = commandServiceHandler;
+        super();
+        this.commandServiceHandler = commandServiceHandler;
     }
 
     /*
@@ -52,9 +54,9 @@ public class DefaultCommandRunner implements CommandRunner {
      */
     @Override
     public Object execute(final CommandExecutionContext context, final CommandRunnerChain chain)
-	    throws RuntimeException {
-	Validate.isTrue(chain == null);
-	return commandServiceHandler.handle(context.getRawCommand());
+            throws RuntimeException {
+        Validate.isTrue(chain == null);
+        return commandServiceHandler.handle(context.getRawCommand());
     }
 
 }

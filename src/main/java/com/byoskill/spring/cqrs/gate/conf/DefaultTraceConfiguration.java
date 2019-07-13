@@ -10,9 +10,9 @@
  */
 package com.byoskill.spring.cqrs.gate.conf;
 
-import java.io.File;
-
 import com.byoskill.spring.cqrs.api.TraceConfiguration;
+
+import java.io.File;
 
 public class DefaultTraceConfiguration implements TraceConfiguration {
 
@@ -23,35 +23,35 @@ public class DefaultTraceConfiguration implements TraceConfiguration {
     private boolean enabled = false;
 
     public DefaultTraceConfiguration() {
-	super();
+        super();
     }
 
     public DefaultTraceConfiguration(final File traceFile, final int traceSize, final boolean enabled) {
-	super();
-	this.traceFile = traceFile;
-	this.traceSize = traceSize;
-	this.enabled = enabled;
+        super();
+        this.traceFile = traceFile;
+        this.traceSize = traceSize;
+        this.enabled = enabled;
     }
 
     @Override
     public File getTraceFile() {
-	return traceFile;
+        return traceFile;
     }
 
     @Override
     public int getTraceSize() {
-	return traceSize;
+        return traceSize;
     }
 
     @Override
     public boolean isTracingEnabled() {
-	return enabled;
+        return enabled;
     }
 
     @Override
     public String toString() {
-	return "DefaultTraceConfiguration [traceFile=" + traceFile + ", traceSize=" + traceSize + ", enabled=" + enabled
-		+ "]";
+        return "DefaultTraceConfiguration [traceFile=" + traceFile + ", traceSize=" + traceSize + ", enabled=" + enabled
+                + "]";
     }
 
 }

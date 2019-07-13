@@ -16,66 +16,63 @@ package com.byoskill.spring.cqrs.gate.impl;
  */
 public class TraceCommandExecution {
 
+    private Object command;
+    private ExecutionStatus executionStatus;
+    private Throwable reason;
+    private Object result;
+
+    public TraceCommandExecution() {
+        super();
+    }
+
     public static TraceCommandExecution failure(final Object command, final Throwable executionResult) {
 
-	final TraceCommandExecution traceCommandExecution = new TraceCommandExecution();
-	traceCommandExecution.command = command;
-	traceCommandExecution.result = executionResult;
-	traceCommandExecution.executionStatus = ExecutionStatus.FAILURE;
-	return traceCommandExecution;
+        final TraceCommandExecution traceCommandExecution = new TraceCommandExecution();
+        traceCommandExecution.command = command;
+        traceCommandExecution.result = executionResult;
+        traceCommandExecution.executionStatus = ExecutionStatus.FAILURE;
+        return traceCommandExecution;
     }
 
     public static TraceCommandExecution success(final Object command, final Object executionResult) {
 
-	final TraceCommandExecution traceCommandExecution = new TraceCommandExecution();
-	traceCommandExecution.command = command;
-	traceCommandExecution.result = executionResult;
-	traceCommandExecution.executionStatus = ExecutionStatus.SUCCESS;
-	return traceCommandExecution;
-    }
-
-    private Object command;
-
-    private ExecutionStatus executionStatus;
-
-    private Throwable reason;
-
-    private Object result;
-
-    public TraceCommandExecution() {
-	super();
+        final TraceCommandExecution traceCommandExecution = new TraceCommandExecution();
+        traceCommandExecution.command = command;
+        traceCommandExecution.result = executionResult;
+        traceCommandExecution.executionStatus = ExecutionStatus.SUCCESS;
+        return traceCommandExecution;
     }
 
     public Object getCommand() {
-	return command;
-    }
-
-    public ExecutionStatus getExecutionStatus() {
-	return executionStatus;
-    }
-
-    public Throwable getReason() {
-	return reason;
-    }
-
-    public Object getResult() {
-	return result;
+        return command;
     }
 
     public void setCommand(final Object command) {
-	this.command = command;
+        this.command = command;
+    }
+
+    public ExecutionStatus getExecutionStatus() {
+        return executionStatus;
     }
 
     public void setExecutionStatus(final ExecutionStatus executionStatus) {
-	this.executionStatus = executionStatus;
+        this.executionStatus = executionStatus;
+    }
+
+    public Throwable getReason() {
+        return reason;
     }
 
     public void setReason(final Throwable reason) {
-	this.reason = reason;
+        this.reason = reason;
+    }
+
+    public Object getResult() {
+        return result;
     }
 
     public void setResult(final Object result) {
-	this.result = result;
+        this.result = result;
     }
 
 }

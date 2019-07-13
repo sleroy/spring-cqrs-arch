@@ -10,6 +10,14 @@
  */
 package com.byoskill.spring.cqrs.gate.impl;
 
+import com.byoskill.spring.cqrs.gate.api.EventBusService;
+import com.byoskill.spring.cqrs.gate.api.Gate;
+import com.byoskill.spring.cqrs.gate.api.InvalidCommandException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,28 +25,17 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-import javax.validation.ConstraintViolationException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.byoskill.spring.cqrs.gate.api.EventBusService;
-import com.byoskill.spring.cqrs.gate.api.Gate;
-import com.byoskill.spring.cqrs.gate.api.InvalidCommandException;
-
 /**
  * This class defines the gate where the commands are dispatched for execution.
  *
  * @author sleroy
- *
  */
 public class SpringGate implements Gate {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SpringGate.class);
 
     private final CommandExecutorServiceImpl commandExecutorServiceImpl;
-    private final EventBusService            eventBusService;
+    private final EventBusService eventBusService;
 
     private final Optional<SpringGateFilters> springGateFilters;
 
@@ -50,7 +47,7 @@ public class SpringGate implements Gate {
      */
     @Autowired
     public SpringGate(final CommandExecutorServiceImpl commandExecutorServiceImpl,
-            final EventBusService eventBusService, final Optional<SpringGateFilters> springGateFilters) {
+                      final EventBusService eventBusService, final Optional<SpringGateFilters> springGateFilters) {
         super();
         this.commandExecutorServiceImpl = commandExecutorServiceImpl;
         this.eventBusService = eventBusService;

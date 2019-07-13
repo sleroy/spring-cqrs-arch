@@ -20,13 +20,10 @@ public interface CommandRunner {
     /**
      * Execute the command.
      *
-     * @param context
-     *            the context
-     * @param chain
-     *            the chain
+     * @param context the context
+     * @param chain   the chain
      * @return the returned value.
-     * @throws RuntimeException
-     *             the runtime exception
+     * @throws RuntimeException the runtime exception
      */
     Object execute(CommandExecutionContext context, CommandRunnerChain chain) throws RuntimeException;
 }

@@ -10,16 +10,6 @@
  */
 package com.byoskill.spring.cqrs.gate.conf;
 
-import java.util.Optional;
-import java.util.concurrent.ForkJoinPool;
-
-import javax.validation.Validator;
-
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
-
 import com.byoskill.spring.cqrs.api.CommandServiceProvider;
 import com.byoskill.spring.cqrs.api.LoggingConfiguration;
 import com.byoskill.spring.cqrs.api.ThrottlingInterface;
@@ -39,6 +29,14 @@ import com.byoskill.spring.cqrs.gate.impl.SpringHandlersProvider;
 import com.byoskill.spring.cqrs.utils.validation.ObjectValidation;
 import com.byoskill.spring.cqrs.workflow.api.CommandRunningWorkflowConfigurer;
 import com.byoskill.spring.cqrs.workflow.impl.CommandRunnerWorkflowService;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
+
+import javax.validation.Validator;
+import java.util.Optional;
+import java.util.concurrent.ForkJoinPool;
 
 @Configuration
 public class ImportCqrsInjectionConfiguration {
@@ -56,8 +54,8 @@ public class ImportCqrsInjectionConfiguration {
     @Bean
     @Scope(value = ConfigurableListableBeanFactory.SCOPE_SINGLETON)
     public CommandExecutorServiceImpl commandExecutorServiceImpl(final LoggingConfiguration configuration,
-            final CommandServiceProvider handlersProvider, final ObjectValidation objectValidation,
-            final CommandRunnerWorkflowService commandWorkflowService, final ForkJoinPool threadPoolTaskExecutor) {
+                                                                 final CommandServiceProvider handlersProvider, final ObjectValidation objectValidation,
+                                                                 final CommandRunnerWorkflowService commandWorkflowService, final ForkJoinPool threadPoolTaskExecutor) {
         return new CommandExecutorServiceImpl(configuration, handlersProvider, objectValidation, commandWorkflowService,
                 threadPoolTaskExecutor);
     }
@@ -133,7 +131,7 @@ public class ImportCqrsInjectionConfiguration {
     @Bean
     @Scope(value = ConfigurableListableBeanFactory.SCOPE_SINGLETON)
     public SpringGate springGate(final CommandExecutorServiceImpl commandExecutorServiceImpl,
-            final EventBusService eventBusService, final Optional<SpringGateFilters> springFilter) {
+                                 final EventBusService eventBusService, final Optional<SpringGateFilters> springFilter) {
         return new SpringGate(commandExecutorServiceImpl, eventBusService, springFilter);
     }
 }

@@ -10,17 +10,16 @@
  */
 package com.byoskill.spring.cqrs.gate.conf;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
 import com.byoskill.spring.cqrs.api.CommandServiceProvider;
 import com.byoskill.spring.cqrs.gate.impl.CommandServicePostProcessor;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class ImportCommandServiceScanningConfiguration {
 
     @Bean
     public CommandServicePostProcessor processor(final CommandServiceProvider commandServiceProvider) {
-	return new CommandServicePostProcessor(commandServiceProvider);
+        return new CommandServicePostProcessor(commandServiceProvider);
     }
 }
