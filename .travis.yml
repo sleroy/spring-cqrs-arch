@@ -1,6 +1,6 @@
 language: java
 script: ./gradlew build jacocoTestReport
-jdk: oraclejdk8
+jdk: openjdk11
 env:
   matrix:
   - TERM=dumb
