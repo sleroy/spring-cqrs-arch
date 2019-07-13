@@ -148,9 +148,9 @@ public class CommandTraceRunner implements CommandRunner {
     }
 
     /**
-     * Serialize trace.
+     * Serialize as the trace the command being executed.
      *
-     * @param _command the command
+     * @param _command the command being executed
      */
     private synchronized void serializeTrace(final TraceCommandExecution _command) {
         try {
