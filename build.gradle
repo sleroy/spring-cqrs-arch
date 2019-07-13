@@ -119,7 +119,7 @@ dependencies {
 	compile group: 'com.google.guava', name: 'guava', version: GUAVA_VERSION
 	compile group: 'javax.el', name: 'javax.el-api', version: JAVAXEL_API_VERSION
 	compile group: 'org.glassfish', name: 'javax.el', version: JAVAXEL_VERSION
-    
+    compile 'javax.annotation:javax.annotation-api:1.3.2'
     
 	compileOnly group: 'org.springframework', name: 'spring-beans', version: SPRING_VERSION
 	compileOnly group: 'org.springframework', name: 'spring-context', version: SPRING_VERSION
