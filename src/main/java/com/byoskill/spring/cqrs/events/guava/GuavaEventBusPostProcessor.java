@@ -19,20 +19,22 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 
 import com.byoskill.spring.cqrs.annotations.EventHandler;
 
+/**
+ * This class defines a bean process that will map Spring beans with @Subscribe methods as event handlers.
+ */
 public class GuavaEventBusPostProcessor implements BeanPostProcessor {
 
-    private static final Logger	       LOGGER = LoggerFactory.getLogger(GuavaEventBusPostProcessor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GuavaEventBusPostProcessor.class);
     private final GuavaEventBusService eventBusService;
 
     /**
      * Instantiates a new command service post processor.
      *
-     * @param eventBusService
-     *            the command service provider
+     * @param eventBusService the command service provider
      */
     @Autowired
     public GuavaEventBusPostProcessor(final GuavaEventBusService eventBusService) {
-	this.eventBusService = eventBusService;
+        this.eventBusService = eventBusService;
 
     }
 
@@ -46,12 +48,12 @@ public class GuavaEventBusPostProcessor implements BeanPostProcessor {
      */
     @Override
     public Object postProcessAfterInitialization(final Object bean, final String beanName) throws BeansException {
-	final Class<?> ultimateTargetClass = AopProxyUtils.ultimateTargetClass(bean);
-	if (ultimateTargetClass.isAnnotationPresent(EventHandler.class)) {
-	    LOGGER.info("Registering an event handler {}->{}", beanName, bean);
-	    eventBusService.registerEventSuscriber(bean);
-	}
-	return bean;
+        final Class<?> ultimateTargetClass = AopProxyUtils.ultimateTargetClass(bean);
+        if (ultimateTargetClass.isAnnotationPresent(EventHandler.class)) {
+            LOGGER.info("Registering an event handler {}->{}", beanName, bean);
+            eventBusService.registerEventSuscriber(bean);
+        }
+        return bean;
     }
 
     /*
@@ -63,6 +65,6 @@ public class GuavaEventBusPostProcessor implements BeanPostProcessor {
     @Override
     public Object postProcessBeforeInitialization(final Object bean, final String beanName) throws BeansException {
 
-	return bean;
+        return bean;
     }
 }

@@ -27,19 +27,21 @@ import com.byoskill.spring.cqrs.gate.api.EventBusService;
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
 
+/**
+ * This class demonstrates how to use Guava as a simple event bus service.
+ */
 public class GuavaEventBusService implements BeanPostProcessor, EventBusService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GuavaEventBusService.class);
-    private ApplicationContext  applicationContext;
-    private EventBus            eventBus;
+    private ApplicationContext applicationContext;
+    private EventBus eventBus;
 
     private ExecutorService threadPoolTaskExecutor;
 
     /**
      * Instantiates a new guava event bus service.
      *
-     * @param asyncExecution
-     *            the async execution
+     * @param asyncExecution the async execution
      */
     public GuavaEventBusService(final boolean asyncExecution) {
         if (asyncExecution) {
@@ -89,8 +91,7 @@ public class GuavaEventBusService implements BeanPostProcessor, EventBusService 
     /**
      * Register event suscriber.
      *
-     * @param bean
-     *            the bean
+     * @param bean the bean
      */
     public void registerEventSuscriber(final Object bean) {
         eventBus.register(bean);

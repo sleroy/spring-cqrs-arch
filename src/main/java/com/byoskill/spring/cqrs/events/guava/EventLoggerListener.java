@@ -18,37 +18,39 @@ import com.byoskill.spring.cqrs.annotations.EventHandler;
 import com.byoskill.spring.cqrs.api.LoggingConfiguration;
 import com.google.common.eventbus.Subscribe;
 
+
+/**
+ * This class describes a basic event logger to display logs when an event has been fired.
+ */
 @EventHandler
 public class EventLoggerListener {
 
-    private static final Logger	       LOGGER = LoggerFactory.getLogger(EventLoggerListener.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EventLoggerListener.class);
     private final LoggingConfiguration configuration;
 
     /**
      * Instantiates a new event logger listener.
      *
-     * @param configuration
-     *            the configuration
+     * @param configuration the configuration
      */
     @Autowired
     public EventLoggerListener(final LoggingConfiguration configuration) {
-	super();
-	this.configuration = configuration;
+        super();
+        this.configuration = configuration;
     }
 
     /**
      * Triggers when a messsage is received.
      *
-     * @param _eventMessage
-     *            the event message
+     * @param _eventMessage the event message
      */
     @Subscribe
-    public void suscribe(final Object _eventMessage) {
-	if (configuration.isLoggingEnabled()) {
-	    LOGGER.info("Event sent : {} -> {}", _eventMessage.getClass(), _eventMessage);
-	} else {
-	    LOGGER.trace("Event sent : {} -> {}", _eventMessage.getClass(), _eventMessage);
-	}
+    public void subscribe(final Object _eventMessage) {
+        if (configuration.isLoggingEnabled()) {
+            LOGGER.info("Event sent : {} -> {}", _eventMessage.getClass(), _eventMessage);
+        } else {
+            LOGGER.trace("Event sent : {} -> {}", _eventMessage.getClass(), _eventMessage);
+        }
     }
 
 }
