@@ -23,8 +23,7 @@ public interface CommandRunningWorkflowConfigurer {
     /**
      * Configure workflow.
      *
-     * @param defaultWorkflow
-     *            the default workflow
+     * @param defaultWorkflow the default workflow
      * @return the runner workflow with all steps
      */
     CommandRunnerWorkflow configureWorkflow(CommandRunnerWorkflow defaultWorkflow);

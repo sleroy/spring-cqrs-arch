@@ -10,13 +10,13 @@
  */
 package com.byoskill.spring.cqrs.workflow.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import com.byoskill.spring.cqrs.executors.api.CommandRunner;
 import com.byoskill.spring.cqrs.executors.api.CommandRunnerChain;
 import com.byoskill.spring.cqrs.executors.impl.DefaultCommandRunner;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class CommandRunnerWorkflow {
 

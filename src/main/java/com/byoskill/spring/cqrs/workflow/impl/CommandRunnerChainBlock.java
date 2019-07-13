@@ -22,18 +22,16 @@ public class CommandRunnerChainBlock implements CommandRunnerChain {
     /**
      * Instantiates a new command runner chain block.
      *
-     * @param commandRunner
-     *            the command runner
-     * @param chain
-     *            the chain
+     * @param commandRunner the command runner
+     * @param chain         the chain
      */
     public CommandRunnerChainBlock(final CommandRunner commandRunner, final CommandRunnerChain chain) {
-	this.commandRunner = commandRunner;
-	this.chain = chain;
+        this.commandRunner = commandRunner;
+        this.chain = chain;
     }
 
     @Override
     public Object execute(final CommandExecutionContext context) throws RuntimeException {
-	return commandRunner.execute(context, chain);
+        return commandRunner.execute(context, chain);
     }
 }

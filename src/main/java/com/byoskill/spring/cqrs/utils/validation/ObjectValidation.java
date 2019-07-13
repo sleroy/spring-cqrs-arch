@@ -10,20 +10,17 @@
  */
 package com.byoskill.spring.cqrs.utils.validation;
 
-import java.util.Set;
+import com.byoskill.spring.cqrs.api.CommandNotValidException;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.byoskill.spring.cqrs.api.CommandNotValidException;
+import java.util.Set;
 
 /**
  * This class is used to performs manual validation of pojo.
  *
  * @author sleroy
- *
  */
 public class ObjectValidation {
 
@@ -32,37 +29,34 @@ public class ObjectValidation {
     /**
      * Instantiates a new object validation.
      *
-     * @param _validator
-     *            the validator
+     * @param _validator the validator
      */
     @Autowired
     public ObjectValidation(final Validator _validator) {
-	super();
-	validator = _validator;
+        super();
+        validator = _validator;
     }
 
     /**
      * Checks if is valid.
      *
-     * @param _object
-     *            the object
+     * @param _object the object
      * @return true, if is valid
      */
     public boolean isValid(final Object _object) {
-	final Set<ConstraintViolation<Object>> constraints = validator.validate(_object);
-	return constraints.isEmpty();
+        final Set<ConstraintViolation<Object>> constraints = validator.validate(_object);
+        return constraints.isEmpty();
     }
 
     /**
      * Validate.
      *
-     * @param _object
-     *            the object
+     * @param _object the object
      */
     public void validate(final Object _object) {
-	final Set<ConstraintViolation<Object>> constraints = validator.validate(_object);
-	if (!constraints.isEmpty()) {
-	    throw new CommandNotValidException("An object cannot be validated.\n Object : " + _object, constraints);
-	}
+        final Set<ConstraintViolation<Object>> constraints = validator.validate(_object);
+        if (!constraints.isEmpty()) {
+            throw new CommandNotValidException("An object cannot be validated.\n Object : " + _object, constraints);
+        }
     }
 }

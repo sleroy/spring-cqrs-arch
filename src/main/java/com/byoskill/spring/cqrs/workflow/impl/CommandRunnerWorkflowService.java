@@ -10,14 +10,6 @@
  */
 package com.byoskill.spring.cqrs.workflow.impl;
 
-import java.util.Optional;
-
-import javax.annotation.PostConstruct;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.byoskill.spring.cqrs.executors.api.CommandRunner;
 import com.byoskill.spring.cqrs.executors.event.EventThrowerRunner;
 import com.byoskill.spring.cqrs.executors.exception.DefaultExceptionHandlerRunner;
@@ -27,49 +19,55 @@ import com.byoskill.spring.cqrs.executors.throttling.CommandThrottlingRunner;
 import com.byoskill.spring.cqrs.executors.tracing.CommandTraceRunner;
 import com.byoskill.spring.cqrs.executors.validating.CommandValidatingRunner;
 import com.byoskill.spring.cqrs.workflow.api.CommandRunningWorkflowConfigurer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.annotation.PostConstruct;
+import java.util.Optional;
 
 public class CommandRunnerWorkflowService {
 
     private static final Logger LOGGER = LoggerFactory
-	    .getLogger(CommandRunnerWorkflowService.class);
+            .getLogger(CommandRunnerWorkflowService.class);
 
-    protected final CommandRunner			     defaultExceptionHandlerRunner;
-    protected final CommandLoggingRunner		     commandLoggingRunner;
-    protected final CommandProfilingRunner		     commandProfilingRunner;
-    protected final CommandThrottlingRunner		     commandThrottlingRunner;
-    protected final CommandTraceRunner			     commandTraceRunner;
-    protected final CommandValidatingRunner		     commandValidatingRunner;
+    protected final CommandRunner defaultExceptionHandlerRunner;
+    protected final CommandLoggingRunner commandLoggingRunner;
+    protected final CommandProfilingRunner commandProfilingRunner;
+    protected final CommandThrottlingRunner commandThrottlingRunner;
+    protected final CommandTraceRunner commandTraceRunner;
+    protected final CommandValidatingRunner commandValidatingRunner;
     private final Optional<CommandRunningWorkflowConfigurer> configurer;
 
-    private final CommandRunnerWorkflow	defaultWorkflow;
-    private CommandRunnerWorkflow	runnerWorkflow;
+    private final CommandRunnerWorkflow defaultWorkflow;
+    private CommandRunnerWorkflow runnerWorkflow;
 
     @Autowired
     public CommandRunnerWorkflowService(
-	    final DefaultExceptionHandlerRunner defaultExceptionHandlerRunner,
-	    final CommandLoggingRunner commandLoggingRunner,
-	    final CommandProfilingRunner commandProfilingRunner,
-	    final CommandThrottlingRunner commandThrottlingRunner,
-	    final CommandTraceRunner commandTraceRunner,
-	    final CommandValidatingRunner commandValidatingRunner,
-	    final EventThrowerRunner eventThrowerRunner,
-	    final Optional<CommandRunningWorkflowConfigurer> configurer) {
-	super();
-	this.defaultExceptionHandlerRunner = defaultExceptionHandlerRunner;
-	this.commandLoggingRunner = commandLoggingRunner;
-	this.commandProfilingRunner = commandProfilingRunner;
-	this.commandThrottlingRunner = commandThrottlingRunner;
-	this.commandTraceRunner = commandTraceRunner;
-	this.commandValidatingRunner = commandValidatingRunner;
-	this.configurer = configurer;
-	defaultWorkflow = new CommandRunnerWorkflow().addSteps(
-		commandLoggingRunner,
-		commandThrottlingRunner,
-		commandValidatingRunner,
-		commandProfilingRunner,
-		commandTraceRunner,
-		eventThrowerRunner,
-		defaultExceptionHandlerRunner);
+            final DefaultExceptionHandlerRunner defaultExceptionHandlerRunner,
+            final CommandLoggingRunner commandLoggingRunner,
+            final CommandProfilingRunner commandProfilingRunner,
+            final CommandThrottlingRunner commandThrottlingRunner,
+            final CommandTraceRunner commandTraceRunner,
+            final CommandValidatingRunner commandValidatingRunner,
+            final EventThrowerRunner eventThrowerRunner,
+            final Optional<CommandRunningWorkflowConfigurer> configurer) {
+        super();
+        this.defaultExceptionHandlerRunner = defaultExceptionHandlerRunner;
+        this.commandLoggingRunner = commandLoggingRunner;
+        this.commandProfilingRunner = commandProfilingRunner;
+        this.commandThrottlingRunner = commandThrottlingRunner;
+        this.commandTraceRunner = commandTraceRunner;
+        this.commandValidatingRunner = commandValidatingRunner;
+        this.configurer = configurer;
+        defaultWorkflow = new CommandRunnerWorkflow().addSteps(
+                commandLoggingRunner,
+                commandThrottlingRunner,
+                commandValidatingRunner,
+                commandProfilingRunner,
+                commandTraceRunner,
+                eventThrowerRunner,
+                defaultExceptionHandlerRunner);
 
     }
 
@@ -79,23 +77,22 @@ public class CommandRunnerWorkflowService {
      * @return the runner workflow
      */
     public CommandRunnerWorkflow getRunnerWorkflow() {
-	return runnerWorkflow;
+        return runnerWorkflow;
     }
 
     /**
      * Gets the workflow.
-     *
      */
     @PostConstruct
     public void initializeWorkflow() {
 
-	if (configurer.isPresent()) {
-	    LOGGER.info("Initializing a custom running workflow");
-	    runnerWorkflow = configurer.get().configureWorkflow(defaultWorkflow);
-	} else {
-	    LOGGER.info("Initializing a default workflow");
-	    runnerWorkflow = defaultWorkflow;
-	}
+        if (configurer.isPresent()) {
+            LOGGER.info("Initializing a custom running workflow");
+            runnerWorkflow = configurer.get().configureWorkflow(defaultWorkflow);
+        } else {
+            LOGGER.info("Initializing a default workflow");
+            runnerWorkflow = defaultWorkflow;
+        }
     }
 
 }
