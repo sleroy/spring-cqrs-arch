@@ -13,19 +13,17 @@ package com.byoskill.spring.cqrs.api;
 public interface EventThrower<C> {
 
     /**
-     * Event on failure.
+     * Event triggred in cqse of failure.
      *
-     * @param failure
-     *            the failure
+     * @param failure the failure
      * @return the event that should be thrown (null does not send event)
      */
     Object eventOnFailure(Throwable failure);
 
     /**
-     * Event on success.
+     * Event triggered on success.
      *
-     * @param result
-     *            the result
+     * @param result the result
      * @return the event that should be thrown (null does not send event)
      */
     Object eventOnSuccess(C result);

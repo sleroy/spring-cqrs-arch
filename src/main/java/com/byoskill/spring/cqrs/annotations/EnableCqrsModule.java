@@ -26,12 +26,11 @@ import com.byoskill.spring.cqrs.gate.conf.ImportGuavaAsyncEventBusConfiguration;
  * This interface defines that the CQRS module should be enabled.
  *
  * @author sleroy
- *
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Import(CqrsImportationSelector.class)
 public @interface EnableCqrsModule {
-    Class<?>[] customConfiguration() default { ImportDefaultCqrsConfiguration.class, ImportGuavaAsyncEventBusConfiguration.class,
-	    ImportCommandServiceScanningConfiguration.class };
+    Class<?>[] customConfiguration() default {ImportDefaultCqrsConfiguration.class, ImportGuavaAsyncEventBusConfiguration.class,
+            ImportCommandServiceScanningConfiguration.class};
 }

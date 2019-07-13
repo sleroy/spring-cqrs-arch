@@ -33,8 +33,7 @@ public interface CommandServiceSpec<C, R> {
     /**
      * Handle.
      *
-     * @param command
-     *            the command
+     * @param command the command
      * @return the returned value
      * @throws RuntimeException
      *             the runtime exception

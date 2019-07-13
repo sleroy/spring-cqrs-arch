@@ -36,7 +36,7 @@ public interface CqrsConfiguration {
      * Returns a throttling interface. The default behaviour is simply ignoring the
      * throttling.
      *
-     * @return the i throttling interface
+     * @return the throttling interface
      */
     public ThrottlingInterface getThrottlingInterface();
 

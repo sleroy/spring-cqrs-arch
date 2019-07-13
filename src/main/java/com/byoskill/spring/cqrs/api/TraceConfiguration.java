@@ -12,6 +12,9 @@ package com.byoskill.spring.cqrs.api;
 
 import java.io.File;
 
+/**
+ * This interface defines the configuration to manipulate traces with the framework.
+ */
 public interface TraceConfiguration {
     /**
      * Gets the trace file.

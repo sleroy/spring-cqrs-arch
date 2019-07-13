@@ -6,7 +6,7 @@
  *
  * You should have received a copy of the MIT license with
  * this file. If not, please write to: sleroy at byoskill.com, or visit : www.byoskill.com
- * 
+ *
  */
 package com.byoskill.spring.cqrs.api;
 
@@ -14,10 +14,11 @@ package com.byoskill.spring.cqrs.api;
 public interface ThrottlingInterface {
 
     /**
-     * Acquire permit.
+     * Acquire a permit before executing a command. Usually the rate limitation are identified with a unique identifier.
      *
-     * @param name
-     *            the name
+     * Each time this mehod is invoked; a rate limiter may be invoked with its own limitations.
+     *
+     * @param name the name of the permit to access to the specific resource.
      */
     void acquirePermit(String name);
 

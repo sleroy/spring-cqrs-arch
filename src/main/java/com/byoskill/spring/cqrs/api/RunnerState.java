@@ -13,8 +13,9 @@ package com.byoskill.spring.cqrs.api;
 /**
  * The Interface RunnerState defines the state of the runner. A developer can
  * store some informations during the execution of a command by its command
- * handler as the transaction. Data are discarded when the
+ * handler as the transaction. Data are discarded when the command has been executed.
  */
+@Deprecated
 public interface RunnerState {
 
     /**
