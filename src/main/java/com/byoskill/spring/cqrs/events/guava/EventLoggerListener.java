@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.byoskill.spring.cqrs.annotations.EventHandler;
-import com.byoskill.spring.cqrs.api.LoggingConfiguration;
+import com.byoskill.spring.cqrs.configuration.LoggingConfiguration;
 import com.google.common.eventbus.Subscribe;
 
 

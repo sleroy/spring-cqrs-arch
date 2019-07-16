@@ -136,8 +136,7 @@ dependencies {
 	testCompile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: JACKSON_VERSION
 	testCompile group: 'org.hibernate.validator', name: 'hibernate-validator', version: VALIDATOR_VERSION
 	testCompile group: 'ch.qos.logback', name: 'logback-classic', version: LOGBACK_VERSION
-
-	// https://mvnrepository.com/artifact/org.springframework/spring-test
+    testCompile group: 'org.assertj', name: 'assertj-core', version: ASSERTJ_VERSION
     testCompile group: 'org.springframework', name: 'spring-test', version: SPRING_VERSION
 	
     testCompile "junit:junit:$JUNIT_VERSION"

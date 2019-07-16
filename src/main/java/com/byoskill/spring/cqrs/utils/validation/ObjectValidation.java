@@ -10,10 +10,11 @@
  */
 package com.byoskill.spring.cqrs.utils.validation;
 
-import com.byoskill.spring.cqrs.api.CommandNotValidException;
+import com.byoskill.spring.cqrs.commands.CommandNotValidException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
 import javax.validation.Validator;
 import java.util.Set;
 
@@ -25,6 +26,13 @@ import java.util.Set;
 public class ObjectValidation {
 
     private final Validator validator;
+
+    /**
+     * Instantiates a new Object validation.
+     */
+    public ObjectValidation() {
+        this(Validation.buildDefaultValidatorFactory().getValidator());
+    }
 
     /**
      * Instantiates a new object validation.
@@ -41,6 +49,7 @@ public class ObjectValidation {
      * Checks if is valid.
      *
      * @param _object the object
+     *
      * @return true, if is valid
      */
     public boolean isValid(final Object _object) {
