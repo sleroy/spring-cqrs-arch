@@ -30,6 +30,25 @@ import java.util.concurrent.CompletableFuture;
 public interface Gate {
 
     /**
+     * Send a named command asynchronously without expecting result.
+     * @param commandName the command name
+     */
+    void dispatchAsyncNamedCommand(String commandName);
+
+    /**
+     * Send a named command and wait for its result.
+     * @param commandName the command name
+     */
+    <R> R dispatchNamedCommand(String commandName);
+
+    /**
+     * Send a named command and wait for its result.
+     * @param commandName the command name
+     */
+    <R> CompletableFuture<R> dispatchAsyncNamedCommandWithValue(String commandName);
+
+
+    /**
      * Dispatch a command and executes it sequentially.
      *
      * @param <R>     the generic type

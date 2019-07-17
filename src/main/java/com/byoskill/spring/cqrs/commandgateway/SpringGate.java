@@ -56,6 +56,22 @@ public class SpringGate implements Gate {
         this.springGateFilters = springGateFilters;
     }
 
+    @Override
+    public void dispatchAsyncNamedCommand(final String commandName) {
+        commandExecutorServiceImpl.runNamedCommand(commandName).join();
+
+    }
+
+    @Override
+    public <R> R dispatchNamedCommand(final String commandName) {
+        return (R) commandExecutorServiceImpl.runNamedCommand(commandName).join();
+    }
+
+    @Override
+    public <R> CompletableFuture<R> dispatchAsyncNamedCommandWithValue(final String commandName) {
+        return commandExecutorServiceImpl.runNamedCommand(commandName);
+    }
+
     /**
      * Executes sequentially a command
      */

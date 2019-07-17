@@ -1,6 +1,7 @@
 package com.byoskill.spring.cqrs.commandservices;
 
 import com.byoskill.spring.cqrs.commands.CommandServiceSpec;
+import org.apache.commons.lang3.Validate;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -24,6 +25,7 @@ public class MethodCommandServiceSpec implements CommandServiceSpec<Object, Obje
         this.method = method;
         this.userClass = userClass;
         this.commandParameterType = commandParameterType;
+        Validate.isTrue(method.getParameterCount() == 1);
     }
 
     @Override

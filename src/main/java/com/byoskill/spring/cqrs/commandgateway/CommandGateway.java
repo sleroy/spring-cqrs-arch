@@ -76,4 +76,16 @@ public interface CommandGateway {
      */
     <R> R sendAndWait(Object command, long timeout, TimeUnit unit);
 
+    /**
+     * Send a named command asynchronously without expecting result.
+     * @param commandName the command name
+     */
+    void sendNamedCommand(String commandName);
+
+    /**
+     * Send a named command and wait for its result.
+     * @param commandName the command name
+     */
+    <R> R sendAndWaitNamedCommand(String commandName);
+
 }

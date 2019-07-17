@@ -40,4 +40,5 @@ public interface CommandServiceProvider {
      */
     public void subscribe(String commandName, CommandServiceSpec<?, ?> beanName);
 
+    public CommandServiceSpec getServiceName(String commandName);
 }

@@ -96,4 +96,17 @@ public class CommandExecutorServiceImpl {
                 threadPool);
     }
 
+    public <R> CompletableFuture<R> runNamedCommand(final String commandName) {
+        final CommandServiceSpec<?, ?> handler = handlersProvider.getServiceName(commandName);
+        LOGGER.debug("Lauching the service with the name {}.", commandName);
+
+        final DefaultCommandRunner defaultCommandRunner = new DefaultCommandRunner(handler);
+        final CommandRunnerWorkflow runnerWorkflow = commandWorkflowService.getRunnerWorkflow();
+        final CommandExecutionContextImpl commandExecutionContext = new CommandExecutionContextImpl(handler, new Object());
+        final CommandRunnerChain commandRunnerChain = runnerWorkflow.buildChain(defaultCommandRunner);
+        final BootstrapRunner bootstrap = new BootstrapRunner();
+        return CompletableFuture.supplyAsync(
+                () -> (R) bootstrap.execute(commandExecutionContext, commandRunnerChain),
+                threadPool);
+    }
 }

@@ -2,7 +2,6 @@ package com.byoskill.spring.cqrs.commandgateway;
 
 
 import org.apache.commons.lang3.Validate;
-import org.checkerframework.checker.units.qual.C;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -69,6 +68,16 @@ public class SimpleCommandGateway implements CommandGateway {
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
             throw new CqrsException(e);
         }
+    }
+
+    @Override
+    public void sendNamedCommand(final String commandName) {
+        this.gate.dispatchAsyncNamedCommand(commandName);
+    }
+
+    @Override
+    public <R> R sendAndWaitNamedCommand(final String commandName) {
+        return this.gate.dispatchNamedCommand(commandName);
     }
 
 }

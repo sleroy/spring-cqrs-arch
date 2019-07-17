@@ -81,11 +81,17 @@ public class CommandServicePostProcessor implements BeanPostProcessor {
         for (Method method : methods) {
             if (hasValidDefinition(method)) {
                 final CommandHandler commandHandler = AnnotationUtils.findAnnotation(method, CommandHandler.class);
-                final Class<?> commandParameterType = getCommandParameterType(method);
                 if (commandHandler != null) {
                     LOGGER.info("Found command handler {} in the bean {}", method, userClass);
-                    this.commandServiceProvider.subscribe(commandParameterType.getName(), new MethodCommandServiceSpec(bean, method, userClass,
-                            commandParameterType));
+                    if (method.getParameterCount() == 0) {
+                        final NoArgMethodCommandServiceSpec argMethodCommandServiceSpec = new NoArgMethodCommandServiceSpec(bean, method);
+                        this.commandServiceProvider.subscribe(userClass.getSimpleName() + "." + method.getName(), argMethodCommandServiceSpec);
+                    } else {
+                        final Class<?> commandParameterType = getCommandParameterType(method);
+                        final String commandParameterTypeName = commandParameterType.getName();
+                        final MethodCommandServiceSpec methodCommandServiceSpec = new MethodCommandServiceSpec(bean, method, userClass, commandParameterType);
+                        this.commandServiceProvider.subscribe(commandParameterTypeName, methodCommandServiceSpec);
+                    }
                 }
             }
         }
@@ -96,7 +102,7 @@ public class CommandServicePostProcessor implements BeanPostProcessor {
     }
 
     private boolean hasValidDefinition(final Method method) {
-        return method.getParameterCount() == 1 && Modifier.isPublic(method.getModifiers());
+        return method.getParameterCount() <= 1 && Modifier.isPublic(method.getModifiers());
     }
 
     /**

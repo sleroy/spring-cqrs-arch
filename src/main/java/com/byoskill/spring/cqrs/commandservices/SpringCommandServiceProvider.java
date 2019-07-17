@@ -69,5 +69,15 @@ public class SpringCommandServiceProvider implements CommandServiceProvider {
         this.handlers.put(commandName, commandHandler);
     }
 
+    @Override
+    public CommandServiceSpec getServiceName(final String commandName) {
+        final CommandServiceSpec<?, ?> commandServiceSpec = this.handlers.get(commandName);
+        if (commandServiceSpec == null) {
+            throw new CommandHandlerNotFoundException(
+                    "command handler not found. Command name is " + commandName);
+        }
+        return commandServiceSpec;
+    }
+
 
 }
