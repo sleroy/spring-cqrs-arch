@@ -24,14 +24,14 @@ public class RandomNumberHandler implements CommandServiceSpec<RandomNumberComma
 
     @Autowired
     public RandomNumberHandler(final Gate gate) {
-	super();
-	random = new Random();
+        super();
+        random = new Random();
 
     }
 
     @Override
     public Integer handle(final RandomNumberCommand command) {
-	return random.nextInt();
+        return random.nextInt();
     }
 
 }

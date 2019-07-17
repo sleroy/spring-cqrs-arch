@@ -10,6 +10,8 @@
  */
 package com.byoskill.spring.cqrs.configuration;
 
+import com.byoskill.spring.cqrs.commandgateway.CommandGateway;
+import com.byoskill.spring.cqrs.commandgateway.SimpleCommandGateway;
 import com.byoskill.spring.cqrs.commandservices.CommandServiceProvider;
 import com.byoskill.spring.cqrs.throttling.ThrottlingInterface;
 import com.byoskill.spring.cqrs.events.EventThrowerRunner;
@@ -36,6 +38,8 @@ import javax.validation.Validator;
 import java.util.Optional;
 import java.util.concurrent.ForkJoinPool;
 
+import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_SINGLETON;
+
 @Configuration
 public class ImportCqrsInjectionConfiguration {
 
@@ -47,60 +51,62 @@ public class ImportCqrsInjectionConfiguration {
      * @param objectValidation       the object validation
      * @param commandWorkflowService the command workflow service
      * @param threadPoolTaskExecutor the thread pool task executor
+     *
      * @return the command executor service impl
      */
     @Bean
-    @Scope(value = ConfigurableListableBeanFactory.SCOPE_SINGLETON)
+    @Scope(value = SCOPE_SINGLETON)
     public CommandExecutorServiceImpl commandExecutorServiceImpl(final CommandServiceProvider handlersProvider,
-                                                                 final CommandRunnerWorkflowService commandWorkflowService, final ForkJoinPool threadPoolTaskExecutor) {
+                                                                 final CommandRunnerWorkflowService commandWorkflowService,
+                                                                 final ForkJoinPool threadPoolTaskExecutor) {
         return new CommandExecutorServiceImpl(handlersProvider, commandWorkflowService,
                 threadPoolTaskExecutor);
     }
 
     @Bean
-    @Scope(value = ConfigurableListableBeanFactory.SCOPE_SINGLETON)
+    @Scope(value = SCOPE_SINGLETON)
     public CommandLoggingRunner commandLoggingRunner(final LoggingConfiguration configuration) {
         return new CommandLoggingRunner(configuration);
     }
 
     @Bean
-    @Scope(value = ConfigurableListableBeanFactory.SCOPE_SINGLETON)
+    @Scope(value = SCOPE_SINGLETON)
     public CommandProfilingRunner commandProfilingRunner(final LoggingConfiguration loggingConfiguration) {
         return new CommandProfilingRunner(loggingConfiguration);
     }
 
     @Bean
-    @Scope(value = ConfigurableListableBeanFactory.SCOPE_SINGLETON)
+    @Scope(value = SCOPE_SINGLETON)
     public CommandThrottlingRunner commandThrottling(final ThrottlingInterface throttlingInterface) {
         return new CommandThrottlingRunner(throttlingInterface);
     }
 
     @Bean
-    @Scope(value = ConfigurableListableBeanFactory.SCOPE_SINGLETON)
+    @Scope(value = SCOPE_SINGLETON)
     public CommandTraceRunner commandTrace(final TraceConfiguration traceConfiguration) {
         return new CommandTraceRunner(traceConfiguration);
     }
 
     @Bean
-    @Scope(value = ConfigurableListableBeanFactory.SCOPE_SINGLETON)
+    @Scope(value = SCOPE_SINGLETON)
     public CommandValidatingRunner commandValidating(final ObjectValidation objectValidation) {
         return new CommandValidatingRunner(objectValidation);
     }
 
     @Bean
-    @Scope(value = ConfigurableListableBeanFactory.SCOPE_SINGLETON)
+    @Scope(value = SCOPE_SINGLETON)
     public DefaultExceptionHandlerRunner defaultExceptionHandlerRunner() {
         return new DefaultExceptionHandlerRunner();
     }
 
     @Bean
-    @Scope(value = ConfigurableListableBeanFactory.SCOPE_SINGLETON)
+    @Scope(value = SCOPE_SINGLETON)
     public EventThrowerRunner eventThrower(final EventBusService eventBusService) {
         return new EventThrowerRunner(eventBusService);
     }
 
     @Bean
-    @Scope(value = ConfigurableListableBeanFactory.SCOPE_SINGLETON)
+    @Scope(value = SCOPE_SINGLETON)
     public CommandRunnerWorkflowService getCommandRunnerWorkflowService(
             final DefaultExceptionHandlerRunner defaultExceptionHandlerRunner,
             final CommandLoggingRunner commandLoggingRunner, final CommandProfilingRunner commandProfilingRunner,
@@ -113,22 +119,29 @@ public class ImportCqrsInjectionConfiguration {
     }
 
     @Bean
-    @Scope(value = ConfigurableListableBeanFactory.SCOPE_SINGLETON)
+    @Scope(value = SCOPE_SINGLETON)
     public CommandServiceProvider getHandlersProvider(final ConfigurableListableBeanFactory beanFactory) {
 
         return new SpringCommandServiceProvider(beanFactory);
     }
 
-    @Scope(value = ConfigurableListableBeanFactory.SCOPE_SINGLETON)
+    @Scope(value = SCOPE_SINGLETON)
     @Bean
     public ObjectValidation objectValidation(final Validator _validator) {
         return new ObjectValidation(_validator);
     }
 
     @Bean
-    @Scope(value = ConfigurableListableBeanFactory.SCOPE_SINGLETON)
+    @Scope(value = SCOPE_SINGLETON)
     public SpringGate springGate(final CommandExecutorServiceImpl commandExecutorServiceImpl,
                                  final EventBusService eventBusService, final Optional<SpringGateFilters> springFilter) {
         return new SpringGate(commandExecutorServiceImpl, eventBusService, springFilter);
+    }
+
+
+    @Bean
+    @Scope(SCOPE_SINGLETON)
+    public CommandGateway commandGateway(SpringGate springGate) {
+        return new SimpleCommandGateway(springGate);
     }
 }

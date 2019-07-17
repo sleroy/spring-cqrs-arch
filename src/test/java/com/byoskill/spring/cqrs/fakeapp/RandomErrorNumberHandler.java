@@ -24,18 +24,18 @@ public class RandomErrorNumberHandler implements CommandServiceSpec<RandomErrorN
 
     @Autowired
     public RandomErrorNumberHandler(final Gate gate) {
-	super();
-	random = new Random();
+        super();
+        random = new Random();
 
     }
 
     @Override
     public Integer handle(final RandomErrorNumberCommand command) {
-	if (random.nextBoolean()) {
-	    return random.nextInt();
-	} else {
-	    throw new RuntimeException("Random problem");
-	}
+        if (random.nextBoolean()) {
+            return random.nextInt();
+        } else {
+            throw new RuntimeException("Random problem");
+        }
 
     }
 

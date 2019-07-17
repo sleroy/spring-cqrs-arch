@@ -4,5 +4,5 @@ import javax.validation.constraints.NotEmpty;
 
 public class DummyObject2Command {
     @NotEmpty
-    String field;
+    public String field;
 }

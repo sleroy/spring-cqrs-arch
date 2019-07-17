@@ -28,7 +28,7 @@ public interface CommandGateway {
      * @param command  command
      * @param callback the callback
      */
-    void send(Object command, Consumer<?> callback);
+    void sendAndConsume(Object command, Consumer<?> callback);
 
     /**
      * Sends the given command and executes the call back if there was no exception.
@@ -36,10 +36,22 @@ public interface CommandGateway {
      * @param command the command
      * @param callback the call back
      */
-    <R, U> void send(C command, Function<R, U> callback);
+    <R, U> U sendAndApply(Object command, Function<R, U> callback);
 
-    <R, U> void send(C command, BiConsumer<? super R, ? super Throwable> callback);
+    /**
+     * Sends the given command and executes the call back if there was no exception.
+     * @param <R> the returned type;
+     * @param command the command
+     * @param callback the call back
+     */
+    <R> void sendWithCallBack(Object command, BiConsumer<? super R, ? super Throwable> callback);
 
+    /**
+     * Sends the given command and executes the call back if there was no exception.
+     * @param <R> the returned type;
+     * @param command the command
+     * @param expectedType the expected type
+     */
     <R> CompletableFuture<R> send(Object command, Class<R> expectedType);
 
     /**
