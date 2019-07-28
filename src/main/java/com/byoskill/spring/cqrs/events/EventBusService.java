@@ -17,6 +17,7 @@ import org.springframework.context.PayloadApplicationEvent;
  * The Interface IEventBusService is a wrapper above the Spring Application
  * Event Publisher.
  */
+@FunctionalInterface
 public interface EventBusService {
 
     /**
@@ -26,11 +27,11 @@ public interface EventBusService {
      * If the specified {@code event} is not an {@link ApplicationEvent}, it is
      * wrapped in a {@link PayloadApplicationEvent}.
      *
-     * @param event
-     *            the event to publish
-     * @since 4.2
+     * @param event the event to publish
      * @see PayloadApplicationEvent
+     * @since 4.2
      */
     void publishEvent(Object event);
+
 
 }

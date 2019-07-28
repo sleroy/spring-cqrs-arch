@@ -26,6 +26,11 @@ public class CommandThrottlingRunner implements CommandInterceptor {
     private static final Logger LOGGER = LoggerFactory.getLogger(CommandThrottlingRunner.class);
     private final ThrottlingInterface throttlingInterface;
 
+    /**
+     * Instantiates a new Command throttling runner.
+     *
+     * @param throttlingInterface the throttling interface
+     */
     @Autowired
     public CommandThrottlingRunner(final Optional<ThrottlingInterface> throttlingInterface) {
         this.throttlingInterface = throttlingInterface.orElse(new DefaultThrottlingInterface());
