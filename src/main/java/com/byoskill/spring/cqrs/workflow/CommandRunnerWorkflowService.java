@@ -10,7 +10,7 @@
  */
 package com.byoskill.spring.cqrs.workflow;
 
-import com.byoskill.spring.cqrs.events.EventThrowerRunner;
+import com.byoskill.spring.cqrs.interceptors.EventThrowerRunner;
 import com.byoskill.spring.cqrs.interceptors.DefaultExceptionHandlerRunner;
 import com.byoskill.spring.cqrs.interceptors.CommandLoggingRunner;
 import com.byoskill.spring.cqrs.interceptors.CommandProfilingRunner;

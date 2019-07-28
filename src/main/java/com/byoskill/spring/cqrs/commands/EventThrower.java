@@ -10,6 +10,8 @@
  */
 package com.byoskill.spring.cqrs.commands;
 
+import java.util.Optional;
+
 public interface EventThrower<C> {
 
     /**
@@ -18,7 +20,7 @@ public interface EventThrower<C> {
      * @param failure the failure
      * @return the event that should be thrown (null does not send event)
      */
-    Object eventOnFailure(Throwable failure);
+    Optional<Object> eventOnFailure(Throwable failure);
 
     /**
      * Event triggered on success.
@@ -26,5 +28,5 @@ public interface EventThrower<C> {
      * @param result the result
      * @return the event that should be thrown (null does not send event)
      */
-    Object eventOnSuccess(C result);
+    Optional<Object> eventOnSuccess(C result);
 }

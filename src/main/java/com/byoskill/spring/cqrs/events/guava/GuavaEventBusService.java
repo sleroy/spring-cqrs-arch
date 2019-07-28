@@ -10,22 +10,19 @@
  */
 package com.byoskill.spring.cqrs.events.guava;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import javax.annotation.PreDestroy;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.context.ApplicationContext;
-import org.springframework.core.annotation.AnnotationUtils;
-
 import com.byoskill.spring.cqrs.annotations.EventHandler;
 import com.byoskill.spring.cqrs.events.EventBusService;
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.core.annotation.AnnotationUtils;
+
+import javax.annotation.PreDestroy;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * This class demonstrates how to use Guava as a simple event bus service.
@@ -33,7 +30,6 @@ import com.google.common.eventbus.EventBus;
 public class GuavaEventBusService implements BeanPostProcessor, EventBusService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GuavaEventBusService.class);
-    private ApplicationContext applicationContext;
     private EventBus eventBus;
 
     private ExecutorService threadPoolTaskExecutor;
@@ -64,10 +60,11 @@ public class GuavaEventBusService implements BeanPostProcessor, EventBusService 
 
     /**
      * Searches for @EventHandler annotated beans.
-     * @param bean the bean
+     *
+     * @param bean     the bean
      * @param beanName the bean name
      * @return the bean
-     * @throws BeansException
+     * @throws BeansException when the bean could not be found
      */
     @Override
     public Object postProcessAfterInitialization(final Object bean, final String beanName) throws BeansException {

@@ -52,6 +52,12 @@ public class SimpleCommandGateway implements CommandGateway {
     }
 
     @Override
+    public <R> R sendWithCallBackAndWait(Object command, BiConsumer<? super R, ? super Throwable> callback) throws ExecutionException, InterruptedException {
+        final CompletableFuture<R> objectCompletableFuture = gate.dispatchAsync(command);
+        return objectCompletableFuture.whenComplete(callback).get();
+    }
+
+    @Override
     public <R> CompletableFuture<R> send(final Object command, Class<R> expectedType) {
         return gate.dispatchAsync(command, expectedType);
     }

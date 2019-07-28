@@ -12,23 +12,17 @@ package com.byoskill.spring.cqrs.configuration;
 
 import com.byoskill.spring.cqrs.commandgateway.CommandGateway;
 import com.byoskill.spring.cqrs.commandgateway.SimpleCommandGateway;
-import com.byoskill.spring.cqrs.commandservices.CommandServiceProvider;
-import com.byoskill.spring.cqrs.throttling.ThrottlingInterface;
-import com.byoskill.spring.cqrs.events.EventThrowerRunner;
-import com.byoskill.spring.cqrs.interceptors.DefaultExceptionHandlerRunner;
-import com.byoskill.spring.cqrs.interceptors.CommandLoggingRunner;
-import com.byoskill.spring.cqrs.interceptors.CommandProfilingRunner;
-import com.byoskill.spring.cqrs.interceptors.CommandThrottlingRunner;
-import com.byoskill.spring.cqrs.interceptors.CommandTraceRunner;
-import com.byoskill.spring.cqrs.interceptors.CommandValidatingRunner;
-import com.byoskill.spring.cqrs.events.EventBusService;
-import com.byoskill.spring.cqrs.workflow.CommandExecutorServiceImpl;
 import com.byoskill.spring.cqrs.commandgateway.SpringGate;
-import com.byoskill.spring.cqrs.filter.SpringGateFilters;
+import com.byoskill.spring.cqrs.commandservices.CommandServiceProvider;
 import com.byoskill.spring.cqrs.commandservices.SpringCommandServiceProvider;
+import com.byoskill.spring.cqrs.events.EventBusService;
+import com.byoskill.spring.cqrs.filter.SpringGateFilters;
+import com.byoskill.spring.cqrs.interceptors.*;
+import com.byoskill.spring.cqrs.throttling.ThrottlingInterface;
 import com.byoskill.spring.cqrs.utils.validation.ObjectValidation;
-import com.byoskill.spring.cqrs.workflow.CommandRunningWorkflowConfigurer;
+import com.byoskill.spring.cqrs.workflow.CommandExecutorServiceImpl;
 import com.byoskill.spring.cqrs.workflow.CommandRunnerWorkflowService;
+import com.byoskill.spring.cqrs.workflow.CommandRunningWorkflowConfigurer;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -46,12 +40,9 @@ public class ImportCqrsInjectionConfiguration {
     /**
      * Command executor service impl.
      *
-     * @param configuration          the configuration
      * @param handlersProvider       the handlers provider
-     * @param objectValidation       the object validation
      * @param commandWorkflowService the command workflow service
      * @param threadPoolTaskExecutor the thread pool task executor
-     *
      * @return the command executor service impl
      */
     @Bean

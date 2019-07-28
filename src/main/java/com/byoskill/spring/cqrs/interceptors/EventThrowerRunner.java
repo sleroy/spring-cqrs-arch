@@ -8,10 +8,11 @@
  * this file. If not, please write to: sleroy at byoskill.com, or visit : www.byoskill.com
  *
  */
-package com.byoskill.spring.cqrs.events;
+package com.byoskill.spring.cqrs.interceptors;
 
 import com.byoskill.spring.cqrs.annotations.ReturnEventOnSuccess;
 import com.byoskill.spring.cqrs.commands.EventThrower;
+import com.byoskill.spring.cqrs.events.EventBusService;
 import com.byoskill.spring.cqrs.workflow.CommandExecutionContext;
 import com.byoskill.spring.cqrs.workflow.CommandInterceptor;
 import com.byoskill.spring.cqrs.workflow.CommandRunnerChain;
@@ -19,6 +20,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Optional;
 
 /**
  * This process identifies CommandService that requires to send events and  performs the required actions depending of their event throwing definitions.
@@ -43,7 +46,12 @@ public class EventThrowerRunner implements CommandInterceptor {
             res = chain.execute(context);
             // If the handler is defining an Event factorw method in case of success
             if (handler != null) {
-                eventBusService.publishEvent(handler.eventOnSuccess(res));
+                Optional<?> event = handler.eventOnSuccess(res);
+                if (!event.isPresent()) {
+                    LOGGER.debug("The command {} is not returning any event on SUCCESS", context.getRawCommand());
+                } else {
+                    eventBusService.publishEvent(event);
+                }
             } else {
                 // If the command handler has specified a @ReturnEventOnSuccess annotation; the value will be returned as an event.
                 final Class<?> ultimateTargetClass = AopProxyUtils.ultimateTargetClass(context.handler());
@@ -56,8 +64,13 @@ public class EventThrowerRunner implements CommandInterceptor {
 
         } catch (final Exception t) {
             if (handler != null) {
-                LOGGER.warn("Execution of the command {} has failed, sending an event...", context.getRawCommand());
-                eventBusService.publishEvent(handler.eventOnFailure(t));
+                Optional<?> event = handler.eventOnFailure(t);
+                if (event.isPresent()) {
+                    LOGGER.warn("Execution of the command {} has failed, sending an event...", context.getRawCommand());
+                    eventBusService.publishEvent(event);
+                } else {
+                    LOGGER.warn("No event sent in case of failure for the command {}...", context.getRawCommand());
+                }
             }
             throw t;
         }

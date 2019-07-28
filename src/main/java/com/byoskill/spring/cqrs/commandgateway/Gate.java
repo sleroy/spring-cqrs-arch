@@ -37,13 +37,16 @@ public interface Gate {
 
     /**
      * Send a named command and wait for its result.
+     *
      * @param commandName the command name
+     * @return  the returned value from the callback
      */
     <R> R dispatchNamedCommand(String commandName);
 
     /**
      * Send a named command and wait for its result.
      * @param commandName the command name
+     * @return  the returned value from the callback
      */
     <R> CompletableFuture<R> dispatchAsyncNamedCommandWithValue(String commandName);
 
