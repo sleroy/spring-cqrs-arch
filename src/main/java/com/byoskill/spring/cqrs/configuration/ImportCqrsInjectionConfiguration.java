@@ -68,7 +68,7 @@ public class ImportCqrsInjectionConfiguration {
 
     @Bean
     @Scope(value = SCOPE_SINGLETON)
-    public CommandThrottlingRunner commandThrottling(final ThrottlingInterface throttlingInterface) {
+    public CommandThrottlingRunner commandThrottling(final Optional<ThrottlingInterface> throttlingInterface) {
         return new CommandThrottlingRunner(throttlingInterface);
     }
 

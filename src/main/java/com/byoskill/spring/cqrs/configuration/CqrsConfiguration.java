@@ -35,14 +35,6 @@ public interface CqrsConfiguration {
     public LoggingConfiguration getLoggingConfiguration();
 
     /**
-     * Returns a throttling interface. The default behaviour is simply ignoring the
-     * throttling.
-     *
-     * @return the throttling interface
-     */
-    public ThrottlingInterface getThrottlingInterface();
-
-    /**
      * Gets the trace configuration.
      *
      * @return the trace configuration

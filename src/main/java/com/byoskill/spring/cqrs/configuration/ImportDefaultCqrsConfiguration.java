@@ -48,11 +48,6 @@ public class ImportDefaultCqrsConfiguration implements CqrsConfiguration {
         return new DefaultLoggingConfiguration();
     }
 
-    @Bean
-    @Override
-    public ThrottlingInterface getThrottlingInterface() {
-        return new DefaultThrottlingInterface();
-    }
 
     @Bean
     @Override

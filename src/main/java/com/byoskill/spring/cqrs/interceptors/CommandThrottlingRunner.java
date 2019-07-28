@@ -11,6 +11,7 @@
 package com.byoskill.spring.cqrs.interceptors;
 
 import com.byoskill.spring.cqrs.annotations.Throttle;
+import com.byoskill.spring.cqrs.configuration.DefaultThrottlingInterface;
 import com.byoskill.spring.cqrs.throttling.ThrottlingInterface;
 import com.byoskill.spring.cqrs.workflow.CommandExecutionContext;
 import com.byoskill.spring.cqrs.workflow.CommandInterceptor;
@@ -19,13 +20,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Optional;
+
 public class CommandThrottlingRunner implements CommandInterceptor {
     private static final Logger LOGGER = LoggerFactory.getLogger(CommandThrottlingRunner.class);
     private final ThrottlingInterface throttlingInterface;
 
     @Autowired
-    public CommandThrottlingRunner(final ThrottlingInterface throttlingInterface) {
-        this.throttlingInterface = throttlingInterface;
+    public CommandThrottlingRunner(final Optional<ThrottlingInterface> throttlingInterface) {
+        this.throttlingInterface = throttlingInterface.orElse(new DefaultThrottlingInterface());
     }
 
     /*
