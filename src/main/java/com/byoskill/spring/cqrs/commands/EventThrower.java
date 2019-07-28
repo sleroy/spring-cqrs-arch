@@ -12,7 +12,11 @@ package com.byoskill.spring.cqrs.commands;
 
 import java.util.Optional;
 
-public interface EventThrower<C> {
+/**
+ * This interface defines a command handler that produces also events after the execution of the command.
+ * @param <R> the result type.
+ */
+public interface EventThrower<R> {
 
     /**
      * Event Triggered in case of failures.
@@ -28,5 +32,5 @@ public interface EventThrower<C> {
      * @param result the result
      * @return the event that should be thrown (null does not send event)
      */
-    Optional<Object> eventOnSuccess(C result);
+    Optional<Object> eventOnSuccess(R result);
 }
