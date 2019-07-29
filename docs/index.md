@@ -24,7 +24,7 @@ And the framework also have **the following limitations** :
 * Single-man project yet.
 
 
-## Introduction
+## Introduction
 
 
 This module is an implementation of a software architecture model inspired from the CQRS ( [link from Fowler](https://martinfowler.com/bliki/CQRS.html) ) model.
