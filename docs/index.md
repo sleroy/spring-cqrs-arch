@@ -2,6 +2,8 @@
 title: CQRS Framework for Spring Framework/Boot
 ---
 
+Original work from @slawek.
+
 Easy introduction and implementation of CQRS Application pattern with Spring  / Spring Boot. **Not sure about using this framework ?** It exists at least two other more mature and more complex frameworks to implement CQRS :
 
 * [Eventuate](https://eventuate.io/)
@@ -22,6 +24,25 @@ And the framework also have **the following limitations** :
 
 * No Event sourcing implemented yet.
 * Single-man project yet.
+
+## Documentation plan
+
+* [Quickstart](/quickstart) 
+* [How to design with the command model](/howtodesign) 
+* [Changelog](/changelog) 
+* [How to configure your Spring Application with the framework](/configuration) 
+* [Event sourcing : TODO](/eventsourcing) 
+* [Exception Handling](/exceptionhandling) 
+* [Using the Gateway](/gateway) 
+* [Command transactions and Saga](/saga) 
+* [Queries and CQRS](/queries) 
+* [How to implement Command Throttling ?](/throttling)
+* [Reference and credits](/credits)
+
+
+
+
+
 
 
 ## Introduction
