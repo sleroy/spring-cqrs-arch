@@ -40,11 +40,6 @@ And the framework also have **the following limitations** :
 * [Reference and credits](/credits)
 
 
-
-
-
-
-
 ## Introduction
 
 
