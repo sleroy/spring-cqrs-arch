@@ -40,7 +40,7 @@ CQRS stands for Command Query Responsibility Segregation. It's a pattern that I 
 The idea is the following : the software functionalities are split between the read and the write accesses made by the user.
 
 
-* [Introduction](/introduction) 
+* [How to design with the command model](/howtodesign) 
 
 
 ### Advantages
