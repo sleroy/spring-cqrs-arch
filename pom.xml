@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.byoskill.spring.cqrs</groupId>
+  <artifactId>spring-cqrs-module</artifactId>
+  <version>1.1.4-SNAPSHOT</version>
+  <name>Spring CQRS Module</name>
+  <description>CQRS simple implementation for Spring and Spring BOOT</description>
+  <licenses>
+    <license>
+      <name>Apache License 2.0</name>
+    </license>
+  </licenses>
+  <scm />
+  <distributionManagement>
+    <repository>
+      <id>bintray-sleroy-maven</id>
+      <name>sleroy-maven</name>
+      <url>https://api.bintray.com/maven/sleroy/maven/spring-cqrs-module/;publish=1</url>
+    </repository>
+  </distributionManagement>
+  <properties>
+    <JAVAXEL_VERSION>3.0.1-b08</JAVAXEL_VERSION>
+    <SLF4J_VERSION>1.7.25</SLF4J_VERSION>
+    <VALIDATOR_VERSION>6.0.6.Final</VALIDATOR_VERSION>
+    <GUAVA_VERSION>28.0-jre</GUAVA_VERSION>
+    <java.version>11</java.version>
+    <COMMONS_LANG3_VERSION>3.9</COMMONS_LANG3_VERSION>
+    <SPRING_VERSION>5.2.6.RELEASE</SPRING_VERSION>
+    <JAVAXEL_API_VERSION>3.0.0</JAVAXEL_API_VERSION>
+    <MOCKITO>2.0.2-beta</MOCKITO>
+    <LOGBACK_VERSION>1.2.3</LOGBACK_VERSION>
+    <JUNIT_VERSION>4.12</JUNIT_VERSION>
+    <ASSERTJ_VERSION>3.12.2</ASSERTJ_VERSION>
+    <JACKSON_VERSION>2.9.9</JACKSON_VERSION>
+  </properties>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.22.0</version>
+        <configuration>
+          <argLine>--illegal-access=permit</argLine>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>2.22.0</version>
+        <configuration>
+          <argLine>--illegal-access=permit</argLine>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.0</version>
+        <configuration>
+          <release>11</release>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.8.5</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>report</id>
+            <phase>test</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+        <plugin>
+            <groupId>org.eluder.coveralls</groupId>
+            <artifactId>coveralls-maven-plugin</artifactId>
+            <version>4.3.0</version>
+            <configuration>
+                <repoToken>yourcoverallsprojectrepositorytoken</repoToken>
+            </configuration>
+        </plugin>
+    </plugins>
+  </build>
+
+    <dependencies>
+
+    </dependencies>
+</project>

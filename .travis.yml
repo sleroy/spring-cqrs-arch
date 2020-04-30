@@ -5,5 +5,5 @@ env:
   matrix:
   - TERM=dumb
 after_success:
-- ./gradlew jacocoRootReport coveralls
+-  ./mvnw clean test jacoco:report coveralls:report install
 
