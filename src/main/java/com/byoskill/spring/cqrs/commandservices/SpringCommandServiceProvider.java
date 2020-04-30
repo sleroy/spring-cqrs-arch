@@ -11,11 +11,16 @@
 package com.byoskill.spring.cqrs.commandservices;
 
 import com.byoskill.spring.cqrs.commands.CommandServiceSpec;
+import com.byoskill.spring.cqrs.utils.validation.InvalidCommandException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.core.ResolvableType;
 
+import javax.annotation.PostConstruct;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -42,12 +47,7 @@ public class SpringCommandServiceProvider implements CommandServiceProvider {
         this.beanFactory = beanFactory;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.byoskill.spring.cqrs.api.HandlersProvider#getHandler(java.lang.
-     * Object)
-     */
+
     @SuppressWarnings("unchecked")
     @Override
     public CommandServiceSpec<?, ?> getService(final Object command) {
@@ -66,8 +66,10 @@ public class SpringCommandServiceProvider implements CommandServiceProvider {
     @Override
     public void subscribe(final String commandName, final CommandServiceSpec<?, ?> commandHandler) {
         LOGGER.info("Subscribing the command {} to {}", commandName, commandHandler.getClass().getName());
-        this.handlers.put(commandName, commandHandler);
+
+            this.handlers.put(commandName, commandHandler);
     }
+
 
     @Override
     public CommandServiceSpec getServiceName(final String commandName) {
@@ -77,6 +79,15 @@ public class SpringCommandServiceProvider implements CommandServiceProvider {
                     "command handler not found. Command name is " + commandName);
         }
         return commandServiceSpec;
+    }
+
+    @Override
+    public Class<?> guessLambdaType(final Object bean, final String beanName) {
+        final BeanDefinition beanDefinition = this.beanFactory.getBeanDefinition(beanName);
+        if (beanDefinition == null) throw new CommandServiceSpecException("Could not guess the type of the command from the bean " + beanName);
+        final ResolvableType resolvableType = beanDefinition.getResolvableType();
+        final ResolvableType[] generics     = resolvableType.getGenerics();
+        return generics[0].getRawClass();
     }
 
 

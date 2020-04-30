@@ -11,7 +11,6 @@
 package com.byoskill.spring.cqrs.commandservices;
 
 import com.byoskill.spring.cqrs.annotations.CommandHandler;
-import com.byoskill.spring.cqrs.commandgateway.CqrsException;
 import com.byoskill.spring.cqrs.commands.CommandServiceSpec;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -21,10 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.core.annotation.AnnotationUtils;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 
 import static org.springframework.util.ClassUtils.getUserClass;
 
@@ -66,7 +62,7 @@ public class CommandServicePostProcessor implements BeanPostProcessor {
     public Object postProcessAfterInitialization(final Object bean, final String beanName) throws BeansException {
         if (bean instanceof CommandServiceSpec) {
             LOGGER.info("Loading an command handler {}->{}", beanName, bean);
-            final Class<?> commandServiceType = getCommandServiceType(bean);
+            final Class<?> commandServiceType = getCommandServiceType(bean, beanName);
             commandServiceProvider.subscribe(commandServiceType.getName(), (CommandServiceSpec<?, ?>) bean);
         } else {
             searchForCommandHandlerMethods(bean);
@@ -109,17 +105,21 @@ public class CommandServicePostProcessor implements BeanPostProcessor {
      *
      * @param bean the bean
      *
+     * @param beanName
      * @return the handled command type
      */
-    private Class<?> getCommandServiceType(final Object bean) {
+    private Class<?> getCommandServiceType(final Object bean, final String beanName) {
         Validate.notNull(bean);
         Class<?> userClass = getUserClass(bean);
         final Type[] genericInterfaces = userClass.getGenericInterfaces();
-        final ParameterizedType type = findByRawType(genericInterfaces, CommandServiceSpec.class);
+        final ParameterizedType type = retrieveParameterizedInterfaceType(genericInterfaces, CommandServiceSpec.class);
+        if (type == null) {
+            return this.commandServiceProvider.guessLambdaType(bean, beanName);
+        }
         return (Class<?>) type.getActualTypeArguments()[0];
     }
 
-    private static ParameterizedType findByRawType(final Type[] genericInterfaces, final Class<?> expectedRawType) {
+    private static ParameterizedType retrieveParameterizedInterfaceType(final Type[] genericInterfaces, final Class<?> expectedRawType) {
         for (final Type type : genericInterfaces) {
             if (type instanceof ParameterizedType) {
                 final ParameterizedType parametrized = (ParameterizedType) type;
@@ -128,6 +128,6 @@ public class CommandServicePostProcessor implements BeanPostProcessor {
                 }
             }
         }
-        throw new CqrsException("Invalid command handler definition, cannot retrieve the type of command handled");
+        return null;
     }
 }

@@ -15,6 +15,7 @@ import java.util.concurrent.CompletionException;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import com.byoskill.spring.cqrs.fakeapp.LambdaCommandService;
 import com.byoskill.spring.cqrs.fakeapp.TestConfiguration;
 import com.byoskill.spring.cqrs.commandservices.CommandServicePostProcessor;
 import org.junit.Assert;
@@ -32,7 +33,8 @@ import com.byoskill.spring.cqrs.fakeapp.commands.RandomNumberCommand;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {TestConfiguration.class, ImportDefaultCqrsConfiguration.class,
-        ImportGuavaEventBusConfiguration.class, ImportCqrsInjectionConfiguration.class, CommandServicePostProcessor.class})
+        ImportGuavaEventBusConfiguration.class, ImportCqrsInjectionConfiguration.class, CommandServicePostProcessor.class,
+        LambdaCommandService.class})
 
 public class RealExampleIntegrationTest {
 

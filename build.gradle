@@ -1,17 +1,16 @@
 plugins {
     id 'jacoco'
     id 'com.github.kt3k.coveralls' version '2.8.4'
-    id "com.jfrog.bintray" version "1.8.4"
+    id "com.jfrog.bintray" version "1.8.5"
     id "com.github.ben-manes.versions" version "0.21.0"
+    id 'maven-publish'
+    id 'java'    
+    id 'maven'        
 }
 
+allprojects {
 
-// Apply the java plugin to add support for Java
 apply plugin: 'java'
-apply plugin: 'maven'
-apply plugin: 'eclipse'
-apply plugin: 'jacoco'
-apply plugin: 'maven-publish'
 
 coveralls {
     sourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs).files.absolutePath
@@ -78,6 +77,10 @@ publishing {
             }
         }
     }
+     
+    repositories {
+        mavenLocal()
+    }
 }
 
 
@@ -87,6 +90,7 @@ bintray {
  	user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
 	key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
 	publications = ['BintrayPublication']
+    publish = true //[Default: false] Whether version should be auto published after an upload    
 	pkg {
 		repo = 'maven'
 		name = 'spring-cqrs-module'
@@ -109,6 +113,7 @@ bintray {
 // In this section you declare where to find the dependencies of your project
 repositories {
     jcenter()
+    mavenLocal()
     maven { url "https://dl.bintray.com/tocea/spring-cqrs-arch" } 
 }
 
@@ -168,4 +173,6 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 artifacts {
     archives sourcesJar
     archives javadocJar
+}
+
 }

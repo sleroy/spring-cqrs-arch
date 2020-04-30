@@ -26,7 +26,7 @@ public interface CommandServiceProvider {
      *            the command
      * @return the command runner
      */
-    public CommandServiceSpec getService(final Object command);
+    CommandServiceSpec getService(final Object command);
 
 
     /**
@@ -38,7 +38,9 @@ public interface CommandServiceProvider {
      * @param beanName
      *            the bean name
      */
-    public void subscribe(String commandName, CommandServiceSpec<?, ?> beanName);
+    void subscribe(String commandName, CommandServiceSpec<?, ?> beanName);
 
-    public CommandServiceSpec getServiceName(String commandName);
+    CommandServiceSpec getServiceName(String commandName);
+
+    Class<?> guessLambdaType(Object bean, String beanName);
 }
