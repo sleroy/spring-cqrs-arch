@@ -32,7 +32,6 @@ public class SpringCommandServiceProviderTest {
         };
         springCommandServiceProvider.subscribe(String.class.getName(), value);
 
-        Mockito.when(beanFactory.getBean(BEAN)).thenReturn(value);
         assertNotNull(springCommandServiceProvider.getService("COMMAND_AS_STRING"));
     }
 
