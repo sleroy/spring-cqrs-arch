@@ -7,15 +7,13 @@
 [![Build Status](https://travis-ci.org/sleroy/spring-cqrs-arch.svg?branch=master)](https://travis-ci.org/sleroy/spring-cqrs-arch)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/199a12aa6e404478b78b648688fa894c)](https://www.codacy.com/app/sleroy/spring-cqrs-arch?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=sleroy/spring-cqrs-arch&amp;utm_campaign=Badge_Grade)
 
-# WIKI
+# WIKI and Documentation
 
-Introduction there : https://sleroy.github.io/spring-cqrs-arch/
+Documentation is there : https://sleroy.github.io/spring-cqrs-arch/
 
-Documentation is there : https://github.com/sleroy/spring-cqrs-arch/wiki
+Changelog is there : https://sleroy.github.io/spring-cqrs-arch/changelog
 
-Changelog is there : https://github.com/sleroy/spring-cqrs-arch/wiki/Changelog
-
-For a quickstart, have a look on the page : https://github.com/sleroy/spring-cqrs-arch/wiki/Quickstart
+For a quickstart, have a look on the page : https://sleroy.github.io/spring-cqrs-arch/quickstart
 
 # Purpose
 

@@ -2,20 +2,64 @@
 title: CQRS Framework for Spring Framework/Boot
 ---
 
+Original work from @slawek.
 
-* [Introduction](/introduction) 
+Easy introduction and implementation of CQRS Application pattern with Spring  / Spring Boot. **Not sure about using this framework ?** It exists at least two other more mature and more complex frameworks to implement CQRS :
+
+* [Eventuate](https://eventuate.io/)
+* [Axon](https://axoniq.io/) 
+
+This framework is different since it makes the following assumptions :
+
+* **No Query model** : I consider that the query layer should be straightforward from the controller to the database and not use any abstraction.
+* **Event Bus and Event sourcing agnostic** : I have used this framework in three different projects where the EventBus with a plain memory-based event bus and with a RabbitMQ solution.
+
+And the framework also have **the following benefits** :
+
+* Easy to implement a Command / Gateway model.
+* Framework and applications are easy to test.
 
 
+And the framework also have **the following limitations** :
 
-# Purpose
+* No Event sourcing implemented yet.
+* Single-man project yet.
+
+## Documentation plan
+
+* [Quickstart](/quickstart) 
+* [How to design with the command model](/howtodesign) 
+* [Changelog](/changelog) 
+* [How to configure your Spring Application with the framework](/configuration) 
+* [Event sourcing : TODO](/eventsourcing) 
+* [Exception Handling](/exceptionhandling) 
+* [Using the Gateway](/gateway) 
+* [Command transactions and Saga](/saga) 
+* [Queries and CQRS](/queries) 
+* [How to implement Command Throttling ?](/throttling)
+* [Reference and credits](/credits)
+
+
+## Introduction
+
 
 This module is an implementation of a software architecture model inspired from the CQRS ( [link from Fowler](https://martinfowler.com/bliki/CQRS.html) ) model.
+
+To quote Martin Fowler :
+
+```
+CQRS stands for Command Query Responsibility Segregation. It's a pattern that I first heard described by Greg Young. At its heart is the notion that you can use a different model to update information than the model you use to read information. For some situations, this separation can be valuable, but beware that for most systems CQRS adds risky complexity.
+```
 
 ![CQRS Architecture](https://martinfowler.com/bliki/images/cqrs/cqrs.png)
 
 The idea is the following : the software functionalities are split between the read and the write accesses made by the user.
 
-## Advantages
+
+* [How to design with the command model](/howtodesign) 
+
+
+### Advantages
 
 The strongest advantages of this architecture are - according my experience - :
 
@@ -24,7 +68,7 @@ The strongest advantages of this architecture are - according my experience - :
 * **Spring compatible** : this architecture is compatible with IOC, Java and Spring
 * **Microservice compatible** : this module can be used to implement a monolith and split it as microservices later, or directly as microservices if you implement a Bus.
 
-## Cleancode
+### Cleancode
 
 Some bad smells often found in Spring / Java 
 Web applications are avoided with this model.
