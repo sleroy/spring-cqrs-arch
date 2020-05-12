@@ -14,10 +14,12 @@ import com.byoskill.spring.cqrs.commands.CommandServiceSpec;
 import com.byoskill.spring.cqrs.utils.validation.InvalidCommandException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.core.ResolvableType;
+import org.springframework.core.type.MethodMetadata;
 
 import javax.annotation.PostConstruct;
 import java.util.HashMap;
@@ -87,7 +89,11 @@ public class SpringCommandServiceProvider implements CommandServiceProvider {
         if (beanDefinition == null) throw new CommandServiceSpecException("Could not guess the type of the command from the bean " + beanName);
         final ResolvableType resolvableType = beanDefinition.getResolvableType();
         final ResolvableType[] generics     = resolvableType.getGenerics();
-        return generics[0].getRawClass();
+        if (generics.length > 0) {
+            return generics[0].getRawClass();
+        } else {
+            throw new CommandServiceSpecException("Could not guess the type of the command from the bean " + beanName);
+        }
     }
 
 
