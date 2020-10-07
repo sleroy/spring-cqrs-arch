@@ -9,3 +9,4 @@ bin
 .classpath
 /command.trace
 /.coveralls.yml
+*.yml
