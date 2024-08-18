@@ -19,8 +19,8 @@ import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
 
-import javax.validation.Validation;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Validation;
+import jakarta.validation.constraints.NotNull;
 
 import com.byoskill.spring.cqrs.workflow.CommandExecutorServiceImpl;
 import org.junit.Before;

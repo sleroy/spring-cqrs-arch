@@ -24,7 +24,9 @@ public interface EventThrower<R> {
      * @param failure the failure
      * @return the event that should be thrown (null does not send event)
      */
-    Optional<Object> eventOnFailure(Throwable failure);
+    default Object eventOnFailure(Throwable failure) {
+        return null;
+    }
 
     /**
      * Event triggered on success.
@@ -32,5 +34,7 @@ public interface EventThrower<R> {
      * @param result the result
      * @return the event that should be thrown (null does not send event)
      */
-    Optional<Object> eventOnSuccess(R result);
+    default Object eventOnSuccess(R result) {
+        return null;
+    }
 }

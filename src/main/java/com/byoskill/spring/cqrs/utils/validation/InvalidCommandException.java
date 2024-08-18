@@ -10,8 +10,7 @@
 package com.byoskill.spring.cqrs.utils.validation;
 
 import com.byoskill.spring.cqrs.commandgateway.CqrsException;
-
-import javax.validation.ConstraintViolationException;
+import jakarta.validation.ConstraintViolationException;
 
 /**
  * The Class InvalidCommandException is thrown when an invalid command has been

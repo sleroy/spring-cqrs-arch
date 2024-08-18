@@ -1,13 +1,10 @@
 package com.byoskill.spring.cqrs.utils.validation;
 
-import javax.validation.ConstraintViolationException;
-import javax.validation.Validation;
-import javax.validation.constraints.NotEmpty;
-
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Validation;
+import jakarta.validation.constraints.NotEmpty;
 import org.junit.Assert;
 import org.junit.Test;
-
-import com.byoskill.spring.cqrs.utils.validation.ObjectValidation;
 
 
 public class ObjectValidationTest {

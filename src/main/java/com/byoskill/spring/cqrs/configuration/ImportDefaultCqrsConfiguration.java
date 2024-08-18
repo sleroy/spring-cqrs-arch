@@ -20,6 +20,9 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinPool.ForkJoinWorkerThreadFactory;
 import java.util.concurrent.ForkJoinWorkerThread;
 
+/**
+ * This Spring configuration class declares the logging; the tracing component  and the exception handler for the Gate.
+ */
 @Configuration
 public class ImportDefaultCqrsConfiguration implements CqrsConfiguration {
 

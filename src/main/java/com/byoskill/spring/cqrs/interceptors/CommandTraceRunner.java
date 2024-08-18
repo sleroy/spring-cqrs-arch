@@ -119,7 +119,7 @@ public class CommandTraceRunner implements CommandInterceptor {
         try {
             flushFile();
         } catch (final Exception e) {
-            LOGGER.error("Error during the serialization of the command trace {} -> {}",
+            LOGGER.error("Error during the serialization of the command trace {}",
                     traceConfiguration.getTraceFile(),
                     e);
         }
@@ -137,7 +137,7 @@ public class CommandTraceRunner implements CommandInterceptor {
                 objectMapper.writeValue(traceConfiguration.getTraceFile(), trace);
             }
         } catch (final IOException e) {
-            LOGGER.error("Could not create the trace, already existing -> {}", e);
+            LOGGER.error("Could not create the trace, already existing", e);
         }
     }
 

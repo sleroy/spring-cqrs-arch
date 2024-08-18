@@ -10,8 +10,8 @@
  */
 package com.byoskill.spring.cqrs.fakeapp;
 
-import javax.validation.Validation;
-import javax.validation.Validator;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

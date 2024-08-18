@@ -27,9 +27,9 @@ import org.springframework.stereotype.Component;
 
 
 /**
- * The Interface CommandHandler is a marker annotation to define Component that handles Commands.
+ * The annotation CommandService declares a bean that is able to handle one or more commands . The commands may be declared using the @{@link CommandHandler} or with the interface {@link com.byoskill.spring.cqrs.commands.CommandServiceSpec}.
  *
- * @author Slawek
+ * @author sleroy
  */
 @Component
 @Retention(RetentionPolicy.RUNTIME)

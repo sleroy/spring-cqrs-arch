@@ -10,15 +10,15 @@
  */
 package com.byoskill.spring.cqrs.commandgateway;
 
-import com.byoskill.spring.cqrs.workflow.CommandExecutorServiceImpl;
 import com.byoskill.spring.cqrs.events.EventBusService;
 import com.byoskill.spring.cqrs.filter.SpringGateFilters;
 import com.byoskill.spring.cqrs.utils.validation.InvalidCommandException;
+import com.byoskill.spring.cqrs.workflow.CommandExecutorServiceImpl;
+import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

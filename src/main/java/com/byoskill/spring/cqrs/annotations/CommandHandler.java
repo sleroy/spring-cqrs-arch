@@ -27,7 +27,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * The annotation CommandResource identifies an entity on which we want to apply an ActiveRecord pattern.
+ * The annotation CommandHandler marks a method that can handle a Command.
  *
  * @author sleroy
  */

@@ -1,22 +1,20 @@
 package com.byoskill.spring.cqrs.commandgateway;
 
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-
-import com.byoskill.spring.cqrs.workflow.CommandExecutorServiceImpl;
-import com.byoskill.spring.cqrs.commandgateway.SpringGate;
+import com.byoskill.spring.cqrs.events.EventBusService;
 import com.byoskill.spring.cqrs.filter.SpringGateFilters;
+import com.byoskill.spring.cqrs.workflow.CommandExecutorServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
-import com.byoskill.spring.cqrs.events.EventBusService;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SpringGateTest {

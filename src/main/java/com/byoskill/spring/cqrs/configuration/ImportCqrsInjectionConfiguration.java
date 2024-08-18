@@ -28,7 +28,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
-import javax.validation.Validator;
+import jakarta.validation.Validator;
 import java.util.Optional;
 import java.util.concurrent.ForkJoinPool;
 

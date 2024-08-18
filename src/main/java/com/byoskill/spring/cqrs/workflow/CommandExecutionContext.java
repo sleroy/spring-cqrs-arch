@@ -46,7 +46,8 @@ public interface CommandExecutionContext {
     Object getRawCommand();
 
     /**
-     * Handler.
+     * Returns the command service specification associated with the current command execution context.
+     * This specification provides the necessary information and behavior for handling the command.
      *
      * @return the command service spec
      */

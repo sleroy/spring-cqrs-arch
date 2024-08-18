@@ -24,6 +24,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.PostConstruct;
 import java.util.Optional;
 
+/**
+ * The purpose of the CommandRunnerWorkflowService class is to manage and initialize the command running workflow.
+ */
 public class CommandRunnerWorkflowService {
 
     private static final Logger LOGGER = LoggerFactory
@@ -66,7 +69,7 @@ public class CommandRunnerWorkflowService {
                 commandTraceRunner,
                 eventThrowerRunner,
                 defaultExceptionHandlerRunner);
-
+        initializeWorkflow();
     }
 
     /**
@@ -78,10 +81,7 @@ public class CommandRunnerWorkflowService {
         return runnerWorkflow;
     }
 
-    /**
-     * Gets the workflow.
-     */
-    @PostConstruct
+
     public void initializeWorkflow() {
 
         if (configurer.isPresent()) {

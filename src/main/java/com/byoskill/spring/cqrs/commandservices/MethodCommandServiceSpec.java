@@ -9,6 +9,15 @@ import java.lang.reflect.Method;
 public class MethodCommandServiceSpec implements CommandServiceSpec<Object, Object> {
     private final Object bean;
     private final Method method;
+
+    public Class<?> getUserClass() {
+        return userClass;
+    }
+
+    public Class<?> getCommandParameterType() {
+        return commandParameterType;
+    }
+
     private final Class<?> userClass;
     private final Class<?> commandParameterType;
 

@@ -13,8 +13,8 @@ package com.byoskill.spring.cqrs.commands;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 
 /**
  * The Class CommandNotValidException is thrown when an invalid command has been

@@ -13,9 +13,9 @@ package com.byoskill.spring.cqrs.utils.validation;
 import com.byoskill.spring.cqrs.commands.CommandNotValidException;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 import java.util.Set;
 
 /**

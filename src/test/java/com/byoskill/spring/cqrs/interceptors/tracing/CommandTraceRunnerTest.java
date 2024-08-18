@@ -22,11 +22,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import com.byoskill.spring.cqrs.configuration.TraceConfiguration;
 import com.byoskill.spring.cqrs.workflow.CommandExecutionContext;
 import com.byoskill.spring.cqrs.workflow.CommandRunnerChain;
+import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CommandTraceRunnerTest {

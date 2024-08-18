@@ -24,7 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Optional;
 
 /**
- * This process identifies CommandService that requires to send events and  performs the required actions depending of their event throwing definitions.
+ * This process identifies CommandService that requires to send events and  performs the required actions depending on their event throwing definitions.
  */
 public class EventThrowerRunner implements CommandInterceptor {
     private static final Logger LOGGER = LoggerFactory.getLogger(EventThrowerRunner.class);
@@ -40,14 +40,13 @@ public class EventThrowerRunner implements CommandInterceptor {
             throws RuntimeException {
 
         Object res = null;
-        final EventThrower handler = context.handler() instanceof EventThrower ? (EventThrower) context.handler()
-                : null;
+        final EventThrower handler = context.handler() instanceof EventThrower ? (EventThrower) context.handler() : null;
         try {
             res = chain.execute(context);
             // If the handler is defining an Event factorw method in case of success
             if (handler != null) {
-                Optional<?> event = handler.eventOnSuccess(res);
-                if (!event.isPresent()) {
+                Object event = handler.eventOnSuccess(res);
+                if (event == null) {
                     LOGGER.debug("The command {} is not returning any event on SUCCESS", context.getRawCommand());
                 } else {
                     eventBusService.publishEvent(event);
@@ -64,8 +63,8 @@ public class EventThrowerRunner implements CommandInterceptor {
 
         } catch (final Exception t) {
             if (handler != null) {
-                Optional<?> event = handler.eventOnFailure(t);
-                if (event.isPresent()) {
+                Object event = handler.eventOnFailure(t);
+                if (event != null) {
                     LOGGER.warn("Execution of the command {} has failed, sending an event...", context.getRawCommand());
                     eventBusService.publishEvent(event);
                 } else {
