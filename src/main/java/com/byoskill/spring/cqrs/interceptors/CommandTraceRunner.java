@@ -63,6 +63,21 @@ public class CommandTraceRunner implements CommandInterceptor {
 
     }
 
+    /**
+     * Inits the service.
+     */
+    private final void init() {
+        objectMapper = new ObjectMapper();
+        try {
+            if (traceConfiguration.getTraceFile().createNewFile()) {
+                final CommandTrace trace = new CommandTrace();
+                objectMapper.writeValue(traceConfiguration.getTraceFile(), trace);
+            }
+        } catch (final IOException e) {
+            LOGGER.error("Could not create the trace, already existing", e);
+        }
+    }
+
     /*
      * (non-Javadoc)
      *
@@ -88,6 +103,23 @@ public class CommandTraceRunner implements CommandInterceptor {
             throw t;
         }
         return result;
+    }
+
+    /**
+     * Serialize as the trace the command being executed.
+     *
+     * @param _command the command being executed
+     */
+    private synchronized void serializeTrace(final TraceCommandExecution _command) {
+        try {
+            commandTrace.addCommand(_command);
+            if (commandTrace.getCommands().size() >= traceConfiguration.getTraceSize()) {
+                flushFile();
+            }
+        } catch (final Exception e) {
+            LOGGER.error("Error during the serialization of the command {} -> {}", traceConfiguration.getTraceFile(),
+                    _command, e);
+        }
     }
 
     /**
@@ -124,38 +156,6 @@ public class CommandTraceRunner implements CommandInterceptor {
                     e);
         }
 
-    }
-
-    /**
-     * Inits the service.
-     */
-    private final void init() {
-        objectMapper = new ObjectMapper();
-        try {
-            if (traceConfiguration.getTraceFile().createNewFile()) {
-                final CommandTrace trace = new CommandTrace();
-                objectMapper.writeValue(traceConfiguration.getTraceFile(), trace);
-            }
-        } catch (final IOException e) {
-            LOGGER.error("Could not create the trace, already existing", e);
-        }
-    }
-
-    /**
-     * Serialize as the trace the command being executed.
-     *
-     * @param _command the command being executed
-     */
-    private synchronized void serializeTrace(final TraceCommandExecution _command) {
-        try {
-            commandTrace.addCommand(_command);
-            if (commandTrace.getCommands().size() >= traceConfiguration.getTraceSize()) {
-                flushFile();
-            }
-        } catch (final Exception e) {
-            LOGGER.error("Error during the serialization of the command {} -> {}", traceConfiguration.getTraceFile(),
-                    _command, e);
-        }
     }
 
 }

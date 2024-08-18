@@ -10,3 +10,4 @@ bin
 /command.trace
 /.coveralls.yml
 *.yml
+target/
