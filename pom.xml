@@ -20,7 +20,7 @@
         <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
         <javax.annotation-api.version>1.3.2</javax.annotation-api.version>
         <junit.version>4.13.2</junit.version>
-        <spring-boot-starter-validation.version>3.3.2</spring-boot-starter-validation.version>
+        <spring-boot-starter-validation.version>3.3.5</spring-boot-starter-validation.version>
         <maven-compiler-plugin.release>17</maven-compiler-plugin.release>
     </properties>
     <name>Spring CQRS Module</name>
