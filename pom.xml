@@ -8,7 +8,7 @@
     <version>1.1.5-SNAPSHOT</version>
     <properties>
         <maven-surefire-plugin.version>3.3.1</maven-surefire-plugin.version>
-        <spring.version>6.1.12</spring.version>
+        <spring.version>6.1.20</spring.version>
         <assertj-core.version>3.26.3</assertj-core.version>
         <logback-classic.version>1.5.7</logback-classic.version>
         <mockito-core.version>5.12.0</mockito-core.version>
@@ -20,7 +20,7 @@
         <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
         <javax.annotation-api.version>1.3.2</javax.annotation-api.version>
         <junit.version>4.13.2</junit.version>
-        <spring-boot-starter-validation.version>3.3.2</spring-boot-starter-validation.version>
+        <spring-boot-starter-validation.version>3.3.7</spring-boot-starter-validation.version>
         <maven-compiler-plugin.release>17</maven-compiler-plugin.release>
     </properties>
     <name>Spring CQRS Module</name>
