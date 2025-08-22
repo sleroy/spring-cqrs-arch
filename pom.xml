@@ -8,7 +8,7 @@
     <version>1.1.5-SNAPSHOT</version>
     <properties>
         <maven-surefire-plugin.version>3.3.1</maven-surefire-plugin.version>
-        <spring.version>6.1.12</spring.version>
+        <spring.version>6.2.10</spring.version>
         <assertj-core.version>3.26.3</assertj-core.version>
         <logback-classic.version>1.5.7</logback-classic.version>
         <mockito-core.version>5.12.0</mockito-core.version>
